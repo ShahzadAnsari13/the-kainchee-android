@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/locationListFragment">
+
+    <fragment
+        android:id="@+id/locationListFragment"
+        android:name="com.thekainchee.user.presentation.location.fragment.LocationListFragment"
+        android:label="Location List">
+        <action
+            android:id="@+id/action_locationListFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.thekainchee.user.presentation.location.fragment.MapFragment"
+        android:label="Map" >
+        <action
+            android:id="@+id/action_mapFragment_to_locationListFragment"
+            app:destination="@id/locationListFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/saveAddressFragment"
+        android:name="com.thekainchee.user.presentation.location.fragment.SaveAddressFragment"
+        android:label="Save Address" />
+</navigation>

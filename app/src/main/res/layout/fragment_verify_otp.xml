@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+
+
+        <androidx.media3.ui.PlayerView
+            android:id="@+id/playerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:use_controller="false"
+            app:resize_mode="zoom"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#33000000"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/loginCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_margin="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Enter OTP"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#111111"
+
+                    android:layout_marginTop="8dp"/>
+
+
+                <!-- SUBTITLE -->
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvSubtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Enter the OTP sent to your phone"
+                    android:textSize="14sp"
+                    android:textColor="#6B7280"
+
+                    android:layout_marginTop="6dp"/>
+
+
+
+                <com.chaos.view.PinView
+                    android:id="@+id/pinViewOtp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="24dp"
+                    app:itemCount="6"
+                    app:itemWidth="40dp"
+                    app:itemHeight="40dp"
+                    app:itemSpacing="8dp"
+                    app:lineWidth="2dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    app:lineColor="@color/otp_default"
+                    app:itemBackground="@drawable/otp_box_background"
+                    android:inputType="number"
+                    android:textSize="18sp"/>
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnVerifyOtp"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Verify OTP"
+                    android:layout_marginTop="32dp"/>
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvResendOtp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Resend OTP in 60s"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/cardview_dark_background"/>
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:visibility="gone"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="24dp"/>
+
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

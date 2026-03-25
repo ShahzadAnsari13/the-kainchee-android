@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="purple_500">#6200EE</color>
+    <color name="primaryColor">#00695C</color>
+    <color name="otp_default">#D0D5DD</color>
+    <color name="otp_focused">#6750A4</color>
+    <color name="otp_filled">#1D2939</color>
+    <color name="gray">#6B7280</color>
+    <color name="lightPrimaryColor">#E8F5E9</color>
+    <color name="lightBlue">#C7DBFB</color>
+    <color name="blue">#00296F</color>
+</resources>

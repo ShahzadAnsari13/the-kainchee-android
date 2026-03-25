@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.dashboard.DashboardActivity">
+
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            app:layout_scrollFlags="scroll">
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/tvLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fetching location..."
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:drawableStart="@drawable/ic_location"
+                    android:textColor="#666666"
+                    android:drawablePadding="6dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"/>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_alignParentEnd="true"
+                    android:backgroundTint="@color/white"
+                    app:cardCornerRadius="18dp"
+                    app:strokeColor="#FFFFFF">
+                    <ImageView android:id="@+id/imgProfile"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_profile" />
+                </com.google.android.material.card.MaterialCardView>
+                <TextView
+                    android:id="@+id/tvGreeting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Hello, Shahzad 👋"
+                    android:textSize="20sp"
+                    android:layout_below="@id/tvLocation"
+                    android:textStyle="bold"/>
+            </RelativeLayout>
+
+
+
+
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="16dp"
+            android:backgroundTint="@color/white"
+            app:cardElevation="3dp"
+            app:cardCornerRadius="12dp">
+
+            <EditText
+                android:id="@+id/etSearch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Search parlours or services"
+                android:drawableStart="@drawable/ic_search"
+                android:background="@null"
+                android:drawablePadding="8dp"
+                android:padding="12dp"
+                android:focusable="false"
+                android:clickable="true"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            app:tabMode="fixed"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/black"
+            app:tabIndicatorHeight="3dp"
+            app:tabTextColor="#808080"
+            app:tabSelectedTextColor="@color/black"
+            app:tabRippleColor="@android:color/transparent"
+            app:tabIndicatorAnimationDuration="200"
+            app:tabIndicatorFullWidth="false"
+            />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_gravity="bottom"
+        android:layout_margin="16dp"
+        android:background="@drawable/bg_bottom_nav"
+        app:itemIconTint="@color/bottom_nav_selector"
+        app:itemTextColor="@color/bottom_nav_selector"
+        app:itemBackground="@drawable/bottom_nav_item_background"
+        app:menu="@menu/bottom_nav_menu"
+        app:labelVisibilityMode="labeled"/>
+
+
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--        android:id="@+id/fabBooking"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_margin="16dp"-->
+<!--        android:src="@drawable/ic_booking"-->
+<!--        android:backgroundTint="@color/primaryColor"-->
+<!--        app:tint="@color/white"-->
+<!--        app:layout_anchor="@id/bottomNavigation"-->
+<!--        app:layout_anchorGravity="top|end"/>-->
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
