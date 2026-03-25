@@ -1,6 +1,5 @@
 *.iml
 .gradle
-/local.properties
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
@@ -13,3 +12,11 @@
 .externalNativeBuild
 .cxx
 local.properties
+# Kotlin
+.kotlin/
+
+# Logs
+*.log
+
+# OS files
+Thumbs.db
