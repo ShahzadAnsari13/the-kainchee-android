@@ -1,8 +1,10 @@
 package com.thekainchee.user.di
 
+import com.thekainchee.user.data.repository.AddressRepositoryImpl
 import com.thekainchee.user.data.repository.AuthRepositoryImpl
 import com.thekainchee.user.data.repository.DeviceLocationRepositoryImpl
 import com.thekainchee.user.data.repository.PlaceSearchRepositoryImpl
+import com.thekainchee.user.domain.repository.AddressRepository
 import com.thekainchee.user.domain.repository.AuthRepository
 import com.thekainchee.user.domain.repository.DeviceLocationRepository
 import com.thekainchee.user.domain.repository.PlaceSearchRepository
@@ -30,4 +32,9 @@ abstract class RepositoryModule {
         placeSearchRepositoryImpl: PlaceSearchRepositoryImpl
     ): PlaceSearchRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindAddressRepository(
+        addressRepositoryImpl: AddressRepositoryImpl
+    ): AddressRepository
 }

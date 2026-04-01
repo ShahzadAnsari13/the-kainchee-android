@@ -41,10 +41,9 @@ class LocationListFragment : Fragment() {
         adapter = AddressAdapter(
             onItemClick = {item->
                 if (item.placeId != null) {
-                    findNavController().navigate(
-                        R.id.action_locationListFragment_to_mapFragment,
-                        bundleOf("placeId" to item.placeId)
-                    )
+                    val action = LocationListFragmentDirections
+                        .actionLocationListFragmentToMapFragment(placeId = item.placeId)
+                    findNavController().navigate(action)
                 } else {
                     findNavController().navigate(
                         R.id.action_locationListFragment_to_mapFragment
@@ -54,7 +53,15 @@ class LocationListFragment : Fragment() {
             onMenuClick = {item,view->
 
             }
+
         )
+        binding.cardCurrentLocation.setOnClickListener {
+            val action = LocationListFragmentDirections
+                .actionLocationListFragmentToMapFragment(null)
+
+            findNavController().navigate(action)
+        }
+        binding.tvAddNew.setOnClickListener { findNavController().navigate(R.id.action_locationListFragment_to_mapFragment) }
 
         binding.rvLocations.apply {
             adapter = this@LocationListFragment.adapter

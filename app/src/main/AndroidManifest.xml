@@ -22,6 +22,7 @@
             android:value="AIzaSyCd-LFRoFR4VCJNkqYnq31Xn02XkWPzwXo"/>
         <activity
             android:name=".presentation.location.LocationActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".presentation.dashboard.DashboardActivity"

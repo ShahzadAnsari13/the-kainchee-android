@@ -105,8 +105,11 @@ class HomeFragment : Fragment() {
                 viewModel.location.collect { address ->
 
                     address?.let {
-
-                        val raw = "Selected Location - ${it.city}, ${it.district}"
+                        val raw = "Selected Location - ${
+                            listOf(it.details, it.city)
+                                .filter { !it.isNullOrBlank() }
+                                .joinToString(", ")
+                        }"
                         val text = if (raw.length > 30) raw.take(30) + "..." else raw
 
                         val spannable = SpannableString(" $text ")

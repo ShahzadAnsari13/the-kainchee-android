@@ -19,46 +19,45 @@ class RefreshTokenAuthenticator @Inject constructor(
     override fun authenticate(route: Route?, response: Response): Request? {
 
         synchronized(this) {
-            // agar Authorization header nahi hai to refresh mat karo
-            if (response.request.header("Authorization") == null)
+
+            if (response.code == 401) {
+                val errorBody = response.peekBody(2048).string()
+
+                if (!errorBody.contains("TOKEN_EXPIRED")) {
+                    return null
+                }
+            }
+
+            val authHeader = response.request.header("Authorization")
+            if (authHeader == null || !authHeader.startsWith("Bearer"))
                 return null
 
-            // infinite loop protection
             if (responseCount(response) >= 2) {
                 return null
             }
 
-            // get refresh token
             val refreshToken = runBlocking {
                 tokenManager.refreshToken.first()
             } ?: return null
 
-            // call refresh API
             val newTokenResponse = runBlocking {
                 authApi.get().refreshToken(
                     RefreshTokenRequestDto(refreshToken)
                 )
             }
 
-            // refresh failed → logout
             if (!newTokenResponse.isSuccessful) {
-
-                runBlocking {
-                    tokenManager.clearTokens()
-                }
-
+                runBlocking { tokenManager.clearTokens() }
                 return null
             }
 
             val newAccessToken =
                 newTokenResponse.body()?.accessToken ?: return null
 
-            // save new access token
             runBlocking {
                 tokenManager.saveTokens(newAccessToken, refreshToken)
             }
 
-            // retry original request with new token
             return response.request.newBuilder()
                 .header("Authorization", "Bearer $newAccessToken")
                 .build()

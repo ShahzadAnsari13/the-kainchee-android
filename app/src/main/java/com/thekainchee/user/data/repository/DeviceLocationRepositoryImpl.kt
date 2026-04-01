@@ -1,6 +1,7 @@
 package com.thekainchee.user.data.repository
 
 import android.content.Context
+import android.location.Address
 import android.location.Geocoder
 import android.util.Log
 import com.thekainchee.user.data.local.room.dao.UserAddressDao
@@ -14,14 +15,36 @@ import kotlinx.coroutines.withContext
 import java.util.Locale
 import javax.inject.Inject
 
-class DeviceLocationRepositoryImpl @Inject constructor(private val userAddressDao: UserAddressDao, private val locationProvider: DeviceLocationProvider, @ApplicationContext private val context: Context) :
-    DeviceLocationRepository {
+class DeviceLocationRepositoryImpl @Inject constructor(
+    private val userAddressDao: UserAddressDao,
+    private val locationProvider: DeviceLocationProvider,
+    @ApplicationContext private val context: Context
+) : DeviceLocationRepository {
+
+    private suspend fun getGeoData(
+        latitude: Double,
+        longitude: Double
+    ): Address {
+
+        val geocoder = Geocoder(context, Locale.getDefault())
+
+        val result = withContext(Dispatchers.IO) {
+            geocoder.getFromLocation(latitude, longitude, 1)
+        }
+
+        return result?.firstOrNull()
+            ?: throw Exception("Address not found")
+    }
+
     override suspend fun getUserLocation(): UserAddress {
+
         val address = userAddressDao.getDefaultAddress()
-        Log.d("LocationDebug","DB ADDRESS: $address")
-        return if(address!=null){
+        Log.d("LocationDebug", "DB ADDRESS: $address")
+
+        return if (address != null) {
+
             UserAddress(
-                label =address.label,
+                label = address.label,
                 latitude = address.latitude,
                 longitude = address.longitude,
                 country = address.country,
@@ -33,42 +56,34 @@ class DeviceLocationRepositoryImpl @Inject constructor(private val userAddressDa
                 details = address.details,
                 isDefault = address.isDefault
             )
-        }else{
-            //Live location fetch
+
+        } else {
+
             val location = locationProvider.getCurrentLocation()
                 ?: throw Exception("Location not available")
 
-            //Geocoder
-            val geocoder = Geocoder(context, Locale.getDefault())
-            val geoResult = withContext(Dispatchers.IO){
-                geocoder.getFromLocation(
-                    location.latitude,
-                    location.longitude,
-                    1
-                )
-            }
-            val geo = geoResult?.firstOrNull() ?: throw Exception("Address not found")
+            val geo = getGeoData(location.latitude, location.longitude)
 
             val entity = UserAddressEntity(
-                label = "CurrentLocation",
+                label = "Other",
                 latitude = location.latitude,
                 longitude = location.longitude,
                 country = geo.countryName ?: "",
                 state = geo.adminArea ?: "",
                 district = geo.subAdminArea ?: "",
-                city = geo.locality,
-                pincode = geo.postalCode,
-                landmark = geo.featureName,
-                details = null,
+                city = geo.locality ?: geo.subAdminArea ?: "",
+                pincode =  geo.postalCode ?: "",
+                landmark = geo.featureName
+                    ?.takeIf { it.isNotBlank() && it != "Unnamed Road" }
+                    ?: "",
+                details = geo.subLocality ?: "",
                 isDefault = false
             )
-
 
             userAddressDao.deleteLiveLocation()
             userAddressDao.insertAddress(entity)
 
-            //  Return domain model
-            return UserAddress(
+            UserAddress(
                 label = entity.label,
                 latitude = entity.latitude,
                 longitude = entity.longitude,
@@ -82,6 +97,29 @@ class DeviceLocationRepositoryImpl @Inject constructor(private val userAddressDa
                 isDefault = entity.isDefault
             )
         }
+    }
 
+    override suspend fun getAddressFromLatLng(
+        latitude: Double,
+        longitude: Double
+    ): UserAddress {
+
+        val geo = getGeoData(latitude, longitude)
+
+        return UserAddress(
+            label = "Other",
+            latitude = latitude,
+            longitude = longitude,
+            country = geo.countryName ?: "",
+            state = geo.adminArea ?: "",
+            district = geo.subAdminArea ?: "",
+            city = geo.locality ?: geo.subAdminArea ?: "",
+            pincode =  geo.postalCode ?: "",
+            landmark = geo.featureName
+                ?.takeIf { it.isNotBlank() && it != "Unnamed Road" }
+                ?: "",
+            details =geo.subLocality ?: "",
+            isDefault = false
+        )
     }
 }

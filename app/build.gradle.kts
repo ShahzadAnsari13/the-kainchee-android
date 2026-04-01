@@ -2,8 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt)
-    kotlin("kapt")
     alias(libs.plugins.ksp)
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -38,8 +38,10 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
+
 
 
 dependencies {
@@ -57,7 +59,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     // Hilt Core
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -98,6 +100,5 @@ dependencies {
     //google places
     implementation("com.google.android.libraries.places:places:3.5.0")
 }
-kapt {
-    correctErrorTypes = true
-}
+
+

@@ -1,5 +1,6 @@
 package com.thekainchee.user.data.remote.interceptor
 
+import android.util.Log
 import com.thekainchee.user.data.local.datastore.TokenManager
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -12,6 +13,7 @@ class AuthInterceptor @Inject constructor(private val tokenManager: TokenManager
         val token = runBlocking {
             tokenManager.accessToken.first()
         }
+        Log.d("TOKEN_CHECK", "token = $token")
         val request = if(token!=null){
             chain.request().newBuilder()
                 .addHeader("Authorization","Bearer $token")

@@ -1,5 +1,6 @@
 package com.thekainchee.user.di
 
+import com.thekainchee.user.data.remote.api.AddressApi
 import com.thekainchee.user.data.remote.api.AuthApi
 import com.thekainchee.user.data.remote.interceptor.AuthInterceptor
 import com.thekainchee.user.data.remote.interceptor.RefreshTokenAuthenticator
@@ -14,6 +15,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.create
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -33,13 +35,36 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @Named("NoAuth")
+    fun provideNoAuthOkHttpClient(loggingInterceptor: HttpLoggingInterceptor) : OkHttpClient {
+        return OkHttpProvider.provideNoAuth(loggingInterceptor)
+    }
+    @Provides
+    @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return RetrofitProvider.provide(okHttpClient)
     }
 
     @Provides
     @Singleton
-    fun provideAuthApi(retrofit: Retrofit) : AuthApi {
+    @Named("NoAuth")
+    fun provideNoAuthRetrofit(
+        @Named("NoAuth") okHttpClient: OkHttpClient
+    ): Retrofit {
+        return RetrofitProvider.provide(okHttpClient)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthApi(
+        @Named("NoAuth") retrofit: Retrofit
+    ): AuthApi {
         return retrofit.create(AuthApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAddressApi(retrofit: Retrofit) : AddressApi {
+        return retrofit.create(AddressApi::class.java)
     }
 }

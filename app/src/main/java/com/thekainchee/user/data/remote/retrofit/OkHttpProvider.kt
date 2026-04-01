@@ -16,4 +16,13 @@ object OkHttpProvider {
             .readTimeout(30, TimeUnit.SECONDS)
             .build()
     }
+    fun provideNoAuth(
+        loggingInterceptor: HttpLoggingInterceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .build()
+    }
 }

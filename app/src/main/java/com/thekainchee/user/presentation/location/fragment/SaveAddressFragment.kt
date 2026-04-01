@@ -5,56 +5,184 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.thekainchee.user.R
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import com.thekainchee.user.databinding.FragmentSaveAddressBinding
+import com.thekainchee.user.domain.model.UserAddress
+import com.thekainchee.user.presentation.location.AddressState
+import com.thekainchee.user.presentation.location.MapState
+import com.thekainchee.user.presentation.location.viewmodel.MapViewModel
+import com.thekainchee.user.presentation.location.viewmodel.SaveAddressViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import kotlin.getValue
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [SaveAddressFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 class SaveAddressFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentSaveAddressBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
-
+    private val args: SaveAddressFragmentArgs by navArgs()
+    private val viewModel: MapViewModel by viewModels()
+    private val saveAddressViewModel: SaveAddressViewModel by viewModels()
+    private var selectedAddress: UserAddress? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_save_address, container, false)
+        _binding = FragmentSaveAddressBinding.inflate(inflater,container,false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SaveAddressFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            SaveAddressFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val lat = args.latitude.toDouble()
+        val lng = args.longitude.toDouble()
+        if (viewModel.state.value is MapState.Idle) {
+            viewModel.getAddressFromLatLng(lat, lng)
+        }
+
+        binding.btnChange.setOnClickListener {
+            val action = SaveAddressFragmentDirections
+                .actionSaveAddressFragmentToMapFragment(null)
+
+            findNavController().navigate(action)
+        }
+
+
+
+        binding.btnConfirm.setOnClickListener {
+            val baseAddress = selectedAddress
+            if (baseAddress == null) {
+                Toast.makeText(requireContext(), "Address not loaded yet", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val label = when (binding.chipGroup.checkedChipId) {
+                R.id.chipHome -> "Home"
+                R.id.chipOffice -> "Work"
+                R.id.chipOther -> "Other"
+                else -> "Home" // fallback (safe)
+            }
+            val flat = binding.etFlat.text.toString().trim()
+            val street = binding.etStreet.text.toString().trim()
+            val landmark = binding.etLandmark.text.toString().trim()
+            val details = listOf(flat, street)
+                .filter { it.isNotBlank() }
+                .joinToString(", ")
+            val finalDetails = details.ifBlank {
+                baseAddress.details
+            }
+            val finalLandmark = landmark.ifBlank {
+                baseAddress.landmark
+            }
+            val userAddress = UserAddress(
+                label = label, // 👉 abhi static (baad me chip se lenge)
+                latitude = baseAddress.latitude,
+                longitude = baseAddress.longitude,
+
+                country = baseAddress.country,
+                state = baseAddress.state,
+                district = baseAddress.district,
+                city = baseAddress.city,
+                pincode = baseAddress.pincode,
+
+                landmark = finalLandmark,
+                details = finalDetails,
+
+                isDefault = true
+            )
+           saveAddressViewModel.saveAddress(userAddress)
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                saveAddressViewModel.state.collect { state ->
+                    when (state) {
+
+                        is AddressState.Idle -> {
+                             binding.btnConfirm.isEnabled = true
+                        }
+
+                        is AddressState.Loading -> {
+                            binding.btnConfirm.text = "Saving..."
+                            binding.btnConfirm.isEnabled = false
+
+                        }
+
+                        is AddressState.Success -> {
+                            binding.btnConfirm.text = "Confirm address"
+                            binding.btnConfirm.isEnabled = true
+                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                            findNavController().popBackStack()
+                        }
+
+                        is AddressState.Error -> {
+                            binding.btnConfirm.text = "Confirm address"
+                            binding.btnConfirm.isEnabled = true
+                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collect { state ->
+
+                    when (state) {
+
+                        is MapState.Loading -> {
+                            // optional loader
+                        }
+
+                        is MapState.AddressReceived -> {
+                            val address = state.address
+
+                            selectedAddress = address // 🔥 IMPORTANT
+
+                            binding.tvhead.text =
+                                if (address.details.isNullOrBlank()) {
+                                    address.city ?: ""
+                                } else {
+                                    address.details ?: ""
+                                }
+
+                            val fullAddress = listOf(
+                                address.details,
+                                address.city,
+                                address.state,
+                                address.pincode
+                            )
+                                .map { it?.trim() }
+                                .filter { !it.isNullOrBlank() }
+                                .distinct()
+                                .joinToString(", ")
+
+                            binding.tvfullAdd.text = fullAddress
+
+                            binding.etLandmark.setText(address.landmark ?: "")
+                        }
+
+                        is MapState.Error -> {
+                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                        }
+
+                        else -> Unit
+                    }
+                }
+            }
+        }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
 }
