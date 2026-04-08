@@ -1,4 +1,4 @@
-package com.thekainchee.user.data.remote.dto.add_address
+package com.thekainchee.user.data.remote.dto.address
 
 data class AddAddressResponseDto(
     val message: String,

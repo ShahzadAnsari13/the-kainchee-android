@@ -40,7 +40,7 @@ class HomeFragment : Fragment() {
     private lateinit var adapter : HomeTabsAdapter
     private  val viewModel : HomeViewModel by viewModels()
     private var openedPermissionSettings = false
-
+    private var shouldRefreshLocation = false
     private val locationPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
@@ -150,6 +150,7 @@ class HomeFragment : Fragment() {
                         spannable.setSpan(
                             object : ClickableSpan() {
                                 override fun onClick(widget: View) {
+                                    shouldRefreshLocation = true
                                     startActivity(
                                         Intent(
                                             requireContext(),
@@ -158,7 +159,7 @@ class HomeFragment : Fragment() {
                                     )
                                 }
                             },
-                            0,
+                            spannable.length-1,
                             spannable.length,
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                         )
@@ -205,6 +206,10 @@ class HomeFragment : Fragment() {
             ) {
                 viewModel.fetchUserLocation()
             }
+        }else if (shouldRefreshLocation) {
+
+            shouldRefreshLocation = false
+            viewModel.fetchUserLocation()
         }
     }
     override fun onDestroyView() {

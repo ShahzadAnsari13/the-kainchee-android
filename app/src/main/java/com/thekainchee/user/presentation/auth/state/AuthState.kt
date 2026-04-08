@@ -1,4 +1,4 @@
-package com.thekainchee.user.presentation.auth
+package com.thekainchee.user.presentation.auth.state
 
 sealed class AuthState {
     object Idle : AuthState()

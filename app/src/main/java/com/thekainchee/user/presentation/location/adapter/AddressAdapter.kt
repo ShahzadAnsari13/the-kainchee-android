@@ -17,7 +17,7 @@ class AddressAdapter(
     private val onMenuClick: (AddressUI, View) -> Unit
 ) : ListAdapter<AddressUI, AddressAdapter.AddressViewHolder>(AddressDiffCallback()) {
 
-
+    var actionId: String? = null
     inner class AddressViewHolder(val binding: ItemLocationBinding) :
         RecyclerView.ViewHolder(binding.root)
 
@@ -57,7 +57,13 @@ class AddressAdapter(
         holder.itemView.setOnClickListener {
             onItemClick(item)
         }
-
+        if (item.id == actionId) {
+            holder.binding.ivMenu.visibility = View.GONE
+            holder.binding.progressBar.visibility = View.VISIBLE
+        } else {
+            holder.binding.ivMenu.visibility = View.VISIBLE
+            holder.binding.progressBar.visibility = View.GONE
+        }
 
 
     }

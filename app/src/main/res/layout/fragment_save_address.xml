@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:text="Home"
-
+                android:checked="true"
                 android:checkable="true"
                 android:textColor="@color/chip_text_selector"
 
@@ -58,11 +58,11 @@
                 app:chipStrokeWidth="1dp"/>
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chipOffice"
+                android:id="@+id/chipWork"
                 style="@style/Widget.Material3.Chip.Assist"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
-                android:text="Office"
+                android:text="Work"
 
                 android:checkable="true"
                 android:textColor="@color/chip_text_selector"
@@ -80,7 +80,7 @@
                 style="@style/Widget.Material3.Chip.Assist"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
-                android:text="Others"
+                android:text="Other"
                 android:checkable="true"
                 android:textColor="@color/chip_text_selector"
 
@@ -105,6 +105,7 @@
             app:cardElevation="4dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/locationCons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp">

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thekainchee.user.domain.model.UserAddress
 import com.thekainchee.user.domain.repository.DeviceLocationRepository
-import com.thekainchee.user.presentation.location.MapState
+import com.thekainchee.user.presentation.location.state.MapState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

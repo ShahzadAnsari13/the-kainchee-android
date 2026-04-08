@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LocationViewModel @Inject constructor(
+class SearchLocationViewModel @Inject constructor(
     private val placeSearchRepository: PlaceSearchRepository
 ) : ViewModel() {
 

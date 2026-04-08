@@ -11,4 +11,5 @@
     <color name="lightPrimaryColor">#E8F5E9</color>
     <color name="lightBlue">#C7DBFB</color>
     <color name="blue">#00296F</color>
+    <color name="red">#D32F2F</color>
 </resources>

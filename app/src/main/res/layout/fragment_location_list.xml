@@ -96,6 +96,7 @@
         android:textColor="@color/primaryColor"
         android:textStyle="bold"
         android:textSize="13sp"
+        android:background="?attr/selectableItemBackground"
         app:layout_constraintTop_toTopOf="@id/tvSaved"
         app:layout_constraintEnd_toEndOf="parent"/>
 

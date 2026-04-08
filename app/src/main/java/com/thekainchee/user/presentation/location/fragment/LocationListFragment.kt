@@ -4,29 +4,49 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
-import androidx.core.view.marginTop
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.thekainchee.user.R
+import com.thekainchee.user.data.local.datastore.UserPreferencesManager
+import com.thekainchee.user.data.mapper.toUI
 import com.thekainchee.user.databinding.FragmentLocationListBinding
+import com.thekainchee.user.domain.model.AddressMode
+import com.thekainchee.user.domain.model.UserAddress
+import com.thekainchee.user.presentation.location.state.AddressListState
 import com.thekainchee.user.presentation.location.adapter.AddressAdapter
 import com.thekainchee.user.presentation.location.model.AddressUI
-import com.thekainchee.user.presentation.location.viewmodel.LocationViewModel
+import com.thekainchee.user.presentation.location.state.AddressEvent
+import com.thekainchee.user.presentation.location.viewmodel.AddressSharedViewModel
+import com.thekainchee.user.presentation.location.viewmodel.AddressViewModel
+import com.thekainchee.user.presentation.location.viewmodel.SearchLocationViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+import kotlin.getValue
 
 @AndroidEntryPoint
 class LocationListFragment : Fragment() {
     private lateinit var adapter: AddressAdapter
     private var _binding: FragmentLocationListBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: LocationViewModel by viewModels()
+    private val viewModel: SearchLocationViewModel by viewModels()
+    private val addressViewModel : AddressViewModel by viewModels()
+
+    private val addressSharedViewModel : AddressSharedViewModel by activityViewModels()
+    private var fullList: List<UserAddress> = emptyList()
+    var actionId: String? = null
+    @Inject
+    lateinit var preferencesManager : UserPreferencesManager
      override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,23 +65,103 @@ class LocationListFragment : Fragment() {
                         .actionLocationListFragmentToMapFragment(placeId = item.placeId)
                     findNavController().navigate(action)
                 } else {
-                    findNavController().navigate(
-                        R.id.action_locationListFragment_to_mapFragment
-                    )
+                    //store id in dataStore
+                    item.id?.let {
+                        lifecycleScope.launch {
+                            preferencesManager.saveSelectedAddressId(it)
+                        }
+                    }
+                    Toast.makeText(
+                        requireContext(),
+                        "Location selected successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
                 }
             },
             onMenuClick = {item,view->
+                val bottomSheet = AddressOptionsBottomSheet(
+                    onEditClick = {
+                        addressSharedViewModel.mode = AddressMode.EDIT
+                        addressSharedViewModel.selectedAddress = item
+                        val action = LocationListFragmentDirections
+                            .actionLocationListFragmentToMapFragment(null)
+
+                        findNavController().navigate(action)
+                    },
+                    onDeleteClick = deleteClick@{
+                        if (addressViewModel.actionId.value != null) return@deleteClick
+                       item.id?.let{
+                           addressViewModel.deleteAddress(it)
+                       }
+                    },
+                    onSetDefaultClick = setDefaultClick@{
+                        if (addressViewModel.actionId.value != null) return@setDefaultClick
+                        item.id?.let{
+                            addressViewModel.setDefaultAddress(it)
+                        }
+                    }
+                )
+
+                bottomSheet.show(parentFragmentManager, "AddressOptionsBottomSheet")
 
             }
 
+
         )
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                addressViewModel.actionId.collect { id ->
+                    adapter.actionId = id
+                    adapter.notifyDataSetChanged()
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                addressViewModel.event.collect {event->
+                    when(event){
+                        is AddressEvent.ShowMessage->{
+                            Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                addressViewModel.state.collect { state ->
+                    when (state) {
+                        is AddressListState.Loading -> { /* loader */ }
+
+                        is AddressListState.Success -> {
+                            fullList = state.data
+                            val uiList = fullList.map { it.toUI() }
+
+                            adapter.submitList(uiList)
+                        }
+
+                        is AddressListState.Error -> { /* error */ }
+                        else -> {}
+                    }
+                }
+            }
+        }
+
+
         binding.cardCurrentLocation.setOnClickListener {
             val action = LocationListFragmentDirections
                 .actionLocationListFragmentToMapFragment(null)
 
             findNavController().navigate(action)
         }
-        binding.tvAddNew.setOnClickListener { findNavController().navigate(R.id.action_locationListFragment_to_mapFragment) }
+        binding.tvAddNew.setOnClickListener {
+            val action = LocationListFragmentDirections
+                .actionLocationListFragmentToMapFragment(null)
+
+            findNavController().navigate(action)
+        }
 
         binding.rvLocations.apply {
             adapter = this@LocationListFragment.adapter
@@ -75,7 +175,11 @@ class LocationListFragment : Fragment() {
                 viewModel.searchLocation(query)
                 Log.d("SEARCH", query)
             }  else {
-                // TODO: original list show (saved addresses)
+                binding.tvSaved.text = "Saved addresses"
+                binding.tvAddNew.visibility = View.VISIBLE
+                val uiList = fullList.map { it.toUI() }
+                adapter.submitList(uiList)
+
             }
         }
         viewModel.searchResults.observe(viewLifecycleOwner) { list ->

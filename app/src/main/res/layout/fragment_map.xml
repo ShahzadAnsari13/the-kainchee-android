@@ -35,7 +35,7 @@
             android:id="@+id/etSearch"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="Search for your location"
+            android:hint="@string/search_for_your_location"
             android:drawableStart="@drawable/ic_search"
             android:textSize="13sp"
             android:drawablePadding="8dp"
@@ -48,6 +48,17 @@
 
     </com.google.android.material.card.MaterialCardView>
 
+    <ImageView
+        android:id="@+id/centerPin"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_location"
+        android:tint="@color/primaryColor"
+        app:layout_constraintBottom_toTopOf="@+id/btnCurrentLocation"
+        app:layout_constraintEnd_toEndOf="@+id/mapFragment"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchCard" />
     <!-- Current Location Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCurrentLocation"
@@ -80,6 +91,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/locationCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp">

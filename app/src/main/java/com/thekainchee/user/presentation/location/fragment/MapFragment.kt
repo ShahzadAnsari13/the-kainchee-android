@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -23,9 +24,13 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.Places
-import com.thekainchee.user.presentation.location.MapState
+import com.thekainchee.user.domain.model.AddressMode
+import com.thekainchee.user.presentation.location.state.MapState
+import com.thekainchee.user.presentation.location.viewmodel.AddressSharedViewModel
 import com.thekainchee.user.presentation.location.viewmodel.MapViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.getValue
 
@@ -36,12 +41,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private val binding get() = _binding!!
 
     private var googleMap: GoogleMap? = null
-    private var placeId: String? = null
+
     private var latLng: LatLng? = null
 
     private val args: MapFragmentArgs by navArgs()
     private val viewModel: MapViewModel by viewModels()
 
+    private val addressSharedViewModel: AddressSharedViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -58,11 +64,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         binding.etSearch.setOnClickListener {
-            findNavController().navigate(R.id.action_mapFragment_to_locationListFragment)
+            findNavController().popBackStack()
         }
 
         binding.btnChange.setOnClickListener {
-            findNavController().navigate(R.id.action_mapFragment_to_locationListFragment)
+            findNavController().popBackStack()
         }
 
         binding.btnCurrentLocation.setOnClickListener {
@@ -86,7 +92,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             findNavController().navigate(action)
         }
 
-        // 🔥 STATE OBSERVE (FINAL)
+        // STATE OBSERVE (FINAL)
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.collect { state ->
@@ -94,7 +100,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     when (state) {
 
                         is MapState.Loading -> {
-                            // optional loader
+
                         }
 
                         is MapState.LocationReceived -> {
@@ -104,6 +110,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         }
 
                         is MapState.AddressReceived -> {
+                            binding.locationCard.visibility = View.VISIBLE
+                            binding.locationCard.alpha = 0f
+                            binding.locationCard.animate().alpha(1f).setDuration(200).start()
                             val address = state.address
 
                             binding.tvhead.text =
@@ -122,7 +131,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         }
 
                         is MapState.Error -> {
-                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT)
+                                .show()
                         }
 
                         else -> Unit
@@ -134,11 +144,56 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-        placeId = args.placeId
-        if (placeId != null) {
-            fetchPlaceLatLng(placeId!!)
-        } else {
-            viewModel.fetchUserLocation()
+
+        when (addressSharedViewModel.mode) {
+
+            AddressMode.EDIT -> {
+
+                val selectedAddress = addressSharedViewModel.selectedAddress ?: return
+                binding.btnSetLocation.text = "Update Location"
+                latLng = LatLng(selectedAddress.latitude, selectedAddress.longitude)
+
+                viewModel.getAddressFromLatLng(
+                    selectedAddress.latitude,
+                    selectedAddress.longitude
+                )
+
+                latLng?.let { showLocationOnMap(it) }
+            }
+
+            AddressMode.ADD -> {
+
+                val placeId = args.placeId
+
+                placeId?.let {
+                    fetchPlaceLatLng(it)
+                } ?: viewModel.fetchUserLocation()
+            }
+        }
+        var job: Job? = null
+        googleMap?.setOnCameraMoveStartedListener {
+            binding.locationCard.animate()
+                .alpha(0f)
+                .setDuration(200)
+                .withEndAction {
+                    binding.locationCard.visibility = View.GONE
+                }
+        }
+        googleMap?.setOnCameraIdleListener {
+            
+            val centerLatLng = googleMap?.cameraPosition?.target ?: return@setOnCameraIdleListener
+
+            latLng = centerLatLng
+            job?.cancel()
+
+            job = lifecycleScope.launch {
+                delay(200)
+
+                viewModel.getAddressFromLatLng(
+                    centerLatLng.latitude,
+                    centerLatLng.longitude
+                )
+            }
         }
     }
 
@@ -170,9 +225,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private fun showLocationOnMap(latLng: LatLng) {
         googleMap?.apply {
-            clear()
             setPadding(0, 0, 0, 300)
-            addMarker(MarkerOptions().position(latLng).title("Selected Location"))
             moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
         }
     }

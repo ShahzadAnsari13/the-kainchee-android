@@ -24,9 +24,7 @@
             app:argType="string"
             app:nullable="true" />
 
-        <action
-            android:id="@+id/action_mapFragment_to_locationListFragment"
-            app:destination="@id/locationListFragment" />
+
 
         <action
             android:id="@+id/action_mapFragment_to_saveAddressFragment"
@@ -46,9 +44,7 @@
             android:name="longitude"
             app:argType="string" />
 
-        <action
-            android:id="@+id/action_saveAddressFragment_to_mapFragment"
-            app:destination="@id/mapFragment" />
+
 
     </fragment>
 </navigation>

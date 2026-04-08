@@ -7,11 +7,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.ActivityDashboardBinding
+import com.thekainchee.user.presentation.base.SessionAwareActivity
 import com.thekainchee.user.presentation.dashboard.home.fragment.HomeFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class DashboardActivity : AppCompatActivity() {
+class DashboardActivity :  SessionAwareActivity() {
     private lateinit var binding: ActivityDashboardBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

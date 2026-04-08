@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -14,11 +15,13 @@ import com.thekainchee.user.R
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.thekainchee.user.databinding.FragmentSaveAddressBinding
+import com.thekainchee.user.domain.model.AddressMode
 import com.thekainchee.user.domain.model.UserAddress
-import com.thekainchee.user.presentation.location.AddressState
-import com.thekainchee.user.presentation.location.MapState
+import com.thekainchee.user.presentation.location.state.AddressState
+import com.thekainchee.user.presentation.location.state.MapState
+import com.thekainchee.user.presentation.location.viewmodel.AddressSharedViewModel
 import com.thekainchee.user.presentation.location.viewmodel.MapViewModel
-import com.thekainchee.user.presentation.location.viewmodel.SaveAddressViewModel
+import com.thekainchee.user.presentation.location.viewmodel.SaveUpdateAddressViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlin.getValue
@@ -30,7 +33,8 @@ class SaveAddressFragment : Fragment() {
 
     private val args: SaveAddressFragmentArgs by navArgs()
     private val viewModel: MapViewModel by viewModels()
-    private val saveAddressViewModel: SaveAddressViewModel by viewModels()
+    private val saveUpdateAddressViewModel: SaveUpdateAddressViewModel by viewModels()
+    private val addressSharedViewModel : AddressSharedViewModel by activityViewModels()
     private var selectedAddress: UserAddress? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,20 +49,43 @@ class SaveAddressFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val lat = args.latitude.toDouble()
         val lng = args.longitude.toDouble()
-        if (viewModel.state.value is MapState.Idle) {
+        when (addressSharedViewModel.mode) {
+
+            AddressMode.EDIT -> {
+                // chip select
+                if(addressSharedViewModel.selectedAddress?.label=="Home"){
+                    binding.chipHome.isChecked = true
+                }else if(addressSharedViewModel.selectedAddress?.label=="Work"){
+                    binding.chipWork.isChecked = true
+                }else{
+                    binding.chipHome.isChecked = true
+                }
+                binding.btnConfirm.text=getString(R.string.update_address)
+
+            }
+
+            AddressMode.ADD -> {
+                binding.chipHome.isChecked = true
+            }
+        }
+        if (selectedAddress == null) {
             viewModel.getAddressFromLatLng(lat, lng)
+            binding.locationCons.animate()
+                .alpha(0f)
+                .setDuration(200)
+                .withEndAction {
+                    binding.locationCons.visibility = View.GONE
+                }
         }
 
         binding.btnChange.setOnClickListener {
-            val action = SaveAddressFragmentDirections
-                .actionSaveAddressFragmentToMapFragment(null)
-
-            findNavController().navigate(action)
+            findNavController().popBackStack()
         }
 
 
 
         binding.btnConfirm.setOnClickListener {
+            if (!binding.btnConfirm.isEnabled) return@setOnClickListener
             val baseAddress = selectedAddress
             if (baseAddress == null) {
                 Toast.makeText(requireContext(), "Address not loaded yet", Toast.LENGTH_SHORT).show()
@@ -66,7 +93,7 @@ class SaveAddressFragment : Fragment() {
             }
             val label = when (binding.chipGroup.checkedChipId) {
                 R.id.chipHome -> "Home"
-                R.id.chipOffice -> "Work"
+                R.id.chipWork -> "Work"
                 R.id.chipOther -> "Other"
                 else -> "Home" // fallback (safe)
             }
@@ -83,7 +110,8 @@ class SaveAddressFragment : Fragment() {
                 baseAddress.landmark
             }
             val userAddress = UserAddress(
-                label = label, // 👉 abhi static (baad me chip se lenge)
+                id = null,
+                label = label,
                 latitude = baseAddress.latitude,
                 longitude = baseAddress.longitude,
 
@@ -96,35 +124,78 @@ class SaveAddressFragment : Fragment() {
                 landmark = finalLandmark,
                 details = finalDetails,
 
-                isDefault = true
+                isDefault = when (addressSharedViewModel.mode) {
+                    AddressMode.ADD -> true
+                    AddressMode.EDIT -> addressSharedViewModel.selectedAddress?.isSelected ?: true
+                }
             )
-           saveAddressViewModel.saveAddress(userAddress)
+            when(addressSharedViewModel.mode){
+                 AddressMode.ADD -> {
+                     saveUpdateAddressViewModel.saveAddress(userAddress)
+                }
+                AddressMode.EDIT ->{
+                    saveUpdateAddressViewModel.updateAddress(addressSharedViewModel.selectedAddress?.id,userAddress)
+                }
+            }
+
         }
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                saveAddressViewModel.state.collect { state ->
+                saveUpdateAddressViewModel.state.collect { state ->
                     when (state) {
 
                         is AddressState.Idle -> {
-                             binding.btnConfirm.isEnabled = true
+                            when(addressSharedViewModel.mode){
+                                AddressMode.ADD -> {
+                                    binding.btnConfirm.text = getString(R.string.confirm)
+                                    binding.btnConfirm.isEnabled = true
+                                }
+                                AddressMode.EDIT ->{
+                                    binding.btnConfirm.text = getString(R.string.update_address)
+                                    binding.btnConfirm.isEnabled = true
+                                }
+                            }
+
                         }
 
                         is AddressState.Loading -> {
-                            binding.btnConfirm.text = "Saving..."
+                            binding.btnConfirm.text = ""
                             binding.btnConfirm.isEnabled = false
 
                         }
 
-                        is AddressState.Success -> {
-                            binding.btnConfirm.text = "Confirm address"
-                            binding.btnConfirm.isEnabled = true
+                        is AddressState.CreateAddress -> {
+                            when(addressSharedViewModel.mode){
+                                AddressMode.ADD -> {
+                                    binding.btnConfirm.text = getString(R.string.confirm)
+                                    binding.btnConfirm.isEnabled = true
+                                }
+                                AddressMode.EDIT ->{
+                                    binding.btnConfirm.text = getString(R.string.update_address)
+                                    binding.btnConfirm.isEnabled = true
+                                }
+                            }
                             Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
-                            findNavController().popBackStack()
+                            findNavController().popBackStack(R.id.locationListFragment, false)
+                        }
+                        is AddressState.UpdateAddress->{
+                            addressSharedViewModel.mode = AddressMode.ADD
+                            addressSharedViewModel.selectedAddress = null
+                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                            findNavController().popBackStack(R.id.locationListFragment, false)
                         }
 
                         is AddressState.Error -> {
-                            binding.btnConfirm.text = "Confirm address"
-                            binding.btnConfirm.isEnabled = true
+                            when(addressSharedViewModel.mode){
+                                AddressMode.ADD -> {
+                                    binding.btnConfirm.text = getString(R.string.confirm)
+                                    binding.btnConfirm.isEnabled = true
+                                }
+                                AddressMode.EDIT ->{
+                                    binding.btnConfirm.text = getString(R.string.update_address)
+                                    binding.btnConfirm.isEnabled = true
+                                }
+                            }
                             Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                         }
                     }
@@ -138,13 +209,22 @@ class SaveAddressFragment : Fragment() {
                     when (state) {
 
                         is MapState.Loading -> {
-                            // optional loader
+                            binding.locationCons.animate()
+                                .alpha(0f)
+                                .setDuration(200)
+                                .withEndAction {
+                                    binding.locationCons.visibility = View.GONE
+                                }
                         }
 
                         is MapState.AddressReceived -> {
+
+                            binding.locationCons.visibility = View.VISIBLE
+                            binding.locationCons.alpha = 0f
+                            binding.locationCons.animate().alpha(1f).setDuration(200).start()
                             val address = state.address
 
-                            selectedAddress = address // 🔥 IMPORTANT
+                            selectedAddress = address
 
                             binding.tvhead.text =
                                 if (address.details.isNullOrBlank()) {
@@ -180,8 +260,8 @@ class SaveAddressFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 

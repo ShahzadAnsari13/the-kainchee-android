@@ -1,4 +1,4 @@
-package com.thekainchee.user.presentation.location
+package com.thekainchee.user.presentation.location.state
 
 import com.thekainchee.user.domain.model.UserAddress
 

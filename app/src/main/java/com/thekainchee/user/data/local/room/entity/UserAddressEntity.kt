@@ -3,11 +3,13 @@ package com.thekainchee.user.data.local.room.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+
+
 @Entity(tableName = "user_address")
 data class UserAddressEntity(
 
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey
+    val id: String,
 
     val label: String, // Home, Work, Other
 
@@ -25,3 +27,5 @@ data class UserAddressEntity(
 
     val isDefault: Boolean
 )
+
+

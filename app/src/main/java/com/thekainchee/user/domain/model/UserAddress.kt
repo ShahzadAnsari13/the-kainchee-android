@@ -1,6 +1,7 @@
 package com.thekainchee.user.domain.model
 
 data class UserAddress(
+    val id: String?,
     val label : String,
 
     val latitude : Double,

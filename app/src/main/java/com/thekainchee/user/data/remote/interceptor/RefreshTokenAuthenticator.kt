@@ -1,6 +1,6 @@
 package com.thekainchee.user.data.remote.interceptor
 
-import com.thekainchee.user.data.local.datastore.TokenManager
+import com.thekainchee.user.data.local.datastore.UserPreferencesManager
 import com.thekainchee.user.data.remote.api.AuthApi
 import com.thekainchee.user.data.remote.dto.auth.RefreshTokenRequestDto
 import kotlinx.coroutines.flow.first
@@ -12,7 +12,7 @@ import okhttp3.Route
 import javax.inject.Inject
 
 class RefreshTokenAuthenticator @Inject constructor(
-    private val tokenManager: TokenManager,
+    private val tokenManager: UserPreferencesManager,
     private val authApi: dagger.Lazy<AuthApi>
 ) : Authenticator {
 

@@ -19,7 +19,7 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentRequestOtpBinding
-import com.thekainchee.user.presentation.auth.AuthState
+import com.thekainchee.user.presentation.auth.state.AuthState
 import com.thekainchee.user.presentation.auth.viewModel.AuthViewModel
 import com.thekainchee.user.presentation.auth.fragment.VerifyOtpFragment
 import com.thekainchee.user.presentation.common.ui.countrypicker.CountryPickerBottomSheet
