@@ -9,6 +9,8 @@ import com.thekainchee.user.presentation.location.model.PlaceSuggestion
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,21 +21,24 @@ class SearchLocationViewModel @Inject constructor(
 
     private var searchJob: Job? = null
 
-    private val _searchResults = MutableLiveData<List<PlaceSuggestion>>()
-    val searchResults: LiveData<List<PlaceSuggestion>> = _searchResults
+    private val _searchResults = MutableStateFlow<List<PlaceSuggestion>>(emptyList())
+    val searchResults: StateFlow<List<PlaceSuggestion>> = _searchResults
 
     fun searchLocation(query: String) {
-
         searchJob?.cancel()
 
         searchJob = viewModelScope.launch {
             delay(400)
 
             if (query.length >= 3) {
-                val result = placeSearchRepository.searchLocation(query)
-                _searchResults.postValue(result)
+                try {
+                    val result = placeSearchRepository.searchLocation(query)
+                    _searchResults.value = result
+                } catch (e: Exception) {
+                    _searchResults.value = emptyList()
+                }
             } else {
-                _searchResults.postValue(emptyList())
+                _searchResults.value = emptyList()
             }
         }
     }

@@ -3,6 +3,7 @@ package com.thekainchee.user.presentation.dashboard.home.fragment
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.icu.util.Calendar
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -13,10 +14,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -25,20 +25,19 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentHomeBinding
 import com.thekainchee.user.presentation.common.bottomSheet.LocationPermissionBottomSheet
-import com.thekainchee.user.presentation.dashboard.home.viewModel.HomeViewModel
+import com.thekainchee.user.presentation.dashboard.home.viewModel.LocationViewModel
 import com.thekainchee.user.presentation.dashboard.home.adapter.HomeTabsAdapter
 import com.thekainchee.user.presentation.location.LocationActivity
 import com.thekainchee.user.utils.LocationUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.security.Permission
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
     private var _binding : FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter : HomeTabsAdapter
-    private  val viewModel : HomeViewModel by viewModels()
+    private  val viewModel : LocationViewModel by activityViewModels()
     private var openedPermissionSettings = false
     private var shouldRefreshLocation = false
     private val locationPermissionLauncher =
@@ -88,6 +87,7 @@ class HomeFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.tvGreeting.text = getGreeting()
         LocationUtils.checkGpsStatus(
             requireActivity(),
             gpsResolutionLauncher
@@ -179,6 +179,7 @@ class HomeFragment : Fragment() {
 
         adapter = HomeTabsAdapter(this)
         binding.viewPager.adapter = adapter
+        binding.viewPager.isUserInputEnabled = false
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             when (position) {
                 0 -> tab.text = "All"
@@ -191,8 +192,14 @@ class HomeFragment : Fragment() {
 
     }
 
-
-
+    fun getGreeting():String{
+        val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        return when (hour) {
+            in 0..11 -> "Good Morning ☀️"
+            in 12..16 -> "Good Afternoon 🌤️"
+            else -> "Good Evening 🌙"
+        }
+    }
 
     override fun onResume() {
         super.onResume()

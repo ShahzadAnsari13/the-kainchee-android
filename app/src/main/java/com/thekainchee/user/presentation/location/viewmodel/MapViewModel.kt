@@ -39,7 +39,7 @@ class MapViewModel @Inject constructor(private val locationRepository: DeviceLoc
         viewModelScope.launch {
             try {
                 val address = locationRepository.getAddressFromLatLng(lat, lng)
-                _state.value = MapState.AddressReceived(address)
+                _state.value = MapState.AddressReceived(lat,lng,address)
             } catch (e: Exception) {
                 _state.value = MapState.Error(e.message ?: "Address error")
             }

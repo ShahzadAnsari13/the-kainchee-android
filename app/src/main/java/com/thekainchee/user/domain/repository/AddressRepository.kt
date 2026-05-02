@@ -5,7 +5,7 @@ import com.thekainchee.user.domain.model.UserAddress
 import kotlinx.coroutines.flow.Flow
 
 interface AddressRepository {
-    suspend fun addAddress(address: UserAddress): UserAddress
+    suspend fun addAddress(address: UserAddress)
     fun getAddresses(): Flow<List<UserAddress>>
     suspend fun refreshAddresses()
 

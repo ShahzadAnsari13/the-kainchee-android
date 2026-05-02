@@ -17,6 +17,7 @@ import androidx.navigation.fragment.navArgs
 import com.thekainchee.user.databinding.FragmentSaveAddressBinding
 import com.thekainchee.user.domain.model.AddressMode
 import com.thekainchee.user.domain.model.UserAddress
+import com.thekainchee.user.presentation.location.state.AddressEvent
 import com.thekainchee.user.presentation.location.state.AddressState
 import com.thekainchee.user.presentation.location.state.MapState
 import com.thekainchee.user.presentation.location.viewmodel.AddressSharedViewModel
@@ -144,59 +145,42 @@ class SaveAddressFragment : Fragment() {
                 saveUpdateAddressViewModel.state.collect { state ->
                     when (state) {
 
+                        is AddressState.Loading -> {
+                            binding.btnConfirm.text = ""
+                            binding.btnConfirm.isEnabled = false
+                        }
+
                         is AddressState.Idle -> {
                             when(addressSharedViewModel.mode){
                                 AddressMode.ADD -> {
                                     binding.btnConfirm.text = getString(R.string.confirm)
-                                    binding.btnConfirm.isEnabled = true
                                 }
                                 AddressMode.EDIT ->{
                                     binding.btnConfirm.text = getString(R.string.update_address)
-                                    binding.btnConfirm.isEnabled = true
                                 }
                             }
+                            binding.btnConfirm.isEnabled = true
+                        }
+                    }
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                saveUpdateAddressViewModel.event.collect { event ->
+                    when (event) {
 
+                        is AddressEvent.ShowMessage -> {
+                            Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
                         }
 
-                        is AddressState.Loading -> {
-                            binding.btnConfirm.text = ""
-                            binding.btnConfirm.isEnabled = false
+                        is AddressEvent.NavigateBack -> {
+                            Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
 
-                        }
-
-                        is AddressState.CreateAddress -> {
-                            when(addressSharedViewModel.mode){
-                                AddressMode.ADD -> {
-                                    binding.btnConfirm.text = getString(R.string.confirm)
-                                    binding.btnConfirm.isEnabled = true
-                                }
-                                AddressMode.EDIT ->{
-                                    binding.btnConfirm.text = getString(R.string.update_address)
-                                    binding.btnConfirm.isEnabled = true
-                                }
-                            }
-                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
-                            findNavController().popBackStack(R.id.locationListFragment, false)
-                        }
-                        is AddressState.UpdateAddress->{
                             addressSharedViewModel.mode = AddressMode.ADD
                             addressSharedViewModel.selectedAddress = null
-                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
-                            findNavController().popBackStack(R.id.locationListFragment, false)
-                        }
 
-                        is AddressState.Error -> {
-                            when(addressSharedViewModel.mode){
-                                AddressMode.ADD -> {
-                                    binding.btnConfirm.text = getString(R.string.confirm)
-                                    binding.btnConfirm.isEnabled = true
-                                }
-                                AddressMode.EDIT ->{
-                                    binding.btnConfirm.text = getString(R.string.update_address)
-                                    binding.btnConfirm.isEnabled = true
-                                }
-                            }
-                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                            findNavController().popBackStack(R.id.locationListFragment, false)
                         }
                     }
                 }

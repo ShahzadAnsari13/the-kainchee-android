@@ -2,6 +2,7 @@ package com.thekainchee.user.di
 
 import com.thekainchee.user.data.remote.api.AddressApi
 import com.thekainchee.user.data.remote.api.AuthApi
+import com.thekainchee.user.data.remote.api.ParlourApi
 import com.thekainchee.user.data.remote.interceptor.AuthInterceptor
 import com.thekainchee.user.data.remote.interceptor.RefreshTokenAuthenticator
 import com.thekainchee.user.data.remote.retrofit.LoggingInterceptorProvider
@@ -66,5 +67,11 @@ object NetworkModule {
     @Singleton
     fun provideAddressApi(retrofit: Retrofit) : AddressApi {
         return retrofit.create(AddressApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideParlourApi(retrofit: Retrofit) : ParlourApi{
+        return retrofit.create(ParlourApi::class.java)
     }
 }

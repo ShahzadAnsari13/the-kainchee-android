@@ -15,7 +15,6 @@
         android:layout_height="wrap_content"
         android:background="@color/white">
 
-
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="120dp"
@@ -23,22 +22,29 @@
             app:contentScrim="@color/white"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-
-
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:padding="16dp"
                 app:layout_collapseMode="pin">
+
+                <TextView
+                    android:id="@+id/tvGreeting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hello, User 👋"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/tvLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
                     android:text="Fetching location..."
                     android:textSize="13sp"
                     android:textColor="#666666"
+                    android:layout_below="@id/tvGreeting"
+                    android:layout_marginTop="4dp"
                     android:maxLines="1"
                     android:ellipsize="end"/>
 
@@ -47,38 +53,28 @@
                     android:layout_height="36dp"
                     android:layout_alignParentEnd="true"
                     android:backgroundTint="@color/white"
-                    app:cardCornerRadius="18dp"
-                    app:strokeWidth="0dp">
-                    <ImageView android:id="@+id/imgProfile"
+                    app:cardCornerRadius="18dp">
+
+                    <ImageView
+                        android:id="@+id/imgProfile"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/ic_profile" />
+                        android:src="@drawable/ic_profile"/>
                 </com.google.android.material.card.MaterialCardView>
-                <TextView
-                    android:id="@+id/tvGreeting"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Hello, User 👋"
-                    android:textSize="20sp"
-                    android:layout_below="@id/tvLocation"
-                    android:textStyle="bold"/>
+
             </RelativeLayout>
-
-
-
-
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-
-
+        <!-- Search -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_margin="16dp"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
             android:backgroundTint="@color/white"
-            app:cardElevation="3dp"
+            app:cardElevation="2dp"
             app:cardCornerRadius="12dp">
 
             <EditText
@@ -89,28 +85,25 @@
                 android:drawableStart="@drawable/ic_search"
                 android:background="@null"
                 android:drawablePadding="8dp"
-                android:padding="12dp"
+                android:paddingHorizontal="12dp"
                 android:focusable="false"
                 android:cursorVisible="false"
                 android:clickable="true"/>
-
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Tabs -->
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:backgroundTint="@color/white"
-            app:tabMode="fixed"
-            app:tabGravity="fill"
             app:tabIndicatorColor="@color/black"
             app:tabIndicatorHeight="3dp"
             app:tabTextColor="#808080"
             app:tabSelectedTextColor="@color/black"
             app:tabRippleColor="@android:color/transparent"
-            app:tabIndicatorAnimationDuration="200"
-            app:tabIndicatorFullWidth="false"
-            />
+            app:tabIndicatorFullWidth="false"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 

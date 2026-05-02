@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
@@ -25,7 +24,7 @@ import com.thekainchee.user.domain.model.UserAddress
 import com.thekainchee.user.presentation.location.state.AddressListState
 import com.thekainchee.user.presentation.location.adapter.AddressAdapter
 import com.thekainchee.user.presentation.location.model.AddressUI
-import com.thekainchee.user.presentation.location.state.AddressEvent
+import com.thekainchee.user.presentation.location.state.AddressDeleteEvent
 import com.thekainchee.user.presentation.location.viewmodel.AddressSharedViewModel
 import com.thekainchee.user.presentation.location.viewmodel.AddressViewModel
 import com.thekainchee.user.presentation.location.viewmodel.SearchLocationViewModel
@@ -58,6 +57,7 @@ class LocationListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         adapter = AddressAdapter(
             onItemClick = {item->
                 if (item.placeId != null) {
@@ -91,9 +91,15 @@ class LocationListFragment : Fragment() {
                     },
                     onDeleteClick = deleteClick@{
                         if (addressViewModel.actionId.value != null) return@deleteClick
-                       item.id?.let{
-                           addressViewModel.deleteAddress(it)
-                       }
+
+                        val id = item.id ?: return@deleteClick
+
+                        if (item.isSelected) {
+                            Toast.makeText(requireContext(), "Cannot delete default address", Toast.LENGTH_SHORT).show()
+                            return@deleteClick
+                        }
+
+                        addressViewModel.deleteAddress(id)
                     },
                     onSetDefaultClick = setDefaultClick@{
                         if (addressViewModel.actionId.value != null) return@setDefaultClick
@@ -121,7 +127,7 @@ class LocationListFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 addressViewModel.event.collect {event->
                     when(event){
-                        is AddressEvent.ShowMessage->{
+                        is AddressDeleteEvent.ShowMessage->{
                             Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
                         }
                     }
@@ -182,28 +188,38 @@ class LocationListFragment : Fragment() {
 
             }
         }
-        viewModel.searchResults.observe(viewLifecycleOwner) { list ->
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewModel.searchResults.collect {list ->
 
-            val uiList = list.mapIndexed { index, item ->
-                AddressUI(
-                    id = index.toString(),
-                    label = item.primaryText,
-                    address = item.secondaryText,
-                    latitude = 0.0,
-                    longitude = 0.0,
-                    placeId = item.placeId,
-                    isFromSearch = true
-                )
-            }
-            binding.tvSaved.text = "Search results"
-            binding.tvSaved.setTextColor(
-                    ContextCompat.getColor(requireContext(), R.color.gray)
+                    val uiList = list.mapIndexed { index, item ->
+                        AddressUI(
+                            id = index.toString(),
+                            label = item.primaryText,
+                            address = item.secondaryText,
+                            latitude = 0.0,
+                            longitude = 0.0,
+                            placeId = item.placeId,
+                            isFromSearch = true
+                        )
+                    }
+                    binding.tvSaved.text = "Search results"
+                    binding.tvSaved.setTextColor(
+                        ContextCompat.getColor(requireContext(), R.color.gray)
                     )
-            binding.tvAddNew.visibility = View.GONE
+                    binding.tvAddNew.visibility = View.GONE
 
-            adapter.submitList(uiList)
+                    adapter.submitList(uiList)
+                }
+            }
         }
 
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.etSearch.setText("")
     }
     override fun onDestroyView() {
         super.onDestroyView()

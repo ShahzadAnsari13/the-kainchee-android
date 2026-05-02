@@ -32,6 +32,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "17"
@@ -99,6 +100,24 @@ dependencies {
 
     //google places
     implementation("com.google.android.libraries.places:places:3.5.0")
+
+
+    //Glide
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+
+// Enables Java 8+ APIs (e.g., LocalDate, LocalTime) on lower Android versions
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+//Material and ViewPager
+    implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+
+
+    //Skeleton ui Shimmer
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
+
+
+    //Dot indicator
+    implementation("com.tbuonomo:dotsindicator:4.2")
 }
 
 

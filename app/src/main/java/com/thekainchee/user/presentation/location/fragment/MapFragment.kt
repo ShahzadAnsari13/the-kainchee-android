@@ -46,7 +46,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private val args: MapFragmentArgs by navArgs()
     private val viewModel: MapViewModel by viewModels()
-
+    private var cameraJob: Job? = null
     private val addressSharedViewModel: AddressSharedViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -110,9 +110,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         }
 
                         is MapState.AddressReceived -> {
-                            binding.locationCard.visibility = View.VISIBLE
-                            binding.locationCard.alpha = 0f
-                            binding.locationCard.animate().alpha(1f).setDuration(200).start()
+                            if (binding.locationCard.visibility != View.VISIBLE) {
+                                binding.locationCard.visibility = View.VISIBLE
+                                binding.locationCard.alpha = 0f
+                                binding.locationCard.animate().alpha(1f).setDuration(200).start()
+                            }
                             val address = state.address
 
                             binding.tvhead.text =
@@ -170,23 +172,21 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 } ?: viewModel.fetchUserLocation()
             }
         }
-        var job: Job? = null
         googleMap?.setOnCameraMoveStartedListener {
-            binding.locationCard.animate()
-                .alpha(0f)
-                .setDuration(200)
-                .withEndAction {
-                    binding.locationCard.visibility = View.GONE
-                }
+            if (binding.locationCard.visibility != View.VISIBLE) {
+                binding.locationCard.visibility = View.VISIBLE
+                binding.locationCard.alpha = 0f
+                binding.locationCard.animate().alpha(1f).setDuration(200).start()
+            }
         }
         googleMap?.setOnCameraIdleListener {
             
             val centerLatLng = googleMap?.cameraPosition?.target ?: return@setOnCameraIdleListener
 
             latLng = centerLatLng
-            job?.cancel()
+            cameraJob?.cancel()
 
-            job = lifecycleScope.launch {
+            cameraJob = viewLifecycleOwner.lifecycleScope.launch {
                 delay(200)
 
                 viewModel.getAddressFromLatLng(
@@ -232,6 +232,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        cameraJob?.cancel()
         _binding = null
     }
 }

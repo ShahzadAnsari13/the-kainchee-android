@@ -2,9 +2,8 @@ package com.thekainchee.user.presentation.location.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thekainchee.user.domain.model.UserAddress
 import com.thekainchee.user.domain.repository.AddressRepository
-import com.thekainchee.user.presentation.location.state.AddressEvent
+import com.thekainchee.user.presentation.location.state.AddressDeleteEvent
 import com.thekainchee.user.presentation.location.state.AddressListState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,7 +16,7 @@ class AddressViewModel @Inject constructor(private val addressRepository: Addres
     private val _state = MutableStateFlow<AddressListState>(AddressListState.Idle)
     val state : StateFlow<AddressListState> = _state
 
-    private val _event = MutableSharedFlow<AddressEvent>()
+    private val _event = MutableSharedFlow<AddressDeleteEvent>()
     val event = _event
     private val _actionId = MutableStateFlow<String?>(null)
     val actionId: StateFlow<String?> = _actionId
@@ -47,10 +46,10 @@ class AddressViewModel @Inject constructor(private val addressRepository: Addres
                 addressRepository.deleteAddress(id)
                 addressRepository.refreshAddresses()
 
-                _event.emit(AddressEvent.ShowMessage("Address deleted successfully"))
+                _event.emit(AddressDeleteEvent.ShowMessage("Address deleted successfully"))
 
             } catch (e: Exception) {
-                _event.emit(AddressEvent.ShowMessage("Something went wrong"))
+                _event.emit(AddressDeleteEvent.ShowMessage("Something went wrong"))
             }
             finally {
                 _actionId.value = null
@@ -64,9 +63,9 @@ class AddressViewModel @Inject constructor(private val addressRepository: Addres
             try {
                 addressRepository.setDefaultAddress(id)
                 addressRepository.refreshAddresses()
-                _event.emit(AddressEvent.ShowMessage("Address set as default successfully"))
+                _event.emit(AddressDeleteEvent.ShowMessage("Address set as default successfully"))
             } catch (e: Exception) {
-                _event.emit(AddressEvent.ShowMessage(e.message ?: "Something went wrong"))
+                _event.emit(AddressDeleteEvent.ShowMessage(e.message ?: "Something went wrong"))
             } finally {
                 _actionId.value = null
             }

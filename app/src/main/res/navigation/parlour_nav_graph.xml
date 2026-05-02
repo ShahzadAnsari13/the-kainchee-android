@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parlour_nav_graph"
+    app:startDestination="@id/parlourDetailedFragment">
+
+    <fragment
+        android:id="@+id/parlourDetailedFragment"
+        android:name="com.thekainchee.user.presentation.parlour.fragment.ParlourDetailFragment"
+        android:label="ParlourDetailedFragment">
+
+        <argument
+            android:name="parlourId"
+            app:argType="string" />
+
+        <argument
+            android:name="distance"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_parlourDetailedFragment_to_parlourMap"
+            app:destination="@id/parlourMap" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/parlourMap"
+        android:name="com.thekainchee.user.presentation.parlour.fragment.ParlourMap"
+        android:label="ParlourMap">
+
+        <argument
+            android:name="latitude"
+            app:argType="string" />
+
+        <argument
+            android:name="longitude"
+            app:argType="string" />
+
+    </fragment>
+
+</navigation>

@@ -44,7 +44,8 @@
             android:padding="12dp"
             android:focusable="false"
             android:clickable="true"
-            android:cursorVisible="false"/>
+            android:cursorVisible="false"
+            android:foreground="?attr/selectableItemBackground"/>
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -76,7 +77,8 @@
         app:layout_constraintBottom_toTopOf="@id/cv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="16dp"
+        android:foreground="?attr/selectableItemBackground"/>
 
     <!-- Bottom Sheet -->
     <com.google.android.material.card.MaterialCardView
@@ -111,7 +113,8 @@
                 app:cornerRadius="6dp"
                 android:minHeight="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent"
+                android:foreground="?attr/selectableItemBackground"/>
 
             <!-- Title -->
             <com.google.android.material.textview.MaterialTextView

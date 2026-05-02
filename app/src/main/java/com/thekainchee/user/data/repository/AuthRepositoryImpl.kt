@@ -6,6 +6,7 @@ import com.thekainchee.user.data.remote.dto.auth.RequestOtpDto
 import com.thekainchee.user.data.remote.dto.auth.VerifyOtpDto
 import com.thekainchee.user.data.remote.dto.auth.VerifyOtpResponseDto
 import com.thekainchee.user.domain.repository.AuthRepository
+import com.thekainchee.user.utils.ErrorUtils
 import org.json.JSONObject
 import javax.inject.Inject
 
@@ -24,8 +25,8 @@ class AuthRepositoryImpl @Inject constructor(private val authApi: AuthApi) : Aut
             if(response.isSuccessful && response.body() !=null){
                 Result.success(response.body()!!)
             }else{
-                val errorMsg = parseError(response.errorBody()?.string())
-                Result.failure(Exception(errorMsg))
+                val errorMsg = ErrorUtils.parseError(response.errorBody()?.string())
+                Result.failure(Exception(errorMsg.message))
             }
         }
         catch(e: Exception){
@@ -46,20 +47,13 @@ class AuthRepositoryImpl @Inject constructor(private val authApi: AuthApi) : Aut
             if(response.isSuccessful && response.body() != null){
                 Result.success(response.body()!!)
             }else{
-                val errorMsg = parseError(response.errorBody()?.string())
-                Result.failure(Exception(errorMsg))
+                val errorMsg = ErrorUtils.parseError(response.errorBody()?.string())
+                Result.failure(Exception(errorMsg.message))
             }
         }catch (e : Exception){
             Result.failure(e)
         }
     }
 
-    private fun parseError(errorBody: String?): String {
-        return try {
-            val jsonObject = JSONObject(errorBody ?: "")
-            jsonObject.optString("message", "Something went wrong")
-        } catch (e: Exception) {
-            "Something went wrong"
-        }
-    }
+
 }

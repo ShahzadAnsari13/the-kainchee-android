@@ -9,6 +9,7 @@ import com.thekainchee.user.data.mapper.toEntity
 import com.thekainchee.user.data.remote.api.AddressApi
 import com.thekainchee.user.domain.model.UserAddress
 import com.thekainchee.user.domain.repository.AddressRepository
+import com.thekainchee.user.utils.ErrorUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -17,7 +18,7 @@ class AddressRepositoryImpl @Inject constructor(
     private val addressApi: AddressApi,
     private val userAddressDao: UserAddressDao
 ) : AddressRepository {
-    override suspend fun addAddress(address: UserAddress): UserAddress {
+    override suspend fun addAddress(address: UserAddress) {
 
         val dto = address.toDto()
         val response = addressApi.addAddress(dto)
@@ -31,24 +32,26 @@ class AddressRepositoryImpl @Inject constructor(
                 userAddressDao.updateDefault(entity.id)
             }
 
-            return entity.toDomain()
-
         } else {
-            throw Exception(response.errorBody()?.string() ?: "Failed to add address")
+
+            val error = ErrorUtils.parseError(response.errorBody()?.string())
+            throw Exception(error.message ?: "Failed to add address")
         }
     }
     @Transaction
     override suspend fun refreshAddresses() {
         val response = addressApi.getAddresses()
         Log.d("API_DEBUG", "Response: ${response.body()}")
-        if (response.isSuccessful && response.body() != null) {
+        if (response.isSuccessful) {
             val body = response.body() ?: throw Exception("Empty response")
             val entities = body.addresses.map { it.toEntity() }
             userAddressDao.clearAll()
             userAddressDao.insertAll(entities)
         }
         else {
-            throw Exception("Refresh failed: ${response.errorBody()?.string()}")
+
+            val error = ErrorUtils.parseError(response.errorBody()?.string())
+            throw Exception("Refresh failed: ${error.message}")
         }
     }
     @Transaction
@@ -64,7 +67,9 @@ class AddressRepositoryImpl @Inject constructor(
             val entity = body.address.toEntity()
             userAddressDao.insertAddress(entity)
         } else {
-            throw Exception(response.errorBody()?.string() ?: "Update failed")
+
+            val error = ErrorUtils.parseError(response.errorBody()?.string())
+            throw Exception(error.message ?: "Update failed")
         }
     }
 
@@ -73,8 +78,9 @@ class AddressRepositoryImpl @Inject constructor(
         if (response.isSuccessful) {
             userAddressDao.deleteById(id)
         } else {
-            val error = response.errorBody()?.string()
-            throw Exception(error ?: "Failed to delete address")
+
+            val error = ErrorUtils.parseError(response.errorBody()?.string())
+            throw Exception(error.message ?: "Failed to delete address")
         }
     }
 
@@ -83,8 +89,9 @@ class AddressRepositoryImpl @Inject constructor(
         if (response.isSuccessful) {
             userAddressDao.updateDefault(id)
         } else {
-            val error = response.errorBody()?.string()
-            throw Exception(error ?: "Something went wrong")
+
+            val error = ErrorUtils.parseError(response.errorBody()?.string())
+            throw Exception(error.message ?: "Something went wrong")
         }
     }
 

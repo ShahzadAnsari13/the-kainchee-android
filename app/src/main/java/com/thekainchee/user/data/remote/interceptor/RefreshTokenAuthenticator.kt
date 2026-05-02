@@ -26,6 +26,13 @@ class RefreshTokenAuthenticator @Inject constructor(
                 if (!errorBody.contains("TOKEN_EXPIRED")) {
                     return null
                 }
+
+                val refreshToken = runBlocking { tokenManager.refreshToken.first() }
+
+                if (refreshToken == null) {
+                    runBlocking { tokenManager.clearTokens() }
+                    return null
+                }
             }
 
             val authHeader = response.request.header("Authorization")

@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val locationRepository: DeviceLocationRepository) : ViewModel() {
+class LocationViewModel @Inject constructor(private val locationRepository: DeviceLocationRepository) : ViewModel() {
     private val _location = MutableStateFlow<UserAddress?>(null)
     val location : StateFlow<UserAddress?> = _location
 
