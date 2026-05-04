@@ -5,7 +5,7 @@ import com.thekainchee.user.presentation.dashboard.home.model.BookingUI
 import com.thekainchee.user.presentation.dashboard.home.model.ParlourUI
 import com.thekainchee.user.presentation.dashboard.home.model.ServiceUI
 import com.thekainchee.user.presentation.parlour.model.ParlourDetailedUI
-import com.thekainchee.user.presentation.parlour.model.ServiceCategory
+import com.thekainchee.user.presentation.service.model.ServiceCategory
 
 interface ParlourRepository {
     suspend fun getNearbyParlours(
@@ -35,8 +35,6 @@ interface ParlourRepository {
         id : String
     ): Result<ParlourDetailedUI>
 
-    suspend fun getServiceCategories(
-        id : String
-    ): Result<List<ServiceCategory>>
+
 
 }

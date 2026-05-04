@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <View
+        android:layout_width="120dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shimmer_bg"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="10dp"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="3dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <!-- Image -->
+            <View
+                android:id="@+id/fakeImage"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <!-- Name -->
+            <View
+                android:id="@+id/fakeName"
+                android:layout_width="120dp"
+                android:layout_height="14dp"
+                android:background="@drawable/shimmer_bg"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toEndOf="@id/fakeImage"
+                app:layout_constraintTop_toTopOf="@id/fakeImage"/>
+
+            <!-- Info -->
+            <View
+                android:id="@+id/fakeInfo"
+                android:layout_width="180dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="@id/fakeName"
+                app:layout_constraintTop_toBottomOf="@id/fakeName"/>
+
+            <!-- Price -->
+            <View
+                android:id="@+id/fakePrice"
+                android:layout_width="80dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="@id/fakeName"
+                app:layout_constraintTop_toBottomOf="@id/fakeInfo"/>
+
+            <!-- Button -->
+            <View
+                android:layout_width="70dp"
+                android:layout_height="32dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/fakePrice"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="10dp"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="3dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <!-- Image -->
+            <View
+                android:id="@+id/fakeImage2"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <!-- Name -->
+            <View
+                android:id="@+id/fakeName2"
+                android:layout_width="120dp"
+                android:layout_height="14dp"
+                android:background="@drawable/shimmer_bg"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toEndOf="@id/fakeImage2"
+                app:layout_constraintTop_toTopOf="@id/fakeImage2"/>
+
+            <!-- Info -->
+            <View
+                android:id="@+id/fakeInfo2"
+                android:layout_width="180dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="@id/fakeName2"
+                app:layout_constraintTop_toBottomOf="@id/fakeName2"/>
+
+            <!-- Price -->
+            <View
+                android:id="@+id/fakePrice2"
+                android:layout_width="80dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="@id/fakeName2"
+                app:layout_constraintTop_toBottomOf="@id/fakeInfo2"/>
+
+            <!-- Button -->
+            <View
+                android:layout_width="70dp"
+                android:layout_height="32dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/fakePrice2"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="10dp"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="3dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <!-- Image -->
+            <View
+                android:id="@+id/fakeImage3"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <!-- Name -->
+            <View
+                android:id="@+id/fakeName3"
+                android:layout_width="120dp"
+                android:layout_height="14dp"
+                android:background="@drawable/shimmer_bg"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toEndOf="@id/fakeImage3"
+                app:layout_constraintTop_toTopOf="@id/fakeImage3"/>
+
+            <!-- Info -->
+            <View
+                android:id="@+id/fakeInfo3"
+                android:layout_width="180dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="@id/fakeName3"
+                app:layout_constraintTop_toBottomOf="@id/fakeName3"/>
+
+            <!-- Price -->
+            <View
+                android:id="@+id/fakePrice3"
+                android:layout_width="80dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="@id/fakeName3"
+                app:layout_constraintTop_toBottomOf="@id/fakeInfo3"/>
+
+            <!-- Button -->
+            <View
+                android:layout_width="70dp"
+                android:layout_height="32dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/fakePrice3"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="10dp"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="3dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <!-- Image -->
+            <View
+                android:id="@+id/fakeImage4"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <!-- Name -->
+            <View
+                android:id="@+id/fakeName4"
+                android:layout_width="120dp"
+                android:layout_height="14dp"
+                android:background="@drawable/shimmer_bg"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toEndOf="@id/fakeImage4"
+                app:layout_constraintTop_toTopOf="@id/fakeImage4"/>
+
+            <!-- Info -->
+            <View
+                android:id="@+id/fakeInfo4"
+                android:layout_width="180dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="@id/fakeName4"
+                app:layout_constraintTop_toBottomOf="@id/fakeName4"/>
+
+            <!-- Price -->
+            <View
+                android:id="@+id/fakePrice4"
+                android:layout_width="80dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="@id/fakeName4"
+                app:layout_constraintTop_toBottomOf="@id/fakeInfo4"/>
+
+            <!-- Button -->
+            <View
+                android:layout_width="70dp"
+                android:layout_height="32dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/fakePrice4"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="10dp"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="3dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <!-- Image -->
+            <View
+                android:id="@+id/fakeImage5"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <!-- Name -->
+            <View
+                android:id="@+id/fakeName5"
+                android:layout_width="120dp"
+                android:layout_height="14dp"
+                android:background="@drawable/shimmer_bg"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toEndOf="@id/fakeImage5"
+                app:layout_constraintTop_toTopOf="@id/fakeImage5"/>
+
+            <!-- Info -->
+            <View
+                android:id="@+id/fakeInfo5"
+                android:layout_width="180dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="@id/fakeName5"
+                app:layout_constraintTop_toBottomOf="@id/fakeName5"/>
+
+            <!-- Price -->
+            <View
+                android:id="@+id/fakePrice5"
+                android:layout_width="80dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="@id/fakeName5"
+                app:layout_constraintTop_toBottomOf="@id/fakeInfo5"/>
+
+            <!-- Button -->
+            <View
+                android:layout_width="70dp"
+                android:layout_height="32dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/fakePrice5"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="10dp"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="3dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <!-- Image -->
+            <View
+                android:id="@+id/fakeImage6"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <!-- Name -->
+            <View
+                android:id="@+id/fakeName6"
+                android:layout_width="120dp"
+                android:layout_height="14dp"
+                android:background="@drawable/shimmer_bg"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toEndOf="@id/fakeImage6"
+                app:layout_constraintTop_toTopOf="@id/fakeImage6"/>
+
+            <!-- Info -->
+            <View
+                android:id="@+id/fakeInfo6"
+                android:layout_width="180dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="@id/fakeName6"
+                app:layout_constraintTop_toBottomOf="@id/fakeName6"/>
+
+            <!-- Price -->
+            <View
+                android:id="@+id/fakePrice6"
+                android:layout_width="80dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="@id/fakeName6"
+                app:layout_constraintTop_toBottomOf="@id/fakeInfo6"/>
+
+            <!-- Button -->
+            <View
+                android:layout_width="70dp"
+                android:layout_height="32dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/fakePrice6"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="10dp"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="3dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <!-- Image -->
+            <View
+                android:id="@+id/fakeImage7"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <!-- Name -->
+            <View
+                android:id="@+id/fakeName7"
+                android:layout_width="120dp"
+                android:layout_height="14dp"
+                android:background="@drawable/shimmer_bg"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toEndOf="@id/fakeImage7"
+                app:layout_constraintTop_toTopOf="@id/fakeImage7"/>
+
+            <!-- Info -->
+            <View
+                android:id="@+id/fakeInfo7"
+                android:layout_width="180dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="@id/fakeName7"
+                app:layout_constraintTop_toBottomOf="@id/fakeName7"/>
+
+            <!-- Price -->
+            <View
+                android:id="@+id/fakePrice7"
+                android:layout_width="80dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintStart_toStartOf="@id/fakeName7"
+                app:layout_constraintTop_toBottomOf="@id/fakeInfo7"/>
+
+            <!-- Button -->
+            <View
+                android:layout_width="70dp"
+                android:layout_height="32dp"
+                android:background="@drawable/shimmer_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/fakePrice7"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+</LinearLayout>

@@ -8,7 +8,7 @@ import com.thekainchee.user.presentation.dashboard.home.model.BookingUI
 import com.thekainchee.user.presentation.dashboard.home.model.ParlourUI
 import com.thekainchee.user.presentation.dashboard.home.model.ServiceUI
 import com.thekainchee.user.presentation.parlour.model.ParlourDetailedUI
-import com.thekainchee.user.presentation.parlour.model.ServiceCategory
+import com.thekainchee.user.presentation.service.model.ServiceCategory
 import com.thekainchee.user.utils.ErrorUtils
 import java.io.IOException
 import javax.inject.Inject
@@ -121,21 +121,6 @@ class ParlourRepositoryImpl @Inject constructor( private val api: ParlourApi) : 
         }
     }
 
-    override suspend fun getServiceCategories(id: String): Result<List<ServiceCategory>> {
-        return  try{
-            val response = api.getServiceCategories(id)
-            if(response.isSuccessful && response.body() != null){
-                val body = response.body()
-                val list = body?.data?.map { it.toUI() }.orEmpty()
-                Result.success(list)
-            }else{
-                val error = ErrorUtils.parseError(response.errorBody()?.string())
-                Result.failure(Exception(error.message ?: "Failed to fetch service categories"))
-            }
 
-        }catch(e: Exception){
-            Result.failure(e)
-        }
-    }
 
 }

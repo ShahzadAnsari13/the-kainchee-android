@@ -17,12 +17,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.thekainchee.user.databinding.FragmentParlourDetailBinding
-import com.thekainchee.user.presentation.parlour.adapter.CategoryAdapter
+import com.thekainchee.user.presentation.service.adapter.CategoryAdapter
 import com.thekainchee.user.presentation.parlour.adapter.ImageSliderAdapter
-import com.thekainchee.user.presentation.parlour.model.ServiceCategory
+import com.thekainchee.user.presentation.service.model.ServiceCategory
 import com.thekainchee.user.presentation.parlour.state.ParlourDetailedState
-import com.thekainchee.user.presentation.parlour.state.ServiceCategoryState
+import com.thekainchee.user.presentation.service.state.ServiceCategoryState
 import com.thekainchee.user.presentation.parlour.viewModel.ParlourDetailViewModel
+import com.thekainchee.user.presentation.service.viewModel.ServiceViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -46,6 +47,8 @@ class ParlourDetailFragment : Fragment() {
     private var latitude: String? = null
     private var longitude: String? = null
     private val parlourDetailedViewModel : ParlourDetailViewModel by viewModels()
+
+    private val serviceViewModel : ServiceViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -62,12 +65,12 @@ class ParlourDetailFragment : Fragment() {
         setupViewPagerCallback()
         id?.let {
             parlourDetailedViewModel.getParlourDetails(it)
-            parlourDetailedViewModel.getServiceCategories(it)
+            serviceViewModel.getServiceCategories(it)
         }
         binding.btnRetry.setOnClickListener {
             id?.let {
                 parlourDetailedViewModel.getParlourDetails(it)
-                parlourDetailedViewModel.getServiceCategories(it)
+                serviceViewModel.getServiceCategories(it)
             }
         }
         binding.tvRating.setOnClickListener {
@@ -183,7 +186,7 @@ class ParlourDetailFragment : Fragment() {
                     }
                 }
                 launch {
-                    parlourDetailedViewModel.serviceCategoryState.collect { state ->
+                    serviceViewModel.serviceCategoryState.collect { state ->
                         when(state){
                             is ServiceCategoryState.Idle -> {
 

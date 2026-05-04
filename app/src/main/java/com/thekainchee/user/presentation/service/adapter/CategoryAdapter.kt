@@ -1,4 +1,4 @@
-package com.thekainchee.user.presentation.parlour.adapter
+package com.thekainchee.user.presentation.service.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.ItemCategoryBinding
-import com.thekainchee.user.presentation.parlour.model.ServiceCategory
+import com.thekainchee.user.presentation.service.model.ServiceCategory
 
 class CategoryAdapter(private val list : List<ServiceCategory>, private val onItemClick : (ServiceCategory) -> Unit) : RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
 
@@ -27,12 +27,12 @@ class CategoryAdapter(private val list : List<ServiceCategory>, private val onIt
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): CategoryAdapter.ViewHolder {
+    ): ViewHolder {
         val binding = ItemCategoryBinding.inflate(LayoutInflater.from(parent.context),parent,false)
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: CategoryAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(list[position])
     }
 

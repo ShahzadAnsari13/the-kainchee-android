@@ -11,7 +11,7 @@ import com.thekainchee.user.presentation.dashboard.home.model.ParlourUI
 import com.thekainchee.user.presentation.dashboard.home.model.ServiceUI
 import com.thekainchee.user.presentation.parlour.model.LocationUiModel
 import com.thekainchee.user.presentation.parlour.model.ParlourDetailedUI
-import com.thekainchee.user.presentation.parlour.model.ServiceCategory
+import com.thekainchee.user.presentation.service.model.ServiceCategory
 
 fun ParlourDto.toUI() : ParlourUI {
     return ParlourUI(

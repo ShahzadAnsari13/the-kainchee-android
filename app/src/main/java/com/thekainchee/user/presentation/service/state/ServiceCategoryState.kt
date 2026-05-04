@@ -1,7 +1,6 @@
-package com.thekainchee.user.presentation.parlour.state
+package com.thekainchee.user.presentation.service.state
 
-import com.thekainchee.user.presentation.parlour.model.ParlourDetailedUI
-import com.thekainchee.user.presentation.parlour.model.ServiceCategory
+import com.thekainchee.user.presentation.service.model.ServiceCategory
 
 sealed class ServiceCategoryState{
     object Idle : ServiceCategoryState()
