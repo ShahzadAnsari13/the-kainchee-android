@@ -147,8 +147,8 @@
 
                     <ImageView
                         android:id="@+id/ivVerified"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:src="@drawable/ic_verified"
                         android:layout_marginStart="6dp"/>
                 </LinearLayout>

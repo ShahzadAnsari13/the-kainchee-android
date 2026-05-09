@@ -11,6 +11,7 @@ import com.thekainchee.user.domain.repository.AuthRepository
 import com.thekainchee.user.domain.repository.DeviceLocationRepository
 import com.thekainchee.user.domain.repository.ParlourRepository
 import com.thekainchee.user.domain.repository.PlaceSearchRepository
+import com.thekainchee.user.domain.repository.ServiceRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -49,8 +50,8 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract  fun bindParlourRepository(
+    abstract  fun bindServiceRepository(
         serviceRepositoryImpl: ServiceRepositoryImpl
-    ): ServiceRepositoryImpl
+    ): ServiceRepository
 
 }

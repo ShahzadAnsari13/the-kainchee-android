@@ -4,5 +4,6 @@ data class ServiceDto(
     val serviceName : String,
     val bookingCount : Int,
     val avgPrice : Double,
-    val avgDuration : Double
+    val avgDuration : Double,
+    val image: String
 )

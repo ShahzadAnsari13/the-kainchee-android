@@ -4,6 +4,7 @@ import com.thekainchee.user.data.mapper.toUI
 import com.thekainchee.user.data.remote.api.ServiceApi
 import com.thekainchee.user.domain.repository.ServiceRepository
 import com.thekainchee.user.presentation.service.model.ServiceCategory
+import com.thekainchee.user.presentation.service.model.ServiceUiModel
 import com.thekainchee.user.utils.ErrorUtils
 import javax.inject.Inject
 
@@ -25,4 +26,25 @@ class ServiceRepositoryImpl @Inject constructor(private val api  : ServiceApi) :
         Result.failure(e)
     }
 }
+
+    override suspend fun getServicesByCategory(
+        parlourId: String,
+        categoryId: String
+    ): Result<List<ServiceUiModel>> {
+        try{
+            val response = api.getServicesByCategory(parlourId,categoryId)
+            if(response.isSuccessful && response.body() !=null){
+                val body = response.body()
+                val list = body?.services?.map { it.toUI() }.orEmpty()
+                return Result.success(list)
+            }else{
+                val error = ErrorUtils.parseError(response.errorBody()?.string())
+                return Result.failure(Exception(error.message ?: "Failed to fetch services"))
+            }
+        }
+        catch(e: Exception){
+            return Result.failure(e)
+
+        }
+    }
 }

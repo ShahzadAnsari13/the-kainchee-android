@@ -1,106 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="150dp"
+    android:layout_width="170dp"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="18dp"
-    app:cardElevation="2dp"
-    app:strokeWidth="1dp"
-    app:strokeColor="#EEEEEE"
-    app:cardBackgroundColor="#FFFFFF"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginTop="4dp"
-    android:layout_marginBottom="4dp"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="6dp"
     android:clickable="true"
     android:focusable="true"
-    app:rippleColor="?attr/colorControlHighlight">
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="3dp"
+    app:rippleColor="?attr/colorControlHighlight"
+    app:strokeColor="#EEEEEE"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="14dp">
+        android:orientation="vertical">
 
-        <!-- 🔥 Top Row (label + icon better aligned) -->
+        <!-- 🔥 Rounded Image -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="0dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!-- Service Image -->
+                <ImageView
+                    android:id="@+id/ivService"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_no_data"/>
+
+                <!-- Optional Dark Overlay -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#22000000"/>
+
+                <!-- Trending Chip -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/bg_trending_chip"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/noun_trend_chart_7969412"
+                        app:tint="@android:color/white"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="Trending"
+                        android:textColor="@android:color/white"
+                        android:textSize="11sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+            </FrameLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 🔥 Content -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:orientation="vertical"
+            android:padding="12dp">
 
+            <!-- Service Name -->
             <TextView
-                android:layout_width="0dp"
+                android:id="@+id/tvServiceName"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Trending"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:textColor="@color/primaryColor"/>
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Hair Cut"
+                android:textColor="#212121"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
 
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/noun_trend_chart_7969412"
-                android:tint="@color/primaryColor"/>
-        </LinearLayout>
-
-        <!-- 🔥 Service Name -->
-        <TextView
-            android:id="@+id/tvServiceName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Hair Cut"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#212121"
-            android:layout_marginTop="6dp"
-            android:maxLines="1"
-            android:ellipsize="end"/>
-
-        <!-- 🔥 Price + Duration -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="6dp"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/tvPrice"
+            <!-- Price + Duration -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="₹150"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:textColor="#212121"/>
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
+                <TextView
+                    android:id="@+id/tvPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="₹150"
+                    android:textColor="#212121"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" • "
+                    android:textColor="#BDBDBD"
+                    android:textSize="12sp"/>
+
+                <TextView
+                    android:id="@+id/tvDuration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="30 min"
+                    android:textColor="#757575"
+                    android:textSize="12sp"/>
+
+            </LinearLayout>
+
+            <!-- Booking Count -->
             <TextView
+                android:id="@+id/tvBookings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" • "
+                android:layout_marginTop="8dp"
+                android:text="25+ booked"
+                android:textColor="@color/primaryColor"
                 android:textSize="12sp"
-                android:textColor="#BDBDBD"/>
-
-            <TextView
-                android:id="@+id/tvDuration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="30 min"
-                android:textSize="12sp"
-                android:textColor="#757575"/>
+                android:textStyle="bold"/>
 
         </LinearLayout>
-
-        <!-- 🔥 Bookings -->
-        <TextView
-            android:id="@+id/tvBookings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="25 bookings"
-            android:textSize="12sp"
-            android:textColor="#5E35B1"
-            android:layout_marginTop="6dp"/>
 
     </LinearLayout>
 

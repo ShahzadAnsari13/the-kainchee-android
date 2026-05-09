@@ -42,4 +42,7 @@ class ParlourActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
     }
+    fun setToolbarTitle(title: String) {
+        binding.tvTitle.text = title
+    }
 }

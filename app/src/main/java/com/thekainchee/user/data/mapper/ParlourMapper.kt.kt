@@ -1,10 +1,10 @@
 package com.thekainchee.user.data.mapper
 
 import com.thekainchee.user.data.remote.dto.parlour.BookingDto
-import com.thekainchee.user.data.remote.dto.parlour.CategoryDto
+import com.thekainchee.user.data.remote.dto.service.CategoryDto
 import com.thekainchee.user.data.remote.dto.parlour.ParlourDetailsResponseDto
 import com.thekainchee.user.data.remote.dto.parlour.ParlourDto
-import com.thekainchee.user.data.remote.dto.parlour.ServiceCategoryDto
+import com.thekainchee.user.data.remote.dto.service.ServiceCategoryDto
 import com.thekainchee.user.data.remote.dto.parlour.ServiceDto
 import com.thekainchee.user.presentation.dashboard.home.model.BookingUI
 import com.thekainchee.user.presentation.dashboard.home.model.ParlourUI
@@ -29,7 +29,8 @@ fun ServiceDto.toUI() : ServiceUI {
         serviceName = serviceName,
         bookingCount = bookingCount,
         avgPrice = avgPrice,
-        avgDuration = avgDuration
+        avgDuration = avgDuration,
+        image = image
     )
 
 }
@@ -44,6 +45,7 @@ fun BookingDto.toUI() : BookingUI {
     return BookingUI(
         id = _id,
         serviceSummary = summary,
+        image = services.firstOrNull()?.image.orEmpty(),
         totalPrice = totalPrice,
         totalDurationMinutes = totalDurationMinutes,
         bookingDate = bookingDate,
@@ -94,11 +96,5 @@ fun ParlourDetailsResponseDto.toUi() : ParlourDetailedUI{
     )
 }
 
-fun CategoryDto.toUI(): ServiceCategory{
-    return ServiceCategory(
-        id = this._id,
-        name = this.name,
-        image  = this.image
-    )
 
-}
+

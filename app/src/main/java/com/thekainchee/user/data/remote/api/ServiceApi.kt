@@ -1,9 +1,11 @@
 package com.thekainchee.user.data.remote.api
 
-import com.thekainchee.user.data.remote.dto.parlour.ServiceCategoryDto
+import com.thekainchee.user.data.remote.dto.service.ServiceCategoryDto
+import com.thekainchee.user.data.remote.dto.service.ServiceResponseDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ServiceApi {
     @GET("parlour/{id}/service-categories")
@@ -11,9 +13,9 @@ interface ServiceApi {
         @Path("id") id: String
     ): Response<ServiceCategoryDto>
 
-    @GET("user/{parlourId}/{categoryId}/services")
+    @GET("user/{parlourId}/services")
     suspend fun getServicesByCategory(
         @Path("parlourId") parlourId: String,
-        @Path("categoryId") categoryId: String
-    ): Response<>
+        @Query("categoryId") categoryId: String
+    ): Response<ServiceResponseDto>
 }

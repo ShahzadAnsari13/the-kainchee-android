@@ -6,20 +6,23 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="12dp"
     android:layout_marginTop="10dp"
-    app:cardCornerRadius="14dp"
-    app:cardElevation="3dp">
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="1.5dp"
+    app:strokeColor="#EEEEEE"
+    app:strokeWidth="1dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="12dp">
 
-        <!-- 🔹 Service Image -->
+        <!-- Service Image -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardImage"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            app:cardCornerRadius="10dp"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+            app:cardCornerRadius="14dp"
             app:cardElevation="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -29,78 +32,104 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_placeholder"/>
+                android:src="@drawable/ic_no_data"/>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 🔹 Name -->
+        <!-- Service Name -->
         <TextView
             android:id="@+id/tvName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="Hair Cut"
-            android:textSize="16sp"
-            android:textStyle="bold"
             android:textColor="@color/black"
-            app:layout_constraintStart_toEndOf="@id/cardImage"
-            app:layout_constraintTop_toTopOf="@id/cardImage"
+            android:textSize="17sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="10dp"/>
+            app:layout_constraintStart_toEndOf="@id/cardImage"
+            app:layout_constraintTop_toTopOf="@id/cardImage"/>
 
-        <!-- 🔹 Duration + Description -->
+        <!-- Duration -->
         <TextView
-            android:id="@+id/tvInfo"
+            android:id="@+id/tvDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_chip"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:text="⏱ 30 min"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/cardImage"
+            app:layout_constraintTop_toBottomOf="@id/tvName"/>
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/tvDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="30 min • Basic haircut"
-            android:textSize="13sp"
-            android:textColor="@color/gray"
-            android:layout_marginTop="4dp"
-            app:layout_constraintStart_toStartOf="@id/tvName"
-            app:layout_constraintTop_toBottomOf="@id/tvName"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
             android:maxLines="2"
-            android:ellipsize="end"/>
+            android:text="Professional stylish haircut with expert stylist"
+            android:textColor="@color/gray"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/cardImage"
+            app:layout_constraintTop_toBottomOf="@id/tvDuration"/>
 
-        <!-- 🔹 Price -->
+        <!-- Price -->
         <TextView
             android:id="@+id/tvPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
             android:text="₹199"
-            android:textSize="15sp"
-            android:textStyle="bold"
             android:textColor="@color/primaryColor"
-            app:layout_constraintStart_toStartOf="@id/tvName"
-            app:layout_constraintTop_toBottomOf="@id/tvInfo"
-            android:layout_marginTop="8dp"/>
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/cardImage"
+            app:layout_constraintTop_toBottomOf="@id/tvDescription"/>
 
-        <!-- 🔹 ADD Button -->
+        <!-- Add Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAdd"
-            android:layout_width="80dp"
-            android:layout_height="36dp"
+            android:layout_width="74dp"
+            android:layout_height="34dp"
+            android:backgroundTint="@color/primaryColor"
             android:text="ADD"
             android:textAllCaps="false"
-            android:textSize="13sp"
-            android:textStyle="bold"
             android:textColor="@color/white"
-            android:backgroundTint="@color/primaryColor"
+            android:textSize="12sp"
+            android:textStyle="bold"
             app:cornerRadius="18dp"
+            app:layout_constraintBottom_toBottomOf="@id/tvPrice"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/tvPrice"/>
+            app:layout_constraintTop_toTopOf="@id/tvPrice"/>
 
-        <!-- 🔹 Unavailable Tag -->
+        <!-- Unavailable -->
         <TextView
             android:id="@+id/tvUnavailable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/bg_unavailable"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="3dp"
             android:text="Unavailable"
-            android:textSize="12sp"
             android:textColor="@android:color/holo_red_dark"
+            android:textSize="11sp"
+            android:textStyle="bold"
             android:visibility="gone"
-            app:layout_constraintStart_toStartOf="@id/tvPrice"
-            app:layout_constraintTop_toBottomOf="@id/tvPrice"
-            android:layout_marginTop="4dp"/>
+            app:layout_constraintStart_toEndOf="@id/cardImage"
+            app:layout_constraintTop_toBottomOf="@id/tvPrice"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

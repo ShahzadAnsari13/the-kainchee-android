@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.graphics.BlendMode.Companion.Color
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.thekainchee.user.databinding.FragmentParlourDetailBinding
+import com.thekainchee.user.presentation.parlour.ParlourActivity
 import com.thekainchee.user.presentation.service.adapter.CategoryAdapter
 import com.thekainchee.user.presentation.parlour.adapter.ImageSliderAdapter
 import com.thekainchee.user.presentation.service.model.ServiceCategory
@@ -112,6 +114,8 @@ class ParlourDetailFragment : Fragment() {
                                 latitude = data.location.latitude.toString()
                                 longitude = data.location.longitude.toString()
 
+                                (requireActivity() as ParlourActivity)
+                                    .setToolbarTitle(data.name ?: "Parlour Details")
                                 binding.tvName.text = data.name
                                 val safeDistance = distance ?: "--"
                                 binding.tvRating.text = "⭐ ${"%.1f".format(data.ratingAverage)} (${data.ratingCount}) • 📍 $safeDistance km"
@@ -236,7 +240,14 @@ class ParlourDetailFragment : Fragment() {
 
 
         serviceCategoryAdapter = CategoryAdapter(categories) { category ->
-            Toast.makeText(requireContext(), category.name, Toast.LENGTH_SHORT).show()
+            val parlourId = id ?: return@CategoryAdapter
+            val action =
+                ParlourDetailFragmentDirections.actionParlourDetailedFragmentToServiceListFragment(
+                    parlourId = parlourId,
+                    categoryId = category.id,
+                    categoryName = category.name
+                )
+            findNavController().navigate(action)
         }
 
         binding.rvCategories.adapter = serviceCategoryAdapter

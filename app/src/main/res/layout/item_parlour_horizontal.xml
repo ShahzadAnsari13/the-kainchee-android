@@ -1,91 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="160dp"
-    android:layout_height="wrap_content"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="6dp"
-    app:strokeWidth="1dp"
-    app:strokeColor="#EAEAEA"
+    android:layout_width="170dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="14dp"
+    android:layout_marginVertical="6dp"
     android:clickable="true"
     android:focusable="true"
-    app:cardBackgroundColor="@android:color/white"
-    android:layout_marginEnd="16dp"
     android:foreground="?attr/selectableItemBackground"
-    app:rippleColor="?attr/colorControlHighlight">
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="3dp"
+    app:rippleColor="?attr/colorControlHighlight"
+    app:strokeColor="#EEEEEE"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="8dp">
+        android:orientation="vertical">
 
-        <!-- Image -->
-
+        <!-- 🔥 Rounded Parlour Image -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="110dp"
-            app:cardCornerRadius="12dp"
-            app:strokeWidth="0dp">
-            <ImageView
-                android:id="@+id/ivParlour"
+            android:layout_height="120dp"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="0dp">
+
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"/>
+                android:layout_height="match_parent">
+
+                <!-- Parlour Image -->
+                <ImageView
+                    android:id="@+id/ivParlour"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_no_data"/>
+
+                <!-- Dark Overlay -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#22000000"/>
+
+                <!-- Type Chip -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/bg_trending_chip"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp">
+
+                    <TextView
+                        android:id="@+id/tvType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Unisex"
+                        android:textColor="@android:color/white"
+                        android:textSize="11sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+            </FrameLayout>
+
         </com.google.android.material.card.MaterialCardView>
 
-
-        <!-- Name -->
-        <TextView
-
-            android:id="@+id/tvName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Salon XYZ"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="#222222"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:layout_marginTop="6dp"/>
-
-        <!-- Type -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvType"
-            android:text="Unisex"
-            android:textSize="12sp"
-            android:textColor="#666666"
-            android:gravity="center_vertical"/>
-
-        <!-- Rating + Distance -->
+        <!-- 🔥 Content -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="4dp">
+            android:orientation="vertical"
+            android:padding="12dp">
 
+            <!-- Parlour Name -->
             <TextView
+                android:id="@+id/tvName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Salon XYZ"
+                android:textColor="#212121"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <!-- Rating + Distance -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tvRating"
-                android:text="⭐ 4.5"
-                android:textSize="12sp"/>
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="  •  "
-                android:textSize="12sp"/>
+                <TextView
+                    android:id="@+id/tvRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⭐ 4.5"
+                    android:textColor="#212121"
+                    android:textSize="13sp"
+                    android:textStyle="bold"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tvDistance"
-                android:text="2.3 km"
-                android:textSize="12sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" • "
+                    android:textColor="#BDBDBD"
+                    android:textSize="12sp"/>
+
+                <TextView
+                    android:id="@+id/tvDistance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2.3 km"
+                    android:textColor="#757575"
+                    android:textSize="12sp"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

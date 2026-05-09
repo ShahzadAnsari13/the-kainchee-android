@@ -80,7 +80,7 @@
                 android:id="@+id/tvDateTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Today • 05:30 PM - 06:15 PM"
+                android:text="📅 Today • 🕒 05:30 PM - 06:15 PM"
                 android:textSize="13sp"
                 android:textColor="#757575"
                 android:layout_marginTop="4dp"/>

@@ -24,21 +24,13 @@
         android:visibility="gone"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Services"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:padding="16dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvServices"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:paddingBottom="8dp"/>
+            android:layout_height="match_parent"
+            android:paddingBottom="8dp"
+            android:clipToPadding="false"/>
     </LinearLayout>
 
     <!-- 🔹 ERROR / EMPTY -->
@@ -59,6 +51,7 @@
             android:scaleType="centerInside" />
 
         <TextView
+            android:id="@+id/tvEmptyTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -68,6 +61,7 @@
             android:textColor="#222222"/>
 
         <TextView
+            android:id="@+id/tvEmptySubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

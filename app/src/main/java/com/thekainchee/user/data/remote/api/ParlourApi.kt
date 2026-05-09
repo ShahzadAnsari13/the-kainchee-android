@@ -2,7 +2,7 @@ package com.thekainchee.user.data.remote.api
 
 import com.thekainchee.user.data.remote.dto.parlour.NearbyParlourResponseDto
 import com.thekainchee.user.data.remote.dto.parlour.ParlourDetailsResponseDto
-import com.thekainchee.user.data.remote.dto.parlour.ServiceCategoryDto
+import com.thekainchee.user.data.remote.dto.service.ServiceCategoryDto
 import com.thekainchee.user.data.remote.dto.parlour.TrendingParlourResponseDto
 import com.thekainchee.user.data.remote.dto.parlour.TrendingServiceResponseDto
 import com.thekainchee.user.data.remote.dto.parlour.UpcomingBookingResponseDto

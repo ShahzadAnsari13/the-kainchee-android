@@ -41,7 +41,8 @@ class ServiceAdapter(
 
                 tvName.text = item.name
                 tvPrice.text = "₹${item.price}"
-                tvInfo.text = "${item.duration} min • ${item.description ?: ""}"
+                tvDuration.text = "⏱ ${item.duration} min"
+                tvDescription.text = " ${item.description ?: ""}"
 
                 if (item.isAvailable) {
                     btnAdd.isEnabled = true

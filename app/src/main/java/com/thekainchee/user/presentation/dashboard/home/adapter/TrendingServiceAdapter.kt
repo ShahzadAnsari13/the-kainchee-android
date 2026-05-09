@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.thekainchee.user.R
 import com.thekainchee.user.databinding.ItemTrendingServiceBinding
 import com.thekainchee.user.presentation.dashboard.home.model.ServiceUI
 
@@ -37,6 +39,11 @@ class TrendingServiceAdapter(private val onItemClick : (ServiceUI) -> Unit)
             binding.tvServiceName.text = item.serviceName
             binding.tvPrice.text = "₹${item.avgPrice}"
             binding.tvDuration.text = "${item.avgDuration}min"
+            Glide.with(binding.root)
+                .load(item.image)
+                .placeholder(R.drawable.ic_no_data)
+                .error(R.drawable.ic_no_data)
+                .into(binding.ivService)
             binding.tvBookings.visibility =
                 if (item.bookingCount >= 5) View.VISIBLE else View.GONE
 

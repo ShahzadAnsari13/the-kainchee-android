@@ -17,14 +17,24 @@
         app:navigationIcon="@drawable/ic_back"
         app:navigationIconTint="@color/black"
         app:contentInsetStartWithNavigation="0dp"
-        app:title="Parlour Details"
-        app:titleTextColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-    </com.google.android.material.appbar.MaterialToolbar>
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="48dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Parlour Details"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
+    </com.google.android.material.appbar.MaterialToolbar>
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/parlourNavHost"
         android:name="androidx.navigation.fragment.NavHostFragment"
