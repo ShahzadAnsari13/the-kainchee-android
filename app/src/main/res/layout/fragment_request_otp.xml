@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <!-- VIDEO BACKGROUND -->
+
 
     <androidx.media3.ui.PlayerView
         android:id="@+id/playerView"
@@ -39,6 +39,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="32dp"
         app:cardCornerRadius="20dp"
+        android:clipToPadding="false"
         app:cardElevation="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,8 +56,9 @@
 
             <ImageView
                 android:id="@+id/ivLogo"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:scaleType="fitCenter"
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/img"/>
 
@@ -66,12 +68,18 @@
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Welcome to \nThe Kainchee"
+                android:text="Welcome to"
                 android:textSize="22sp"
-                android:textStyle="bold"
                 android:textColor="@color/black"
                 android:layout_marginTop="16dp"/>
+            <com.google.android.material.textview.MaterialTextView
 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="The Kainchee"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
 
 
             <com.google.android.material.textview.MaterialTextView
@@ -83,14 +91,13 @@
                 android:textColor="@color/gray"
                 android:layout_marginTop="6dp"/>
 
-            <!-- PHONE ROW -->
 
             <LinearLayout
                 android:id="@+id/phoneRow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="12dp">
 
 
 
@@ -98,6 +105,7 @@
                     android:id="@+id/tilCountryCode"
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
+                    android:minHeight="56dp"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -105,7 +113,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="+91"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:inputType="none"
                         android:singleLine="true"
                         android:focusable="false"
@@ -121,15 +129,17 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="6dp"
+                    android:paddingVertical="4dp"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPhone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Enter Phone number"
+                        android:hint="Enter Phone Number"
                         android:inputType="phone"
                         android:maxLength="10"
+
                         android:textSize="14sp"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -143,7 +153,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:text="Get OTP"
-                android:layout_marginTop="32dp"/>
+                android:layout_marginTop="32dp"
+                app:backgroundTint="@color/primaryColor"
+                android:letterSpacing="0"
+                app:cornerRadius="28dp"
+                android:textAllCaps="false"
+                android:textStyle="bold"/>
 
 
 
@@ -153,6 +168,7 @@
                 android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
+                app:rippleColor="@color/white"
                 android:visibility="gone"/>
 
         </LinearLayout>

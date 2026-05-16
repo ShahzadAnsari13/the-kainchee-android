@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.thekainchee.user.R
 import com.thekainchee.user.databinding.ItemServiceBinding
 import com.thekainchee.user.presentation.service.model.ServiceUiModel
 
@@ -43,7 +45,11 @@ class ServiceAdapter(
                 tvPrice.text = "₹${item.price}"
                 tvDuration.text = "⏱ ${item.duration} min"
                 tvDescription.text = " ${item.description ?: ""}"
-
+                Glide.with(binding.root.context)
+                    .load(item.image)
+                    .placeholder(R.drawable.ic_no_data)
+                    .error(R.drawable.ic_no_data)
+                    .into(ivService)
                 if (item.isAvailable) {
                     btnAdd.isEnabled = true
                     root.alpha = 1f

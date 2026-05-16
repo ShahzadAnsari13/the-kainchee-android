@@ -8,4 +8,6 @@
     <string name="confirm_address">Confirm address</string>
     <string name="update_address">Update address</string>
     <string name="search_for_your_location">Search for your location</string>
+    <string name="get_otp">Get OTP</string>
+    <string name="sending">Sending...</string>
 </resources>

@@ -18,7 +18,7 @@ fun ParlourDto.toUI() : ParlourUI {
         id = _id,
         name = name,
         image = images?.firstOrNull(),
-        rating = rating,
+        rating = rating.average,
         distance = distance,
         type = type
     )

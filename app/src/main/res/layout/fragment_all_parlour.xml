@@ -7,19 +7,80 @@
     android:layout_height="match_parent"
     tools:context=".presentation.dashboard.home.tabs.fragment.AllParlourFragment">
 
-    <!-- ================= MAIN CONTENT ================= -->
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerLayout"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="match_parent"
+        app:shimmer_auto_start="true"
+        app:shimmer_duration="1200">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <include layout="@layout/item_shimmer_section"/>
+
+            <include layout="@layout/item_shimmer_section"/>
+
+            <include layout="@layout/item_shimmer_section"/>
+
+        </LinearLayout>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerLayoutVerticalParlour"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="match_parent"
+        app:shimmer_auto_start="true"
+        app:shimmer_duration="1200">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <include layout="@layout/item_shimmer_section"/>
+
+            <View
+                android:layout_width="140dp"
+                android:layout_height="24dp"
+                android:background="@drawable/bg_shimmer"
+                android:layout_marginTop="24dp"/>
+
+            <include layout="@layout/item_shimmer_vertical_parlour"/>
+
+
+            <include layout="@layout/item_shimmer_vertical_parlour"/>
+
+            <include layout="@layout/item_shimmer_vertical_parlour"/>
+
+            <include layout="@layout/item_shimmer_vertical_parlour"/>
+
+        </LinearLayout>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/mainContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:overScrollMode="never"
+
         android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+
+
             android:padding="8dp">
 
             <LinearLayout
@@ -48,18 +109,7 @@
                         android:layout_height="wrap_content">
 
 
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/tvTrendingPViewAll"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="View All"
-                            android:textSize="14sp"
-                            android:textColor="@color/primaryColor"
-                            android:drawableEnd="@drawable/ic_forward"
-                            android:drawablePadding="4dp"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:foreground="?attr/selectableItemBackground" />
+
 
                         <ProgressBar
                             android:id="@+id/loaderTrendingParlour"
@@ -106,18 +156,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
 
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/tvNearbyViewAll"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="View All"
-                            android:textSize="14sp"
-                            android:textColor="@color/primaryColor"
-                            android:drawableEnd="@drawable/ic_forward"
-                            android:drawablePadding="4dp"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:foreground="?attr/selectableItemBackground" />
 
                         <ProgressBar
                             android:id="@+id/loaderNearby"
@@ -163,18 +201,6 @@
                         android:layout_height="wrap_content">
 
 
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/tvTrendingSViewAll"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="View All"
-                            android:textSize="14sp"
-                            android:textColor="@color/primaryColor"
-                            android:drawableEnd="@drawable/ic_forward"
-                            android:drawablePadding="4dp"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:foreground="?attr/selectableItemBackground" />
 
                         <ProgressBar
                             android:id="@+id/loaderTrendingService"
@@ -221,18 +247,6 @@
                         android:layout_height="wrap_content">
 
 
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/tvUpcomingBookingsViewAll"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="View All"
-                            android:textSize="14sp"
-                            android:textColor="@color/primaryColor"
-                            android:drawableEnd="@drawable/ic_forward"
-                            android:drawablePadding="4dp"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:foreground="?attr/selectableItemBackground" />
 
                         <ProgressBar
                             android:id="@+id/loaderUpcomingBooking"
@@ -262,6 +276,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+
         android:visibility="gone"
         android:gravity="center_horizontal"
         android:padding="24dp"

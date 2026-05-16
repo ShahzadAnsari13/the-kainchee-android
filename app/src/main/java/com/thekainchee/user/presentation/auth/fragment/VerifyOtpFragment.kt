@@ -27,6 +27,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.navigation.fragment.navArgs
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentVerifyOtpBinding
 import com.thekainchee.user.presentation.auth.state.AuthState
@@ -44,11 +45,12 @@ class VerifyOtpFragment : Fragment() {
     private var phone: String? = null
     private var countryCode: String? = null
     private var countDownTimer: CountDownTimer? = null
-    private lateinit var player: ExoPlayer
+    private var player: ExoPlayer? = null
+    private val args : VerifyOtpFragmentArgs by navArgs()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        phone = arguments?.getString("phone")
-        countryCode = arguments?.getString("countryCode")
+        phone = args.phone
+        countryCode = args.countryCode
     }
 
     override fun onCreateView(
@@ -71,10 +73,10 @@ class VerifyOtpFragment : Fragment() {
             Uri.parse("android.resource://${requireContext().packageName}/${R.raw.salon_bg2}")
         )
 
-        player.setMediaItem(mediaItem)
-        player.repeatMode = Player.REPEAT_MODE_ALL
-        player.prepare()
-        player.play()
+        player?.setMediaItem(mediaItem)
+        player?.repeatMode = Player.REPEAT_MODE_ONE
+        player?.prepare()
+        player?.playWhenReady = true
         val text = "Sent to ${countryCode ?: ""} ${phone ?: ""} "
         val start = "Sent to ".length
         val spannable = SpannableString(text + " ")
@@ -267,18 +269,19 @@ class VerifyOtpFragment : Fragment() {
     }
     override fun onResume() {
         super.onResume()
-        player.play()
+        player?.play()
     }
 
     override fun onPause() {
         super.onPause()
-        player.pause()
+        player?.pause()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.playerView.player = null
         countDownTimer?.cancel()
-        player.release()
+        player?.release()
         _binding = null
     }
 }

@@ -17,6 +17,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.navigation.fragment.findNavController
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentRequestOtpBinding
 import com.thekainchee.user.presentation.auth.state.AuthState
@@ -32,7 +33,7 @@ class RequestOtpFragment : Fragment() {
     private var _binding : FragmentRequestOtpBinding? = null
     private val binding get() =  _binding!!
     private val viewModel : AuthViewModel by viewModels()
-    private lateinit var player: ExoPlayer
+    private var player: ExoPlayer? = null
     private val phoneRegex = Regex("^[6-9]\\d{9}$")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,6 +46,7 @@ class RequestOtpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnRequestOtp.isEnabled = false
+        binding.btnRequestOtp.alpha = 0.5f
         player = ExoPlayer.Builder(requireContext()).build()
 
         binding.playerView.player = player
@@ -53,13 +55,15 @@ class RequestOtpFragment : Fragment() {
             Uri.parse("android.resource://${requireContext().packageName}/${R.raw.salon_bg}")
         )
 
-        player.setMediaItem(mediaItem)
-        player.repeatMode = Player.REPEAT_MODE_ALL
-        player.prepare()
-        player.play()
+        player?.setMediaItem(mediaItem)
+        player?.repeatMode = Player.REPEAT_MODE_ONE
+        player?.prepare()
+        player?.playWhenReady = true
         binding.etPhone.addTextChangedListener {
-            val phone = it.toString()
+            val phone = it.toString().trim()
             binding.btnRequestOtp.isEnabled =   phoneRegex.matches(phone)
+            binding.btnRequestOtp.alpha =
+                if (phoneRegex.matches(phone)) 1f else 0.5f
         }
         fun openCountryPicker() {
             val picker = CountryPickerBottomSheet { country ->
@@ -78,8 +82,8 @@ class RequestOtpFragment : Fragment() {
 
         binding.btnRequestOtp.setOnClickListener {
             val phone  = binding.etPhone.text.toString()
-            if(phone.isBlank()){
-                Toast.makeText(requireContext(),"Enter phone number", Toast.LENGTH_SHORT).show()
+            if(!phoneRegex.matches(phone)){
+                showToast("Enter phone number")
                 return@setOnClickListener
             }
             val countryCode = binding.etCountryCode.text.toString()
@@ -95,27 +99,47 @@ class RequestOtpFragment : Fragment() {
                     when(state){
                         is AuthState.Loading -> {
                             binding.progressBar.isVisible =true
-                            binding.btnRequestOtp.text = "Sending..."
+                            binding.etCountryCode.isEnabled = false
+                            binding.btnRequestOtp.text = getString(R.string.sending)
                             binding.btnRequestOtp.isEnabled = false
+                            binding.etPhone.isEnabled = false
+                            binding.btnRequestOtp.alpha = 0.5f
                         }
                         is AuthState.OtpSent ->{
                             binding.progressBar.isVisible = false
-                            binding.btnRequestOtp.text = "Get OTP"
+                            binding.btnRequestOtp.text = getString(R.string.get_otp)
                             binding.btnRequestOtp.isEnabled = false
-                            Toast.makeText(requireContext(),state.message, Toast.LENGTH_SHORT).show()
+                            binding.etPhone.isEnabled = true
+                            binding.btnRequestOtp.alpha = 0.5f
+
+                            binding.etCountryCode.isEnabled = true
+                            showToast(state.message)
                             openVerifyOtpFragment()
                             viewModel.resetState()
                         }
                         is AuthState.Error ->{
                             binding.progressBar.isVisible = false
-                            binding.btnRequestOtp.text = "Get OTP"
-                            binding.btnRequestOtp.isEnabled = true
-                            Toast.makeText(requireContext(),state.message?: "Something went Wrong",
-                                Toast.LENGTH_SHORT).show()
+                            binding.btnRequestOtp.text =  getString(R.string.get_otp)
+                            val isValidPhone =
+                                phoneRegex.matches(binding.etPhone.text.toString().trim())
+
+                            binding.btnRequestOtp.isEnabled = isValidPhone
+                            binding.btnRequestOtp.alpha = if (isValidPhone) 1f else 0.5f
+                            binding.etPhone.isEnabled = true
+                            binding.etCountryCode.isEnabled = true
+
+                            showToast(state.message?: "Something went Wrong")
 
                         }
                         else ->{
                             binding.progressBar.isVisible = false
+                            val isValidPhone =
+                                phoneRegex.matches(binding.etPhone.text.toString().trim())
+
+                            binding.btnRequestOtp.isEnabled = isValidPhone
+                            binding.btnRequestOtp.alpha = if (isValidPhone) 1f else 0.5f
+                            binding.btnRequestOtp.text = getString(R.string.get_otp)
+                            binding.etCountryCode.isEnabled = true
                         }
                     }
                 }
@@ -123,31 +147,32 @@ class RequestOtpFragment : Fragment() {
         }
     }
     private fun openVerifyOtpFragment(){
-        val phone = binding.etPhone.text.toString()
-        val countryCode = binding.etCountryCode.text.toString()
-        val fragment = VerifyOtpFragment()
-        val bundle = Bundle()
-        bundle.putString("phone",phone)
-        bundle.putString("countryCode",countryCode)
-        fragment.arguments = bundle
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer,fragment)
-            .addToBackStack(null)
-            .commit()
+        val action =
+            RequestOtpFragmentDirections
+                .actionRequestOtpFragmentToVerifyOtpFragment(
+                    phone = binding.etPhone.text.toString(),
+                    countryCode = binding.etCountryCode.text.toString()
+                )
+
+        findNavController().navigate(action)
     }
     override fun onResume() {
         super.onResume()
-        player.play()
+        player?.playWhenReady = true
     }
 
     override fun onPause() {
         super.onPause()
-        player.pause()
+        player?.pause()
+    }
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {
-        player.release()
-        _binding = null
         super.onDestroyView()
+        binding.playerView.player = null
+        player?.release()
+        _binding = null
     }
 }

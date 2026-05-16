@@ -1,5 +1,6 @@
 package com.thekainchee.user.presentation.dashboard.home.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thekainchee.user.domain.repository.ParlourRepository
@@ -170,6 +171,7 @@ class ParlourViewModel @Inject constructor(private val parlourRepository: Parlou
             val result = parlourRepository.getNearbyParlours(
                 lat, lng, nearbyCurrentPage, type
             )
+            Log.d("RESULT_CHECK", result.toString())
 
             nearbyIsLoading = false
 

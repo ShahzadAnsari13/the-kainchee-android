@@ -63,11 +63,7 @@ class ServiceListFragment : Fragment() {
 
         }
 
-        val dummyList = listOf(
-            ServiceUiModel("1", "Hair Cut", 199.0, 30, "Basic haircut", true),
-            ServiceUiModel("2", "Beard Trim", 99.0, 15, "Clean beard", true),
-            ServiceUiModel("3", "Facial", 499.0, 60, "Glow facial", false)
-        )
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 launch {

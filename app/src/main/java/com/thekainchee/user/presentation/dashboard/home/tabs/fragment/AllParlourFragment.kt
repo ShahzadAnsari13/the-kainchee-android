@@ -2,11 +2,13 @@ package com.thekainchee.user.presentation.dashboard.home.tabs.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -16,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentAllParlourBinding
 import com.thekainchee.user.presentation.dashboard.home.adapter.ParlourHorizontalAdapter
 import com.thekainchee.user.presentation.dashboard.home.adapter.TrendingServiceAdapter
@@ -24,6 +27,7 @@ import com.thekainchee.user.presentation.dashboard.home.model.BookingUI
 import com.thekainchee.user.presentation.dashboard.home.model.ParlourUI
 import com.thekainchee.user.presentation.dashboard.home.model.ServiceUI
 import com.thekainchee.user.presentation.dashboard.home.state.BookingState
+import com.thekainchee.user.presentation.dashboard.home.state.LocationUiState
 import com.thekainchee.user.presentation.dashboard.home.state.ParlourState
 import com.thekainchee.user.presentation.dashboard.home.state.TrendingServiceState
 import com.thekainchee.user.presentation.dashboard.home.viewModel.LocationViewModel
@@ -42,9 +46,10 @@ class AllParlourFragment : Fragment() {
 
     private lateinit var trendingServiceAdapter: TrendingServiceAdapter
     private lateinit var upcomingBookingAdapter: UpcomingBookingAdapter
-    private  val viewModel : LocationViewModel by activityViewModels()
+    private  val locationViewModel : LocationViewModel by activityViewModels()
     private val parlourViewModel : ParlourViewModel by viewModels()
-
+    private var lastLat: Double? = null
+    private var lastLng: Double? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -77,16 +82,16 @@ class AllParlourFragment : Fragment() {
             startActivity(intent)
         }
         nearbyAdapter = ParlourHorizontalAdapter ( onItemClick = { item ->
-            val intent = Intent(context, ParlourActivity::class.java)
+            val intent = Intent(requireContext(), ParlourActivity::class.java)
             intent.putExtra("parlourId", item.id)
-            intent.putExtra("distance", item.distance)
+            intent.putExtra("distance", item.distance.toString())
             startActivity(intent)
         })
 
         trendingAdapter = ParlourHorizontalAdapter ( onItemClick = { item ->
-            val intent = Intent(context, ParlourActivity::class.java)
+            val intent = Intent(requireContext(), ParlourActivity::class.java)
             intent.putExtra("parlourId", item.id)
-            intent.putExtra("distance", item.distance)
+            intent.putExtra("distance", item.distance.toString())
             startActivity(intent)
         })
 
@@ -98,14 +103,14 @@ class AllParlourFragment : Fragment() {
 
         })
         val dummyServices = listOf(
-            ServiceUI("Hair Cut", 120, 150.0, 30.0),
-            ServiceUI("Facial", 80, 500.0, 45.0),
-            ServiceUI("Manicure", 60, 300.0, 25.0),
-            ServiceUI("Pedicure", 55, 350.0, 35.0),
-            ServiceUI("Beard Trim", 90, 100.0, 15.0),
-            ServiceUI("Hair Spa", 70, 800.0, 60.0),
-            ServiceUI("Cleanup", 40, 250.0, 20.0),
-            ServiceUI("Massage", 30, 1200.0, 90.0)
+            ServiceUI("Hair Cut", 120, 150.0, 30.0,"https://cdn.pixabay.com/photo/2020/05/14/12/37/barber-5194406_1280.jpg"),
+            ServiceUI("Facial", 80, 500.0, 45.0,"https://tse4.mm.bing.net/th/id/OIP.mqlq8vlalAPSMnzXT-ga4wHaE8?pid=Api&h=220&P=0"),
+            ServiceUI("Manicure", 60, 300.0, 25.0,"https://tse4.mm.bing.net/th/id/OIP.O2o1h41k64h5D7o7464edwHaE8?pid=Api&h=220&P=0"),
+            ServiceUI("Pedicure", 55, 350.0, 35.0,"https://tse1.mm.bing.net/th/id/OIP.oVqQovLKSuXUwsUwhBjC4wHaE8?pid=Api&h=220&P=0"),
+            ServiceUI("Beard Trim", 90, 100.0, 15.0,"https://tse2.mm.bing.net/th/id/OIP.ue80bFueozMqdG3R_RdGYAHaEv?pid=Api&h=220&P=0"),
+            ServiceUI("Hair Spa", 70, 800.0, 60.0,"https://zanya.co.in/wp-content/uploads/2024/02/woman-getting-hair-treatment.jpg"),
+            ServiceUI("Cleanup", 40, 250.0, 20.0,"https://5.imimg.com/data5/FP/GJ/HR/SELLER-110510653/facial-and-skin-treatment-500x500.jpg"),
+            ServiceUI("Massage", 30, 1200.0, 90.0,"https://tse4.mm.bing.net/th/id/OIP.5InsvmiQnyNATGp8Ho-ErQHaE8?pid=Api&h=220&P=0")
         )
         val dummyParlours = listOf(
             ParlourUI(
@@ -130,7 +135,8 @@ class AllParlourFragment : Fragment() {
                 bookingDate = "2026-04-19", // Today
                 slotStartTime = "05:30 PM",
                 slotEndTime = "06:30 PM",
-                bookingStatus = "CONFIRMED"
+                bookingStatus = "CONFIRMED",
+                image = "https://cdn.pixabay.com/photo/2020/05/14/12/37/barber-5194406_1280.jpg"
             ),
             BookingUI(
                 id = "2",
@@ -140,7 +146,8 @@ class AllParlourFragment : Fragment() {
                 bookingDate = "2026-04-20", // Tomorrow
                 slotStartTime = "11:00 AM",
                 slotEndTime = "11:20 AM",
-                bookingStatus = "PENDING"
+                bookingStatus = "PENDING",
+                image = "https://tse4.mm.bing.net/th/id/OIP.mqlq8vlalAPSMnzXT-ga4wHaE8?pid=Api&h=220&P=0"
             ),
             BookingUI(
                 id = "3",
@@ -150,7 +157,8 @@ class AllParlourFragment : Fragment() {
                 bookingDate = "2026-04-25",
                 slotStartTime = "02:00 PM",
                 slotEndTime = "03:30 PM",
-                bookingStatus = "CONFIRMED"
+                bookingStatus = "CONFIRMED",
+                image = "https://tse4.mm.bing.net/th/id/OIP.O2o1h41k64h5D7o7464edwHaE8?pid=Api&h=220&P=0"
             ),
             BookingUI(
                 id = "4",
@@ -160,7 +168,8 @@ class AllParlourFragment : Fragment() {
                 bookingDate = "2026-05-01",
                 slotStartTime = "04:00 PM",
                 slotEndTime = "05:15 PM",
-                bookingStatus = "PENDING"
+                bookingStatus = "PENDING",
+                image  = "https://tse1.mm.bing.net/th/id/OIP.oVqQovLKSuXUwsUwhBjC4wHaE8?pid=Api&h=220&P=0"
             )
         )
         binding.rvNearbyParlours.adapter = nearbyAdapter
@@ -171,17 +180,79 @@ class AllParlourFragment : Fragment() {
         trendingAdapter.submitList(dummyParlours)
         upcomingBookingAdapter.submitList(dummyBookings)
         trendingServiceAdapter.submitList(dummyServices)
+        observeUiStates()
+
+
+
+        binding.rvNearbyParlours.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val totalItemCount = layoutManager.itemCount
+                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+                if (dy >0 && lastVisibleItem >= totalItemCount - 2) {
+
+                    parlourViewModel.nearbyLoadNextPage(type = null)
+                }
+
+            }
+        })
+
+    }
+    private fun observeUiStates(){
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch{
-                    viewModel.location.collect { address ->
-                        address?.let {
+                    locationViewModel.location.collect { state ->
 
-                            parlourViewModel.setLocation(it.latitude, it.longitude)
-                            parlourViewModel.getNearbyParlours(type = null)
-                            parlourViewModel.trendingParlours(type = null)
-                            parlourViewModel.trendingServices()
-                            parlourViewModel.upcomingBookings()
+
+                        when(state){
+                            is LocationUiState.Idle -> {
+                                binding.shimmerLayout.isVisible = false
+                                binding.mainContent.isVisible = false
+                                binding.layoutFullEmpty.isVisible = false
+                            }
+                            is LocationUiState.Loading -> {
+                                binding.shimmerLayout.isVisible = true
+                                binding.shimmerLayout.startShimmer()
+                                binding.mainContent.isVisible = false
+                                binding.layoutFullEmpty.isVisible = false
+                            }
+                            is LocationUiState.Success -> {
+
+                                val lat = state.address.latitude
+                                val lng = state.address.longitude
+
+                                if (lastLat != lat || lastLng != lng) {
+
+                                    lastLat = lat
+                                    lastLng = lng
+
+                                    parlourViewModel.setLocation(lat, lng)
+
+                                    parlourViewModel.getNearbyParlours(type = null)
+                                    parlourViewModel.trendingParlours(type = null)
+//                                    parlourViewModel.trendingServices()
+//                                    parlourViewModel.upcomingBookings()
+                                }
+                            }
+                            is LocationUiState.Error -> {
+                                binding.shimmerLayout.isVisible = false
+                                binding.shimmerLayout.stopShimmer()
+                                binding.mainContent.isVisible = false
+                                binding.layoutFullEmpty.isVisible = true
+                                binding.btnRetry.isVisible = false
+                                binding.btnChangeLocation.isVisible = false
+                                binding.tvEmptyTitle.text = "Location unavailable 📍"
+                                binding.imgEmpty.setImageResource(R.drawable.img_loc)
+                                binding.tvEmptySubtitle.text =
+                                    "We couldn't access your location.\n" +
+                                            "Please retry from the top location bar."
+                            }
+
+
                         }
                     }
                 }
@@ -192,17 +263,17 @@ class AllParlourFragment : Fragment() {
                         when (state) {
 
                             is ParlourState.Loading -> {
-                                binding.tvNearbyViewAll.isInvisible = true
-                                binding.tvNearbyViewAll.isClickable = false
+
                                 binding.loaderNearby.isVisible = true
                             }
 
                             is ParlourState.Success -> {
+                                binding.mainContent.isVisible = true
 
-                                binding.tvNearbyViewAll.isVisible = true
-                                binding.tvNearbyViewAll.isClickable = true
+                                binding.shimmerLayout.stopShimmer()
+                                binding.shimmerLayout.isVisible = false
+
                                 binding.loaderNearby.isVisible = false
-
                                 binding.layoutNearbySection.isVisible = state.data.isNotEmpty()
 
                                 if (state.data.isEmpty()) {
@@ -216,11 +287,19 @@ class AllParlourFragment : Fragment() {
 
                             is ParlourState.Error -> {
 
-                                binding.tvNearbyViewAll.isVisible = true
-                                binding.tvNearbyViewAll.isClickable = true
+                                binding.shimmerLayout.stopShimmer()
+                                binding.shimmerLayout.isVisible = false
                                 binding.loaderNearby.isVisible = false
+                                binding.layoutNearbySection.isVisible = false
+                                binding.mainContent.isVisible = false
+                                binding.layoutFullEmpty.isVisible = true
+                                binding.btnRetry.isVisible = true
+                                binding.btnChangeLocation.isVisible = true
+                                binding.tvEmptyTitle.text = "Unable to load parlours \uD83D\uDE14"
+                                binding.imgEmpty.setImageResource(R.drawable.ic_oops)
+                                binding.tvEmptySubtitle.text =
+                                    "Something went wrong while loading nearby parlours.\nPlease retry or change your location."
 
-                                Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                             }
 
                             else -> Unit
@@ -232,21 +311,16 @@ class AllParlourFragment : Fragment() {
                     parlourViewModel.trendingParlourState.collect {state ->
                         when (state){
                             is ParlourState.Loading -> {
-                                binding.tvTrendingPViewAll.isInvisible = true
-                                binding.tvTrendingPViewAll.isClickable = false
+                                binding.layoutTrendingParloursSection.isVisible = true
                                 binding.loaderTrendingParlour.isVisible = true
                             }
                             is ParlourState.Success ->{
-                                //hideLoader()
-                                binding.tvTrendingPViewAll.isVisible = true
-                                binding.tvTrendingPViewAll.isClickable = true
                                 binding.loaderTrendingParlour.isVisible = false
                                 binding.layoutTrendingParloursSection.isVisible = state.data.isNotEmpty()
                                 trendingAdapter.submitList(state.data)
                             }
                             is ParlourState.Error->{
-                                binding.tvTrendingPViewAll.isVisible = true
-                                binding.tvTrendingPViewAll.isClickable = true
+                                binding.layoutTrendingParloursSection.isVisible = false
                                 binding.loaderTrendingParlour.isVisible = false
                                 Toast.makeText(requireContext(),state.message, Toast.LENGTH_SHORT).show()
                             }
@@ -259,22 +333,18 @@ class AllParlourFragment : Fragment() {
                     parlourViewModel.trendingServiceState.collect {state->
                         when(state){
                             is TrendingServiceState.Loading -> {
-                                binding.tvTrendingSViewAll.isInvisible = true
-                                binding.tvTrendingSViewAll.isClickable = false
+                                binding.layoutTrendingServicesSection.isVisible = true
                                 binding.loaderTrendingService.isVisible = true
 
                             }
                             is TrendingServiceState.Success -> {
 
-                                binding.tvTrendingSViewAll.isVisible = true
-                                binding.tvTrendingSViewAll.isClickable = true
                                 binding.loaderTrendingService.isVisible = false
                                 binding.layoutTrendingServicesSection.isVisible = state.data.isNotEmpty()
                                 trendingServiceAdapter.submitList(state.data)
                             }
                             is TrendingServiceState.Error -> {
-                                binding.tvTrendingSViewAll.isVisible = true
-                                binding.tvTrendingSViewAll.isClickable = true
+                                binding.layoutTrendingServicesSection.isVisible = false
                                 binding.loaderTrendingService.isVisible = false
                                 Toast.makeText(requireContext(),state.message, Toast.LENGTH_SHORT).show()
 
@@ -287,22 +357,19 @@ class AllParlourFragment : Fragment() {
                     parlourViewModel.bookingState.collect { state->
                         when(state){
                             is BookingState.Loading -> {
-                                binding.tvUpcomingBookingsViewAll.isInvisible = true
-                                binding.tvUpcomingBookingsViewAll.isClickable = false
+                                binding.layoutBookingsSection.isVisible = true
                                 binding.loaderUpcomingBooking.isVisible = true
                             }
                             is BookingState.Success -> {
 
-                                binding.tvUpcomingBookingsViewAll.isVisible = true
-                                binding.tvUpcomingBookingsViewAll.isClickable = true
                                 binding.loaderUpcomingBooking.isVisible = false
                                 binding.layoutBookingsSection.isVisible = state.data.isNotEmpty()
                                 upcomingBookingAdapter.submitList(state.data)
                             }
                             is BookingState.Error -> {
 
-                                binding.tvUpcomingBookingsViewAll.isVisible = true
-                                binding.tvUpcomingBookingsViewAll.isClickable = true
+                                binding.layoutBookingsSection.isVisible = false
+
                                 binding.loaderUpcomingBooking.isVisible = false
                                 Toast.makeText(requireContext(),state.message, Toast.LENGTH_SHORT).show()
 
@@ -312,24 +379,6 @@ class AllParlourFragment : Fragment() {
                 }
             }
         }
-
-
-        binding.rvNearbyParlours.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-
-                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                val totalItemCount = layoutManager.itemCount
-                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
-                if (lastVisibleItem >= totalItemCount - 2) {
-
-                    parlourViewModel.nearbyLoadNextPage(type = null)
-                }
-
-            }
-        })
-
     }
     private fun showFullEmpty() {
         binding.mainContent.isVisible = false

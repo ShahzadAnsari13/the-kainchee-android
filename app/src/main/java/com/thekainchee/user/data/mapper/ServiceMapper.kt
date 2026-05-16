@@ -20,6 +20,7 @@ fun ServiceItemDto.toUI() : ServiceUiModel{
         price = this.price,
         duration = this.durationMinutes,
         description = this.description,
-        isAvailable = this.isAvailable
+        isAvailable = this.isAvailable,
+        image = this.image
     )
 }

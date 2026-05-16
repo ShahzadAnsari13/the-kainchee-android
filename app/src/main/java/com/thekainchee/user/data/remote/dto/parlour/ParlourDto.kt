@@ -4,7 +4,7 @@ data class ParlourDto(
     val _id: String,
     val name: String,
     val images: List<String>?,
-    val rating: Double,
+    val rating: RatingDto,
     val distance: Double,
     val type: String
 )

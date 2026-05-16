@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/auth_nav_graph"
+    app:startDestination="@id/requestOtpFragment">
+    <fragment android:id="@+id/requestOtpFragment"
+        android:name="com.thekainchee.user.presentation.auth.fragment.RequestOtpFragment">
+
+        <action android:id="@+id/action_requestOtpFragment_to_verifyOtpFragment"
+            app:destination="@id/verifyOtpFragment"/>
+    </fragment>
+
+
+    <fragment android:id="@+id/verifyOtpFragment"
+        android:name="com.thekainchee.user.presentation.auth.fragment.VerifyOtpFragment">
+        <argument android:name="countryCode"
+            app:argType="string"/>
+        <argument android:name="phone"
+            app:argType="string"/>
+
+
+    </fragment>
+
+</navigation>

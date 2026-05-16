@@ -18,10 +18,6 @@ class AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        if(savedInstanceState==null){
-            supportFragmentManager.beginTransaction()
-                .replace(binding.fragmentContainer.id, RequestOtpFragment())
-                .commit()
-        }
+
     }
 }
