@@ -100,6 +100,10 @@ class BeautyParlourFragment : Fragment() {
         )
         binding.btnRetry.setOnClickListener {
             hideFullEmpty()
+
+            binding.mainContent.isVisible = false
+            binding.shimmerLayoutVerticalParlour.isVisible = true
+            binding.shimmerLayoutVerticalParlour.startShimmer()
             parlourViewModel.getNearbyParlours(type = "BEAUTY", forceRefresh = true)
             parlourViewModel.trendingParlours(type = "BEAUTY")
         }

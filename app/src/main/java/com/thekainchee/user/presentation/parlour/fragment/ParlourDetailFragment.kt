@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.ui.graphics.BlendMode.Companion.Color
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -16,7 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.databinding.FragmentParlourDetailBinding
 import com.thekainchee.user.presentation.parlour.ParlourActivity
 import com.thekainchee.user.presentation.service.adapter.CategoryAdapter
@@ -48,6 +46,7 @@ class ParlourDetailFragment : Fragment() {
     private var distance: String? = null
     private var latitude: String? = null
     private var longitude: String? = null
+    private var isOpened = false
     private val parlourDetailedViewModel : ParlourDetailViewModel by viewModels()
 
     private val serviceViewModel : ServiceViewModel by viewModels()
@@ -89,6 +88,10 @@ class ParlourDetailFragment : Fragment() {
             }
 
         }
+        observeParlourDetails()
+    }
+
+    private fun observeParlourDetails() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 launch{
@@ -124,6 +127,8 @@ class ParlourDetailFragment : Fragment() {
                                 } else {
                                     "${data.type} Parlour • ${data.workersCount} professionals • Hygienic services • Open ${data.openTime} - ${data.closeTime}"
                                 }
+                                isOpened = data.isOpenNow
+                                binding.lottieClosedOverlay.isVisible = !data.isOpenNow
                                 binding.tvTiming.text = "🕒 ${data.openTime} - ${data.closeTime}"
                                 val days = listOf("SUN","MON","TUE","WED","THU","FRI","SAT")
                                 val today = days[Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1]
@@ -137,6 +142,7 @@ class ParlourDetailFragment : Fragment() {
                                         }
                                         "Closed • $days"
                                     }
+
                                     else -> {
                                         ""
                                     }
@@ -229,7 +235,6 @@ class ParlourDetailFragment : Fragment() {
         }
     }
 
-
     // CATEGORY GRID
     private fun setupCategories(categories: List<ServiceCategory>) {
 
@@ -239,15 +244,26 @@ class ParlourDetailFragment : Fragment() {
         // TEMP DATA (API se replace karna baad me)
 
 
+
         serviceCategoryAdapter = CategoryAdapter(categories) { category ->
             val parlourId = id ?: return@CategoryAdapter
-            val action =
-                ParlourDetailFragmentDirections.actionParlourDetailedFragmentToServiceListFragment(
-                    parlourId = parlourId,
-                    categoryId = category.id,
-                    categoryName = category.name
-                )
-            findNavController().navigate(action)
+
+            if(isOpened){
+                val action =
+                    ParlourDetailFragmentDirections.actionParlourDetailedFragmentToServiceListFragment(
+                        parlourId = parlourId,
+                        categoryId = category.id,
+                        categoryName = category.name
+                    )
+                findNavController().navigate(action)
+            }else{
+                Snackbar.make(
+                    binding.root,
+                    "Parlour is currently closed",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }
+
         }
 
         binding.rvCategories.adapter = serviceCategoryAdapter

@@ -34,6 +34,7 @@ import com.thekainchee.user.presentation.dashboard.home.viewModel.LocationViewMo
 import com.thekainchee.user.presentation.dashboard.home.viewModel.ParlourViewModel
 import com.thekainchee.user.presentation.location.LocationActivity
 import com.thekainchee.user.presentation.parlour.ParlourActivity
+import com.thekainchee.user.utils.NetworkUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlin.getValue
@@ -61,6 +62,10 @@ class AllParlourFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if(!NetworkUtils.isInternetAvailable(requireContext())){
+            binding.mainContent.visibility = View.GONE
+            binding.layoutNoInternet.visibility = View.VISIBLE
+        }
         binding.rvNearbyParlours.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.rvTrendingParlours.layoutManager =
@@ -70,11 +75,33 @@ class AllParlourFragment : Fragment() {
         binding.rvUpcomingBookings.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.btnRetry.setOnClickListener {
-            hideFullEmpty()
-            parlourViewModel.getNearbyParlours(type = null, forceRefresh = true)
-            parlourViewModel.trendingParlours(type = null)
-            parlourViewModel.trendingServices()
-            parlourViewModel.upcomingBookings()
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                binding.layoutFullEmpty.visibility = View.GONE
+                binding.layoutNoInternet.visibility = View.VISIBLE
+            }else{
+                hideFullEmpty()
+                binding.mainContent.isVisible = false
+                binding.shimmerLayout.isVisible = true
+                binding.shimmerLayout.startShimmer()
+                parlourViewModel.getNearbyParlours(type = null, forceRefresh = true)
+                parlourViewModel.trendingParlours(type = null)
+                parlourViewModel.trendingServices()
+                parlourViewModel.upcomingBookings()
+            }
+
+        }
+
+        binding.btnTryAgain.setOnClickListener {
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                binding.shimmerLayout.stopShimmer()
+                binding.shimmerLayout.visibility = View.GONE
+                binding.layoutNoInternet.visibility = View.VISIBLE
+            }else{
+                binding.layoutNoInternet.visibility = View.GONE
+                binding.shimmerLayout.visibility = View.VISIBLE
+                binding.shimmerLayout.startShimmer()
+
+            }
         }
 
         binding.btnChangeLocation.setOnClickListener {
@@ -82,6 +109,7 @@ class AllParlourFragment : Fragment() {
             startActivity(intent)
         }
         nearbyAdapter = ParlourHorizontalAdapter ( onItemClick = { item ->
+
             val intent = Intent(requireContext(), ParlourActivity::class.java)
             intent.putExtra("parlourId", item.id)
             intent.putExtra("distance", item.distance.toString())
@@ -192,7 +220,7 @@ class AllParlourFragment : Fragment() {
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
-                if (dy >0 && lastVisibleItem >= totalItemCount - 2) {
+                if (dx >0 && lastVisibleItem >= totalItemCount - 2) {
 
                     parlourViewModel.nearbyLoadNextPage(type = null)
                 }
@@ -222,20 +250,28 @@ class AllParlourFragment : Fragment() {
                             }
                             is LocationUiState.Success -> {
 
-                                val lat = state.address.latitude
-                                val lng = state.address.longitude
+                                if(!NetworkUtils.isInternetAvailable(requireContext())){
+                                    binding.shimmerLayout.stopShimmer()
+                                    binding.shimmerLayout.visibility = View.GONE
+                                    binding.layoutNoInternet.isVisible = true
+                                    return@collect
+                                }else{
+                                    val lat = state.address.latitude
+                                    val lng = state.address.longitude
 
-                                if (lastLat != lat || lastLng != lng) {
+                                    if (lastLat != lat || lastLng != lng) {
 
-                                    lastLat = lat
-                                    lastLng = lng
+                                        lastLat = lat
+                                        lastLng = lng
 
-                                    parlourViewModel.setLocation(lat, lng)
+                                        parlourViewModel.setLocation(lat, lng)
 
-                                    parlourViewModel.getNearbyParlours(type = null)
-                                    parlourViewModel.trendingParlours(type = null)
+                                        parlourViewModel.getNearbyParlours(type = null)
+                                        parlourViewModel.trendingParlours(type = null)
 //                                    parlourViewModel.trendingServices()
 //                                    parlourViewModel.upcomingBookings()
+                                    }
+
                                 }
                             }
                             is LocationUiState.Error -> {

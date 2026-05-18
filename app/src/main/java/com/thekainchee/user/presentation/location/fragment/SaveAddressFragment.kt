@@ -14,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.thekainchee.user.R
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.databinding.FragmentSaveAddressBinding
 import com.thekainchee.user.domain.model.AddressMode
 import com.thekainchee.user.domain.model.UserAddress
@@ -23,6 +24,7 @@ import com.thekainchee.user.presentation.location.state.MapState
 import com.thekainchee.user.presentation.location.viewmodel.AddressSharedViewModel
 import com.thekainchee.user.presentation.location.viewmodel.MapViewModel
 import com.thekainchee.user.presentation.location.viewmodel.SaveUpdateAddressViewModel
+import com.thekainchee.user.utils.NetworkUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlin.getValue
@@ -69,75 +71,121 @@ class SaveAddressFragment : Fragment() {
                 binding.chipHome.isChecked = true
             }
         }
-        if (selectedAddress == null) {
-            viewModel.getAddressFromLatLng(lat, lng)
-            binding.locationCons.animate()
-                .alpha(0f)
-                .setDuration(200)
-                .withEndAction {
-                    binding.locationCons.visibility = View.GONE
+        if(!NetworkUtils.isInternetAvailable(requireContext())){
+            binding.layoutNoInternet.visibility = View.VISIBLE
+            binding.mainContent.visibility = View.GONE
+        }else{
+            binding.layoutNoInternet.visibility = View.GONE
+            binding.mainContent.visibility = View.VISIBLE
+
+            if (selectedAddress == null) {
+                viewModel.getAddressFromLatLng(lat, lng)
+                binding.locationCons.animate()
+                    .alpha(0f)
+                    .setDuration(200)
+                    .withEndAction {
+                        binding.locationCons.visibility = View.GONE
+                    }
+            }
+        }
+
+        binding.btnTryAgain.setOnClickListener {
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                Snackbar.make(binding.root,"No Internet Connection",Snackbar.LENGTH_SHORT).show()
+            }
+            else{
+                binding.layoutNoInternet.visibility = View.GONE
+                binding.mainContent.visibility = View.VISIBLE
+                if (selectedAddress == null) {
+                    viewModel.getAddressFromLatLng(lat, lng)
+                    binding.locationCons.animate()
+                        .alpha(0f)
+                        .setDuration(200)
+                        .withEndAction {
+                            binding.locationCons.visibility = View.GONE
+                        }
                 }
+            }
         }
 
         binding.btnChange.setOnClickListener {
-            findNavController().popBackStack()
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                binding.mainContent.visibility = View.GONE
+                binding.layoutNoInternet.visibility = View.VISIBLE
+            }else{
+                findNavController().popBackStack()
+            }
+
         }
 
 
 
         binding.btnConfirm.setOnClickListener {
-            if (!binding.btnConfirm.isEnabled) return@setOnClickListener
-            val baseAddress = selectedAddress
-            if (baseAddress == null) {
-                Toast.makeText(requireContext(), "Address not loaded yet", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            val label = when (binding.chipGroup.checkedChipId) {
-                R.id.chipHome -> "Home"
-                R.id.chipWork -> "Work"
-                R.id.chipOther -> "Other"
-                else -> "Home" // fallback (safe)
-            }
-            val flat = binding.etFlat.text.toString().trim()
-            val street = binding.etStreet.text.toString().trim()
-            val landmark = binding.etLandmark.text.toString().trim()
-            val details = listOf(flat, street)
-                .filter { it.isNotBlank() }
-                .joinToString(", ")
-            val finalDetails = details.ifBlank {
-                baseAddress.details
-            }
-            val finalLandmark = landmark.ifBlank {
-                baseAddress.landmark
-            }
-            val userAddress = UserAddress(
-                id = null,
-                label = label,
-                latitude = baseAddress.latitude,
-                longitude = baseAddress.longitude,
 
-                country = baseAddress.country,
-                state = baseAddress.state,
-                district = baseAddress.district,
-                city = baseAddress.city,
-                pincode = baseAddress.pincode,
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                binding.mainContent.visibility = View.GONE
+                binding.layoutNoInternet.visibility = View.VISIBLE
+                Snackbar.make(binding.root,"No Internet Connection",Snackbar.LENGTH_SHORT).show()
+            }else{
+                binding.layoutNoInternet.visibility = View.GONE
+                binding.mainContent.visibility = View.VISIBLE
+                if (!binding.btnConfirm.isEnabled) return@setOnClickListener
+                binding.mainContent.visibility = View.VISIBLE
+                binding.layoutNoInternet.visibility = View.GONE
 
-                landmark = finalLandmark,
-                details = finalDetails,
+                val baseAddress = selectedAddress
+                if (baseAddress == null) {
+                    Toast.makeText(requireContext(), "Address not loaded yet", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                val label = when (binding.chipGroup.checkedChipId) {
+                    R.id.chipHome -> "Home"
+                    R.id.chipWork -> "Work"
+                    R.id.chipOther -> "Other"
+                    else -> "Home" // fallback (safe)
+                }
+                val flat = binding.etFlat.text.toString().trim()
+                val street = binding.etStreet.text.toString().trim()
+                val landmark = binding.etLandmark.text.toString().trim()
+                val details = listOf(flat, street)
+                    .filter { it.isNotBlank() }
+                    .joinToString(", ")
+                val finalDetails = details.ifBlank {
+                    baseAddress.details
+                }
+                val finalLandmark = landmark.ifBlank {
+                    baseAddress.landmark
+                }
+                val userAddress = UserAddress(
+                    id = null,
+                    label = label,
+                    latitude = baseAddress.latitude,
+                    longitude = baseAddress.longitude,
 
-                isDefault = when (addressSharedViewModel.mode) {
-                    AddressMode.ADD -> true
-                    AddressMode.EDIT -> addressSharedViewModel.selectedAddress?.isSelected ?: true
-                }
-            )
-            when(addressSharedViewModel.mode){
-                 AddressMode.ADD -> {
-                     saveUpdateAddressViewModel.saveAddress(userAddress)
-                }
-                AddressMode.EDIT ->{
-                    saveUpdateAddressViewModel.updateAddress(addressSharedViewModel.selectedAddress?.id,userAddress)
+                    country = baseAddress.country,
+                    state = baseAddress.state,
+                    district = baseAddress.district,
+                    city = baseAddress.city,
+                    pincode = baseAddress.pincode,
+
+                    landmark = finalLandmark,
+                    details = finalDetails,
+
+                    isDefault = when (addressSharedViewModel.mode) {
+                        AddressMode.ADD -> true
+                        AddressMode.EDIT -> addressSharedViewModel.selectedAddress?.isSelected ?: true
+                    }
+                )
+                when(addressSharedViewModel.mode){
+                    AddressMode.ADD -> {
+                        saveUpdateAddressViewModel.saveAddress(userAddress)
+                    }
+                    AddressMode.EDIT ->{
+                        saveUpdateAddressViewModel.updateAddress(addressSharedViewModel.selectedAddress?.id,userAddress)
+                    }
                 }
             }
+
 
         }
         viewLifecycleOwner.lifecycleScope.launch {
@@ -167,81 +215,85 @@ class SaveAddressFragment : Fragment() {
         }
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                saveUpdateAddressViewModel.event.collect { event ->
-                    when (event) {
+                launch {
+                    saveUpdateAddressViewModel.event.collect { event ->
+                        when (event) {
 
-                        is AddressEvent.ShowMessage -> {
-                            Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
+                            is AddressEvent.ShowMessage -> {
+                                Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+
+                            is AddressEvent.NavigateBack -> {
+                                Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT)
+                                    .show()
+
+                                addressSharedViewModel.mode = AddressMode.ADD
+                                addressSharedViewModel.selectedAddress = null
+
+                                findNavController().popBackStack(R.id.locationListFragment, false)
+                            }
                         }
+                    }
+                }
 
-                        is AddressEvent.NavigateBack -> {
-                            Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
+                launch{
+                    viewModel.state.collect { state ->
 
-                            addressSharedViewModel.mode = AddressMode.ADD
-                            addressSharedViewModel.selectedAddress = null
+                        when (state) {
 
-                            findNavController().popBackStack(R.id.locationListFragment, false)
+                            is MapState.Loading -> {
+                                binding.locationCons.animate()
+                                    .alpha(0f)
+                                    .setDuration(200)
+                                    .withEndAction {
+                                        binding.locationCons.visibility = View.GONE
+                                    }
+                            }
+
+                            is MapState.AddressReceived -> {
+
+                                binding.locationCons.visibility = View.VISIBLE
+                                binding.locationCons.alpha = 0f
+                                binding.locationCons.animate().alpha(1f).setDuration(200).start()
+                                val address = state.address
+
+                                selectedAddress = address
+
+                                binding.tvhead.text =
+                                    if (address.details.isNullOrBlank()) {
+                                        address.city ?: ""
+                                    } else {
+                                        address.details ?: ""
+                                    }
+
+                                val fullAddress = listOf(
+                                    address.details,
+                                    address.city,
+                                    address.state,
+                                    address.pincode
+                                )
+                                    .map { it?.trim() }
+                                    .filter { !it.isNullOrBlank() }
+                                    .distinct()
+                                    .joinToString(", ")
+
+                                binding.tvfullAdd.text = fullAddress
+
+                                binding.etLandmark.setText(address.landmark ?: "")
+                            }
+
+                            is MapState.Error -> {
+                                Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                            }
+
+                            else -> Unit
                         }
                     }
                 }
             }
         }
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state.collect { state ->
 
-                    when (state) {
-
-                        is MapState.Loading -> {
-                            binding.locationCons.animate()
-                                .alpha(0f)
-                                .setDuration(200)
-                                .withEndAction {
-                                    binding.locationCons.visibility = View.GONE
-                                }
-                        }
-
-                        is MapState.AddressReceived -> {
-
-                            binding.locationCons.visibility = View.VISIBLE
-                            binding.locationCons.alpha = 0f
-                            binding.locationCons.animate().alpha(1f).setDuration(200).start()
-                            val address = state.address
-
-                            selectedAddress = address
-
-                            binding.tvhead.text =
-                                if (address.details.isNullOrBlank()) {
-                                    address.city ?: ""
-                                } else {
-                                    address.details ?: ""
-                                }
-
-                            val fullAddress = listOf(
-                                address.details,
-                                address.city,
-                                address.state,
-                                address.pincode
-                            )
-                                .map { it?.trim() }
-                                .filter { !it.isNullOrBlank() }
-                                .distinct()
-                                .joinToString(", ")
-
-                            binding.tvfullAdd.text = fullAddress
-
-                            binding.etLandmark.setText(address.landmark ?: "")
-                        }
-
-                        is MapState.Error -> {
-                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
-                        }
-
-                        else -> Unit
-                    }
-                }
-            }
-        }
     }
 
     override fun onDestroyView() {

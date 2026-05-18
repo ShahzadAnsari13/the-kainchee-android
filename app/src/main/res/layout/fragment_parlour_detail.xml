@@ -80,13 +80,12 @@
         android:layout_height="match_parent"
         android:visibility="gone"
         android:fillViewport="true">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- IMAGE -->
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
@@ -123,7 +122,7 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- HEADER -->
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -329,5 +328,25 @@
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieClosedOverlay"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center"
 
+        android:visibility="gone"
+
+        android:clickable="false"
+        android:focusable="false"
+
+        android:alpha="0.95"
+
+        android:scaleX="1.08"
+        android:scaleY="1.08"
+
+        android:translationY="-20dp"
+
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/closed_animation"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

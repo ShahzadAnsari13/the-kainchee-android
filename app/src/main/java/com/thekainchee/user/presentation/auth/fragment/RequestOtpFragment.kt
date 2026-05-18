@@ -18,12 +18,13 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentRequestOtpBinding
 import com.thekainchee.user.presentation.auth.state.AuthState
 import com.thekainchee.user.presentation.auth.viewModel.AuthViewModel
-import com.thekainchee.user.presentation.auth.fragment.VerifyOtpFragment
 import com.thekainchee.user.presentation.common.ui.countrypicker.CountryPickerBottomSheet
+import com.thekainchee.user.utils.NetworkUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -45,20 +46,28 @@ class RequestOtpFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.btnRequestOtp.isEnabled = false
-        binding.btnRequestOtp.alpha = 0.5f
-        player = ExoPlayer.Builder(requireContext()).build()
+        if(!NetworkUtils.isInternetAvailable(requireContext())){
+            binding.layoutNoInternet.isVisible = true
+            binding.mainContent.isVisible = false
+        }else{
+            setupVideoPlayer()
+        }
 
-        binding.playerView.player = player
-
-        val mediaItem = MediaItem.fromUri(
-            Uri.parse("android.resource://${requireContext().packageName}/${R.raw.salon_bg}")
-        )
-
-        player?.setMediaItem(mediaItem)
-        player?.repeatMode = Player.REPEAT_MODE_ONE
-        player?.prepare()
-        player?.playWhenReady = true
+        binding.btnTryAgain.setOnClickListener {
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                Snackbar.make(
+                    binding.root,
+                    "No Internet Connection",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }else{
+                binding.layoutNoInternet.isVisible = false
+                binding.mainContent.isVisible = true
+                if (player == null) {
+                    setupVideoPlayer()
+                }
+            }
+        }
         binding.etPhone.addTextChangedListener {
             val phone = it.toString().trim()
             binding.btnRequestOtp.isEnabled =   phoneRegex.matches(phone)
@@ -81,17 +90,38 @@ class RequestOtpFragment : Fragment() {
         }
 
         binding.btnRequestOtp.setOnClickListener {
-            val phone  = binding.etPhone.text.toString()
-            if(!phoneRegex.matches(phone)){
-                showToast("Enter phone number")
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                binding.layoutNoInternet.isVisible = true
+                binding.mainContent.isVisible = false
                 return@setOnClickListener
+            }else{
+                val phone  = binding.etPhone.text.toString()
+                if(!phoneRegex.matches(phone)){
+                    showToast("Enter phone number")
+                    return@setOnClickListener
+                }
+                val countryCode = binding.etCountryCode.text.toString()
+                viewModel.requestOtp(countryCode,phone)
             }
-            val countryCode = binding.etCountryCode.text.toString()
-            viewModel.requestOtp(countryCode,phone)
+
         }
         observeState()
     }
 
+    private fun setupVideoPlayer(){
+        player = ExoPlayer.Builder(requireContext()).build()
+
+        binding.playerView.player = player
+
+        val mediaItem = MediaItem.fromUri(
+            Uri.parse("android.resource://${requireContext().packageName}/${R.raw.salon_bg}")
+        )
+
+        player?.setMediaItem(mediaItem)
+        player?.repeatMode = Player.REPEAT_MODE_ONE
+        player?.prepare()
+        player?.playWhenReady = true
+    }
     private fun observeState(){
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
@@ -173,6 +203,7 @@ class RequestOtpFragment : Fragment() {
         super.onDestroyView()
         binding.playerView.player = null
         player?.release()
+        player = null
         _binding = null
     }
 }

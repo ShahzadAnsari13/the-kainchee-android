@@ -111,6 +111,10 @@ class UnisexParlourFragment : Fragment() {
 //        )
         binding.btnRetry.setOnClickListener {
             hideFullEmpty()
+
+            binding.mainContent.isVisible = false
+            binding.shimmerLayoutVerticalParlour.isVisible = true
+            binding.shimmerLayoutVerticalParlour.startShimmer()
             parlourViewModel.getNearbyParlours(type = "UNISEX", forceRefresh = true)
             parlourViewModel.trendingParlours(type = "UNISEX")
         }
@@ -282,8 +286,7 @@ class UnisexParlourFragment : Fragment() {
                             is ParlourState.Error->{
                                 binding.layoutTrendingParloursSection.isVisible = false
                                 binding.loaderTrendingParlour.isVisible = false
-                                Toast.makeText(requireContext(),state.message, Toast.LENGTH_SHORT).show()
-                            }
+                               }
                             else -> Unit
                         }
                     }

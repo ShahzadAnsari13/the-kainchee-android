@@ -19,15 +19,16 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentMapBinding
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.Places
+import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.domain.model.AddressMode
 import com.thekainchee.user.presentation.location.state.MapState
 import com.thekainchee.user.presentation.location.viewmodel.AddressSharedViewModel
 import com.thekainchee.user.presentation.location.viewmodel.MapViewModel
+import com.thekainchee.user.utils.NetworkUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -59,37 +60,85 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val mapFragment =
-            childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        if(!NetworkUtils.isInternetAvailable(requireContext())){
+            binding.layoutNoInternet.visibility = View.VISIBLE
+            binding.mainContent.visibility = View.GONE
+        }else{
+            val mapFragment =
+                childFragmentManager.findFragmentById(R.id.mapFragment) as? SupportMapFragment
+            mapFragment?.getMapAsync(this)
+        }
+
+        binding.btnTryAgain.setOnClickListener {
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                Snackbar.make(binding.root,"No Internet Connection",Snackbar.LENGTH_SHORT).show()
+            }
+            else{
+                binding.layoutNoInternet.visibility = View.GONE
+                binding.mainContent.visibility = View.VISIBLE
+                if(googleMap == null){
+                    val mapFragment =
+                        childFragmentManager.findFragmentById(R.id.mapFragment) as? SupportMapFragment
+                    mapFragment?.getMapAsync(this)
+                }
+            }
+        }
+
 
         binding.etSearch.setOnClickListener {
-            findNavController().popBackStack()
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                binding.layoutNoInternet.visibility = View.VISIBLE
+                binding.mainContent.visibility = View.GONE
+            }else{
+                findNavController().popBackStack()
+            }
+
         }
 
         binding.btnChange.setOnClickListener {
-            findNavController().popBackStack()
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                binding.layoutNoInternet.visibility = View.VISIBLE
+                binding.mainContent.visibility = View.GONE
+            }else{
+                findNavController().popBackStack()
+            }
+
+
         }
 
         binding.btnCurrentLocation.setOnClickListener {
-            viewModel.fetchUserLocation()
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                binding.layoutNoInternet.visibility = View.VISIBLE
+                binding.mainContent.visibility = View.GONE
+            }else{
+                viewModel.fetchUserLocation()
+            }
+
         }
 
         binding.btnSetLocation.setOnClickListener {
 
-            val currentLatLng = latLng
-            if (currentLatLng == null) {
-                Toast.makeText(requireContext(), "Location not ready", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                binding.layoutNoInternet.visibility = View.VISIBLE
+                binding.mainContent.visibility = View.GONE
+            }else{
+                binding.layoutNoInternet.visibility = View.GONE
+                binding.mainContent.visibility = View.VISIBLE
+                val currentLatLng = latLng
+                if (currentLatLng == null) {
+                    Toast.makeText(requireContext(), "Location not ready", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                val action = MapFragmentDirections
+                    .actionMapFragmentToSaveAddressFragment(
+                        latitude = currentLatLng.latitude.toString(),
+                        longitude = currentLatLng.longitude.toString()
+                    )
+
+                findNavController().navigate(action)
             }
 
-            val action = MapFragmentDirections
-                .actionMapFragmentToSaveAddressFragment(
-                    latitude = currentLatLng.latitude.toString(),
-                    longitude = currentLatLng.longitude.toString()
-                )
-
-            findNavController().navigate(action)
         }
 
         // STATE OBSERVE (FINAL)
@@ -187,7 +236,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             cameraJob?.cancel()
 
             cameraJob = viewLifecycleOwner.lifecycleScope.launch {
-                delay(200)
+                delay(400)
 
                 viewModel.getAddressFromLatLng(
                     centerLatLng.latitude,
@@ -220,6 +269,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         resultLatLng.longitude
                     )
                 }
+            }.addOnFailureListener {
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to fetch location",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
     }
 

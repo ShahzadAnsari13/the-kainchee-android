@@ -2,6 +2,7 @@ package com.thekainchee.user.presentation.dashboard.home.fragment
 
 import android.Manifest
 import android.app.Activity
+import android.app.Notification
 import android.content.Intent
 import android.icu.util.Calendar
 import android.os.Bundle
@@ -17,12 +18,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.unit.Velocity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentHomeBinding
@@ -32,6 +35,7 @@ import com.thekainchee.user.presentation.dashboard.home.adapter.HomeTabsAdapter
 import com.thekainchee.user.presentation.dashboard.home.state.LocationUiState
 import com.thekainchee.user.presentation.location.LocationActivity
 import com.thekainchee.user.utils.LocationUtils
+import com.thekainchee.user.utils.NetworkUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -43,6 +47,8 @@ class HomeFragment : Fragment() {
     private  val locationViewModel : LocationViewModel by activityViewModels()
     private var openedPermissionSettings = false
     private var shouldRefreshLocation = false
+    private var observeLoc = false
+    private var onBackPress = false
     private val locationPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
@@ -91,19 +97,62 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.tvGreeting.text = getGreeting()
-        LocationUtils.checkGpsStatus(
-            requireActivity(),
-            gpsResolutionLauncher
-        ) {
-            LocationUtils.checkLocationPermission(
-                activity = requireActivity(),
-                launcher = locationPermissionLauncher
+
+
+        if(!NetworkUtils.isInternetAvailable(requireContext())){
+            binding.layoutNoInternet.visibility = View.VISIBLE
+            binding.mainContent.visibility = View.GONE
+        }else{
+            LocationUtils.checkGpsStatus(
+                requireActivity(),
+                gpsResolutionLauncher
             ) {
-                locationViewModel.fetchUserLocation()
+                LocationUtils.checkLocationPermission(
+                    activity = requireActivity(),
+                    launcher = locationPermissionLauncher
+                ) {
+                    locationViewModel.fetchUserLocation()
+                }
+            }
+            observeLocation()
+            observeLoc = true
+
+            handleOnBackPressed()
+            onBackPress = true
+        }
+
+        binding.btnTryAgain.setOnClickListener {
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                Snackbar.make(
+                    binding.root,
+                    "No Internet Connection",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+
+            }else{
+                binding.layoutNoInternet.visibility = View.GONE
+                binding.mainContent.visibility = View.VISIBLE
+                LocationUtils.checkGpsStatus(
+                    requireActivity(),
+                    gpsResolutionLauncher
+                ) {
+                    LocationUtils.checkLocationPermission(
+                        activity = requireActivity(),
+                        launcher = locationPermissionLauncher
+                    ) {
+                        locationViewModel.fetchUserLocation()
+                    }
+                }
+                if(!observeLoc){
+                    observeLocation()
+                    observeLoc = true
+                }
+                if(!onBackPress){
+                    handleOnBackPressed()
+                    onBackPress = true
+                }
             }
         }
-        observeLocation()
-        handleOnBackPressed()
 
 
 
@@ -130,7 +179,6 @@ class HomeFragment : Fragment() {
                 locationViewModel.location.collect { state ->
                     when(state){
                         is LocationUiState.Idle ->{
-
                         }
                         is LocationUiState.Loading -> {
                             binding.tvLocation.text = "\uD83D\uDCCD Fetching location..."
@@ -239,21 +287,27 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (openedPermissionSettings) {
+        if(!NetworkUtils.isInternetAvailable(requireContext())){
+            binding.mainContent.visibility = View.GONE
+            binding.layoutNoInternet.visibility = View.VISIBLE
+        }else{
+            if (openedPermissionSettings) {
 
-            openedPermissionSettings = false
+                openedPermissionSettings = false
 
-            LocationUtils.checkLocationPermission(
-                activity = requireActivity(),
-                launcher = locationPermissionLauncher
-            ) {
+                LocationUtils.checkLocationPermission(
+                    activity = requireActivity(),
+                    launcher = locationPermissionLauncher
+                ) {
+                    locationViewModel.fetchUserLocation()
+                }
+            }else if (shouldRefreshLocation) {
+
+                shouldRefreshLocation = false
                 locationViewModel.fetchUserLocation()
             }
-        }else if (shouldRefreshLocation) {
-
-            shouldRefreshLocation = false
-            locationViewModel.fetchUserLocation()
         }
+
     }
 
     private fun handleOnBackPressed(){

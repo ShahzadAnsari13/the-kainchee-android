@@ -116,8 +116,12 @@ dependencies {
     implementation("com.facebook.shimmer:shimmer:0.5.0")
 
 
-    //Dot indicator
+    //Dot indicator for ViewPager
     implementation("com.tbuonomo:dotsindicator:4.2")
+
+
+    //Lottie Animation
+    implementation("com.airbnb.android:lottie:6.4.0")
 }
 
 
