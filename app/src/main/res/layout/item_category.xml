@@ -8,22 +8,37 @@
     android:orientation="vertical"
     android:gravity="center">
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        app:cardCornerRadius="32dp"
-        app:cardElevation="2dp"
-        android:backgroundTint="#F5F5F5">
 
-        <ImageView
-            android:id="@+id/imgCategory"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="12dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_no_data"/>
 
-    </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:cardCornerRadius="32dp"
+            app:cardElevation="2dp">
+
+            <ImageView
+                android:id="@+id/imgCategory"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_no_data"/>
+            <View
+                android:id="@+id/viewOverlay"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/bg_overlay_circle"
+                android:visibility="gone"/>
+            <ProgressBar
+                android:id="@+id/progressStatusCheck"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:visibility="gone"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/primaryColor"/>
+        </com.google.android.material.card.MaterialCardView>
+
 
     <TextView
         android:id="@+id/tvCategory"

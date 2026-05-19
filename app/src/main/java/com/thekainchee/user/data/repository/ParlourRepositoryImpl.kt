@@ -121,6 +121,22 @@ class ParlourRepositoryImpl @Inject constructor( private val api: ParlourApi) : 
         }
     }
 
+    override suspend fun checkParlourStatus(parlourId: String): Result<Boolean> {
+        return try{
+            val response = api.checkParlourStatus(parlourId)
+            val dto = response.body()
+            if(response.isSuccessful && dto != null){
+
+                Result.success(dto.isOpenNow)
+            }else{
+                val error = ErrorUtils.parseError(response.errorBody()?.string())
+                Result.failure(Exception(error.message ?: "Failed to check parlour status"))
+            }
+        }
+        catch (e : Exception){
+            Result.failure(e)
+        }
+    }
 
 
 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -21,9 +22,11 @@ import com.thekainchee.user.presentation.service.adapter.CategoryAdapter
 import com.thekainchee.user.presentation.parlour.adapter.ImageSliderAdapter
 import com.thekainchee.user.presentation.service.model.ServiceCategory
 import com.thekainchee.user.presentation.parlour.state.ParlourDetailedState
+import com.thekainchee.user.presentation.parlour.state.ParlourEvent
 import com.thekainchee.user.presentation.service.state.ServiceCategoryState
 import com.thekainchee.user.presentation.parlour.viewModel.ParlourDetailViewModel
 import com.thekainchee.user.presentation.service.viewModel.ServiceViewModel
+import com.thekainchee.user.utils.NetworkUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -48,8 +51,9 @@ class ParlourDetailFragment : Fragment() {
     private var longitude: String? = null
     private var isOpened = false
     private val parlourDetailedViewModel : ParlourDetailViewModel by viewModels()
-
+    private var selectedCategory: ServiceCategory? = null
     private val serviceViewModel : ServiceViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -64,29 +68,64 @@ class ParlourDetailFragment : Fragment() {
         id = args.parlourId
         distance = args.distance
         setupViewPagerCallback()
-        id?.let {
-            parlourDetailedViewModel.getParlourDetails(it)
-            serviceViewModel.getServiceCategories(it)
-        }
-        binding.btnRetry.setOnClickListener {
+        if(!NetworkUtils.isInternetAvailable(requireContext())){
+            binding.mainContent.visibility = View.GONE
+            binding.layoutNoInternet.visibility = View.VISIBLE
+        }else{
             id?.let {
                 parlourDetailedViewModel.getParlourDetails(it)
                 serviceViewModel.getServiceCategories(it)
             }
         }
-        binding.tvRating.setOnClickListener {
-            latitude?.let {lat ->
-                longitude?.let {lng ->
-                    val action =
-                        ParlourDetailFragmentDirections
-                            .actionParlourDetailedFragmentToParlourMap(
-                                latitude = lat,
-                                longitude = lng
-                            )
-                    findNavController().navigate(action)
+
+        binding.btnRetry.setOnClickListener {
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                binding.errorLayout.visibility = View.GONE
+                binding.layoutNoInternet.visibility = View.VISIBLE
+            }else{
+                id?.let {
+                    parlourDetailedViewModel.getParlourDetails(it)
+                    serviceViewModel.getServiceCategories(it)
                 }
             }
+        }
 
+        binding.btnTryAgain.setOnClickListener {
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                Snackbar.make(
+                    binding.root,
+                    "No Internet Connection",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }else{
+                id?.let {
+                    parlourDetailedViewModel.getParlourDetails(it)
+                    serviceViewModel.getServiceCategories(it)
+                }
+            }
+        }
+        binding.tvRatingAndMap.setOnClickListener {
+
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                Snackbar.make(
+                    binding.root,
+                    "No Internet Connection",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }else {
+                latitude?.let { lat ->
+                    longitude?.let { lng ->
+                        val action =
+                            ParlourDetailFragmentDirections
+                                .actionParlourDetailedFragmentToParlourMap(
+                                    latitude = lat,
+                                    longitude = lng
+                                )
+                        findNavController().navigate(action)
+                    }
+                }
+            }
         }
         observeParlourDetails()
     }
@@ -104,6 +143,7 @@ class ParlourDetailFragment : Fragment() {
                                 binding.shimmerLayout.visibility = View.VISIBLE
                                 binding.mainContent.visibility = View.GONE
                                 binding.errorLayout.visibility = View.GONE
+                                binding.layoutNoInternet.visibility = View.GONE
 
                                 binding.shimmerLayout.startShimmer()
                             }
@@ -113,6 +153,8 @@ class ParlourDetailFragment : Fragment() {
 
                                 binding.mainContent.visibility = View.VISIBLE
                                 binding.errorLayout.visibility = View.GONE
+
+                                binding.layoutNoInternet.visibility = View.GONE
                                 val data = state.data
                                 latitude = data.location.latitude.toString()
                                 longitude = data.location.longitude.toString()
@@ -121,14 +163,15 @@ class ParlourDetailFragment : Fragment() {
                                     .setToolbarTitle(data.name ?: "Parlour Details")
                                 binding.tvName.text = data.name
                                 val safeDistance = distance ?: "--"
-                                binding.tvRating.text = "⭐ ${"%.1f".format(data.ratingAverage)} (${data.ratingCount}) • 📍 $safeDistance km"
+                                binding.tvRatingAndMap.text = "⭐ ${"%.1f".format(data.ratingAverage)} (${data.ratingCount}) • 📍 $safeDistance km"
                                 binding.tvDescription.text = if (!data.description.isNullOrBlank()) {
                                     data.description
                                 } else {
                                     "${data.type} Parlour • ${data.workersCount} professionals • Hygienic services • Open ${data.openTime} - ${data.closeTime}"
                                 }
                                 isOpened = data.isOpenNow
-                                binding.lottieClosedOverlay.isVisible = !data.isOpenNow
+                                binding.laIsOpen.isVisible = isOpened
+                                binding.lottieClosedOverlay.isVisible = !isOpened
                                 binding.tvTiming.text = "🕒 ${data.openTime} - ${data.closeTime}"
                                 val days = listOf("SUN","MON","TUE","WED","THU","FRI","SAT")
                                 val today = days[Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1]
@@ -187,7 +230,7 @@ class ParlourDetailFragment : Fragment() {
                             is ParlourDetailedState.Error -> {
                                 binding.shimmerLayout.stopShimmer()
                                 binding.shimmerLayout.visibility = View.GONE
-
+                                binding.layoutNoInternet.visibility = View.GONE
                                 binding.mainContent.visibility = View.GONE
                                 binding.errorLayout.visibility = View.VISIBLE
                             }
@@ -205,12 +248,14 @@ class ParlourDetailFragment : Fragment() {
                                 binding.shimmerCategory.visibility = View.VISIBLE
                                 binding.rvCategories.visibility = View.GONE
                                 binding.emptyLayout.visibility = View.GONE
+                                binding.layoutNoInternet.visibility= View.GONE
                                 binding.shimmerCategory.startShimmer()
                             }
                             is ServiceCategoryState.Success ->{
                                 binding.shimmerCategory.visibility = View.GONE
                                 binding.rvCategories.visibility = View.VISIBLE
                                 binding.emptyLayout.visibility = View.GONE
+                                binding.layoutNoInternet.visibility = View.GONE
                                 binding.shimmerCategory.stopShimmer()
                                 setupCategories(state.data)
                             }
@@ -223,10 +268,50 @@ class ParlourDetailFragment : Fragment() {
                             is ServiceCategoryState.Error->{
                                 binding.shimmerCategory.visibility = View.GONE
                                 binding.rvCategories.visibility = View.GONE
+                                binding.layoutNoInternet.visibility= View.GONE
                                 binding.emptyLayout.visibility = View.VISIBLE
                                 binding.shimmerCategory.stopShimmer()
                             }
 
+                        }
+                    }
+                }
+                launch {
+                    parlourDetailedViewModel.event.collect{
+                        when(it){
+                            is ParlourEvent.NavigateToServices -> {
+                                val category =
+                                    selectedCategory ?: return@collect
+
+                                val action =
+                                    ParlourDetailFragmentDirections
+                                        .actionParlourDetailedFragmentToServiceListFragment(
+                                            parlourId = id!!,
+                                            categoryId = category.id,
+                                            categoryName = category.name
+                                        )
+
+                                findNavController().navigate(action)
+                                serviceCategoryAdapter.disableLoading()
+                            }
+
+                            is ParlourEvent.ShowError -> {
+
+                                Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                                serviceCategoryAdapter.disableLoading()
+                            }
+                            is ParlourEvent.ParlourClosed -> {
+
+                                binding.lottieClosedOverlay.visibility = View.VISIBLE
+                                binding.laIsOpen.visibility = View.GONE
+                                isOpened = false
+                                Snackbar.make(
+                                    binding.root,
+                                    "Parlour is currently closed",
+                                    Snackbar.LENGTH_SHORT
+                                ).show()
+                                serviceCategoryAdapter.disableLoading()
+                            }
                         }
                     }
                 }
@@ -245,25 +330,29 @@ class ParlourDetailFragment : Fragment() {
 
 
 
-        serviceCategoryAdapter = CategoryAdapter(categories) { category ->
+        serviceCategoryAdapter = CategoryAdapter(categories) { category,position ->
             val parlourId = id ?: return@CategoryAdapter
-
-            if(isOpened){
-                val action =
-                    ParlourDetailFragmentDirections.actionParlourDetailedFragmentToServiceListFragment(
-                        parlourId = parlourId,
-                        categoryId = category.id,
-                        categoryName = category.name
-                    )
-                findNavController().navigate(action)
-            }else{
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
                 Snackbar.make(
                     binding.root,
-                    "Parlour is currently closed",
+                    "No Internet Connection",
                     Snackbar.LENGTH_SHORT
                 ).show()
-            }
+                return@CategoryAdapter
+            }else{
+               if(isOpened){
+                   selectedCategory = category
+                   serviceCategoryAdapter.enableLoading(position)
 
+                   parlourDetailedViewModel.checkParlourStatus(parlourId)
+               }else{
+                   Snackbar.make(
+                       binding.root,
+                       "Parlour is currently closed",
+                       Snackbar.LENGTH_SHORT
+                   ).show()
+               }
+            }
         }
 
         binding.rvCategories.adapter = serviceCategoryAdapter
@@ -311,6 +400,7 @@ class ParlourDetailFragment : Fragment() {
             }
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

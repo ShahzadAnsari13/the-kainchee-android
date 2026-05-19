@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentAllParlourBinding
 import com.thekainchee.user.presentation.dashboard.home.adapter.ParlourHorizontalAdapter
@@ -51,6 +52,8 @@ class AllParlourFragment : Fragment() {
     private val parlourViewModel : ParlourViewModel by viewModels()
     private var lastLat: Double? = null
     private var lastLng: Double? = null
+    private var lat: Double? = null
+    private var lng: Double? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -81,26 +84,26 @@ class AllParlourFragment : Fragment() {
             }else{
                 hideFullEmpty()
                 binding.mainContent.isVisible = false
-                binding.shimmerLayout.isVisible = true
-                binding.shimmerLayout.startShimmer()
-                parlourViewModel.getNearbyParlours(type = null, forceRefresh = true)
-                parlourViewModel.trendingParlours(type = null)
-                parlourViewModel.trendingServices()
-                parlourViewModel.upcomingBookings()
+                retryAllData()
             }
 
         }
 
         binding.btnTryAgain.setOnClickListener {
             if(!NetworkUtils.isInternetAvailable(requireContext())){
-                binding.shimmerLayout.stopShimmer()
-                binding.shimmerLayout.visibility = View.GONE
-                binding.layoutNoInternet.visibility = View.VISIBLE
+                Snackbar.make(
+                    binding.root,
+                    "No Internet Connection",
+                    Snackbar.LENGTH_SHORT
+                ).show()
             }else{
                 binding.layoutNoInternet.visibility = View.GONE
-                binding.shimmerLayout.visibility = View.VISIBLE
-                binding.shimmerLayout.startShimmer()
-
+                if(lat != null && lng != null){
+                    retryAllData()
+                }else{
+                    binding.layoutNoInternet.visibility = View.GONE
+                    locationViewModel.fetchUserLocation()
+                }
             }
         }
 
@@ -249,6 +252,13 @@ class AllParlourFragment : Fragment() {
                                 binding.layoutFullEmpty.isVisible = false
                             }
                             is LocationUiState.Success -> {
+                                val currentLat = state.address.latitude
+                                val currentLng = state.address.longitude
+
+                                lat = currentLat
+                                lng = currentLng
+
+                                parlourViewModel.setLocation(currentLat, currentLng)
 
                                 if(!NetworkUtils.isInternetAvailable(requireContext())){
                                     binding.shimmerLayout.stopShimmer()
@@ -256,20 +266,27 @@ class AllParlourFragment : Fragment() {
                                     binding.layoutNoInternet.isVisible = true
                                     return@collect
                                 }else{
-                                    val lat = state.address.latitude
-                                    val lng = state.address.longitude
 
-                                    if (lastLat != lat || lastLng != lng) {
 
-                                        lastLat = lat
-                                        lastLng = lng
+                                    if (lastLat != currentLat || lastLng != currentLng) {
 
-                                        parlourViewModel.setLocation(lat, lng)
+                                        lastLat = currentLat
+                                        lastLng = currentLng
+
 
                                         parlourViewModel.getNearbyParlours(type = null)
                                         parlourViewModel.trendingParlours(type = null)
 //                                    parlourViewModel.trendingServices()
 //                                    parlourViewModel.upcomingBookings()
+                                    }else{
+                                        binding.shimmerLayout.stopShimmer()
+                                        binding.shimmerLayout.visibility = View.GONE
+                                        binding.mainContent.visibility = View.VISIBLE
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Using current location",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
 
                                 }
@@ -415,6 +432,22 @@ class AllParlourFragment : Fragment() {
                 }
             }
         }
+    }
+    private fun retryAllData() {
+
+        binding.shimmerLayout.isVisible = true
+        binding.shimmerLayout.startShimmer()
+
+        parlourViewModel.getNearbyParlours(
+            type = null,
+            forceRefresh = true
+        )
+
+        parlourViewModel.trendingParlours(type = null)
+
+        parlourViewModel.trendingServices()
+
+        parlourViewModel.upcomingBookings()
     }
     private fun showFullEmpty() {
         binding.mainContent.isVisible = false

@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentAllParlourBinding
 import com.thekainchee.user.presentation.dashboard.home.adapter.ParlourHorizontalAdapter
@@ -28,6 +29,7 @@ import com.thekainchee.user.presentation.dashboard.home.viewModel.LocationViewMo
 import com.thekainchee.user.presentation.dashboard.home.viewModel.ParlourViewModel
 import com.thekainchee.user.presentation.location.LocationActivity
 import com.thekainchee.user.presentation.parlour.ParlourActivity
+import com.thekainchee.user.utils.NetworkUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlin.getValue
@@ -42,6 +44,9 @@ class UnisexParlourFragment : Fragment() {
     private val parlourViewModel: ParlourViewModel by viewModels()
     private var lastLat: Double? = null
     private var lastLng: Double? = null
+    private var lat: Double? = null
+    private var lng: Double? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -53,6 +58,10 @@ class UnisexParlourFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if(!NetworkUtils.isInternetAvailable(requireContext())){
+            binding.mainContent.visibility = View.GONE
+            binding.layoutNoInternet.visibility = View.VISIBLE
+        }
         binding.rvNearbyParlours.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.rvTrendingParlours.layoutManager =
@@ -110,13 +119,33 @@ class UnisexParlourFragment : Fragment() {
 //            )
 //        )
         binding.btnRetry.setOnClickListener {
-            hideFullEmpty()
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                binding.layoutFullEmpty.visibility = View.GONE
+                binding.layoutNoInternet.visibility = View.VISIBLE
+            }else {
 
-            binding.mainContent.isVisible = false
-            binding.shimmerLayoutVerticalParlour.isVisible = true
-            binding.shimmerLayoutVerticalParlour.startShimmer()
-            parlourViewModel.getNearbyParlours(type = "UNISEX", forceRefresh = true)
-            parlourViewModel.trendingParlours(type = "UNISEX")
+                hideFullEmpty()
+
+                binding.mainContent.isVisible = false
+                retryAllData()
+            }
+        }
+        binding.btnTryAgain.setOnClickListener {
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                Snackbar.make(
+                    binding.root,
+                    "No Internet Connection",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }else{
+                binding.layoutNoInternet.visibility = View.GONE
+                if(lat != null && lng != null){
+                   retryAllData()
+                }else{
+                    binding.layoutNoInternet.visibility = View.GONE
+                    locationViewModel.fetchUserLocation()
+                }
+            }
         }
 
         binding.btnChangeLocation.setOnClickListener {
@@ -182,22 +211,43 @@ class UnisexParlourFragment : Fragment() {
                                 binding.layoutFullEmpty.isVisible = false
                             }
                             is LocationUiState.Success -> {
-                                val lat = state.address.latitude
-                                val lng = state.address.longitude
+                                val currentLat = state.address.latitude
+                                val currentLng = state.address.longitude
 
-                                if (lastLat != lat || lastLng != lng) {
+                                lat = currentLat
+                                lng = currentLng
 
-                                    lastLat = lat
-                                    lastLng = lng
+                                parlourViewModel.setLocation(currentLat, currentLng)
 
-                                    parlourViewModel.setLocation(lat, lng)
-
-                                    parlourViewModel.getNearbyParlours(type = "UNISEX")
-                                    parlourViewModel.trendingParlours(type = "UNISEX")
+                                if(!NetworkUtils.isInternetAvailable(requireContext())){
+                                    binding.shimmerLayoutVerticalParlour.stopShimmer()
+                                    binding.shimmerLayoutVerticalParlour.visibility = View.GONE
+                                    binding.layoutNoInternet.visibility = View.VISIBLE
                                 }
+                                else {
+
+                                    if (lastLat != currentLat || lastLng != currentLng) {
+
+                                        lastLat = currentLat
+                                        lastLng = currentLng
 
 
 
+                                        parlourViewModel.getNearbyParlours(type = "UNISEX")
+                                        parlourViewModel.trendingParlours(type = "UNISEX")
+                                    }else{
+                                        binding.shimmerLayoutVerticalParlour.stopShimmer()
+                                        binding.shimmerLayoutVerticalParlour.visibility = View.GONE
+                                        binding.mainContent.visibility = View.VISIBLE
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Using current location",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+
+
+                                }
                             }
                             is LocationUiState.Error -> {
                                 binding.shimmerLayout.isVisible = false
@@ -293,6 +343,20 @@ class UnisexParlourFragment : Fragment() {
                 }
             }
         }
+    }
+    private fun retryAllData() {
+
+        binding.shimmerLayoutVerticalParlour.isVisible = true
+        binding.shimmerLayoutVerticalParlour.startShimmer()
+
+        parlourViewModel.getNearbyParlours(
+            type = "UNISEX",
+            forceRefresh = true
+        )
+
+        parlourViewModel.trendingParlours(type = "UNISEX")
+
+
     }
     private fun showFullEmpty() {
         binding.mainContent.isVisible = false

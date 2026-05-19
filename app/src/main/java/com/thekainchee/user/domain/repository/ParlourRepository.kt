@@ -36,5 +36,9 @@ interface ParlourRepository {
     ): Result<ParlourDetailedUI>
 
 
+    suspend fun checkParlourStatus(
+        parlourId: String
+    ): Result<Boolean>
+
 
 }

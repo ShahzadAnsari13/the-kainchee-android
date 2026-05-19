@@ -149,12 +149,22 @@ class ParlourViewModel @Inject constructor(private val parlourRepository: Parlou
         type: String?,
         forceRefresh: Boolean = false
     ) {
+        Log.d("RETRY_CHECK", "FUNCTION STARTED")
+        Log.d("RETRY_CHECK", "TYPE " + type)
         val lat = currentLat ?: return
         val lng = currentLng ?: return
+        Log.d("RETRY_CHECK", "currentLat = $currentLat")
+        Log.d("RETRY_CHECK", "currentLng = $currentLng")
 
-        if (nearbyIsLoading) return
+        Log.d("RETRY_CHECK", "forceRefresh = $forceRefresh")
+        Log.d("RETRY_CHECK", "nearbyIsLoading = $nearbyIsLoading")
+        if (nearbyIsLoading) {
+            Log.d("RETRY_CHECK", "BLOCKED BY LOADING")
+            return
+        }
 
         if (forceRefresh) {
+            Log.d("RETRY_CHECK", "FORCE REFRESH TRUE")
             nearbyCurrentPage = 1
             nearbyIsLastPage = false
         }
@@ -165,18 +175,18 @@ class ParlourViewModel @Inject constructor(private val parlourRepository: Parlou
         }
 
         viewModelScope.launch {
-
+            Log.d("RETRY_CHECK", "COROUTINE STARTED")
             nearbyIsLoading = true
-
+            Log.d("RETRY_CHECK", "API CALLING")
             val result = parlourRepository.getNearbyParlours(
                 lat, lng, nearbyCurrentPage, type
             )
-            Log.d("RESULT_CHECK", result.toString())
+            Log.d("RETRY_CHECK", "RESULT = $result")
 
             nearbyIsLoading = false
 
             if (result.isSuccess) {
-
+                Log.d("RETRY_CHECK", "SUCCESS")
                 val data = result.getOrNull() ?: emptyList()
 
                 if (data.isNotEmpty()) {
@@ -191,7 +201,8 @@ class ParlourViewModel @Inject constructor(private val parlourRepository: Parlou
                 )
 
             } else {
-
+                Log.d("RETRY_CHECK", "ERROR")
+                Log.d("C", "LOADING FALSE")
                 _nearbyParlourState.value = ParlourState.Error(
                     result.exceptionOrNull()?.message ?: "Failed"
                 )

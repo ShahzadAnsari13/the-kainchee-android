@@ -275,7 +275,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="gone"
-        android:gravity="center"
+        android:gravity="center_horizontal"
         android:padding="24dp"
         android:clickable="true"
         android:focusable="true"
