@@ -2,6 +2,7 @@ package com.thekainchee.user.di
 
 import android.content.Context
 import androidx.room.Room
+import com.thekainchee.user.data.local.room.dao.SelectedServiceDao
 import com.thekainchee.user.data.local.room.dao.UserAddressDao
 import com.thekainchee.user.data.local.room.database.AppDatabase
 import dagger.Module
@@ -25,7 +26,8 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "the_kainchee_db"
-        ).build()
+        ).fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides
@@ -34,6 +36,15 @@ object DatabaseModule {
     ): UserAddressDao {
 
         return database.userAddressDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSelectedServiceDao(
+        db: AppDatabase
+    ): SelectedServiceDao {
+
+        return db.selectedServiceDao()
     }
 
 }

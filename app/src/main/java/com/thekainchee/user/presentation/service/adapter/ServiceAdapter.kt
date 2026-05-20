@@ -12,7 +12,7 @@ import com.thekainchee.user.databinding.ItemServiceBinding
 import com.thekainchee.user.presentation.service.model.ServiceUiModel
 
 class ServiceAdapter(
-    private val onAddClick: (ServiceUiModel) -> Unit
+    private val onAddClick: (ServiceUiModel) -> Unit, private val onRemoveClick: (ServiceUiModel) -> Unit
 ) : ListAdapter<ServiceUiModel, ServiceAdapter.ServiceViewHolder>(DIFF_CALLBACK) {
 
     companion object {
@@ -44,12 +44,14 @@ class ServiceAdapter(
                 tvName.text = item.name
                 tvPrice.text = "₹${item.price}"
                 tvDuration.text = "⏱ ${item.duration} min"
-                tvDescription.text = " ${item.description ?: ""}"
+                tvDescription.text = "${item.description ?: ""}"
                 Glide.with(binding.root.context)
                     .load(item.image)
                     .placeholder(R.drawable.ic_no_data)
                     .error(R.drawable.ic_no_data)
                     .into(ivService)
+
+
                 if (item.isAvailable) {
                     btnAdd.isEnabled = true
                     root.alpha = 1f
@@ -61,16 +63,27 @@ class ServiceAdapter(
                 }
 
                 if (item.isAdded) {
-                    btnAdd.text = "ADDED ✓"
-                    btnAdd.isEnabled = false
+
+                    btnAdd.visibility = View.GONE
+                    btnAdded.visibility = View.VISIBLE
+
                 } else {
-                    btnAdd.text = "ADD"
-                    btnAdd.isEnabled = true
+                    btnAdd.visibility = View.VISIBLE
+                    btnAdded.visibility = View.GONE
                 }
 
                 btnAdd.setOnClickListener {
                     if (item.isAvailable && !item.isAdded) {
+
                         onAddClick(item)
+
+                    }
+                }
+                btnAdded.setOnClickListener {
+                    if (item.isAvailable && item.isAdded) {
+
+                        onRemoveClick(item)
+
                     }
                 }
             }

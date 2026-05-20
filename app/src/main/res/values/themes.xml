@@ -4,6 +4,7 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="colorPrimary">@color/primaryColor</item>
+
     </style>
 
     <style name="Theme.TheKaincheeUser" parent="Base.Theme.TheKaincheeUser" />

@@ -8,5 +8,5 @@ data class ServiceUiModel(
     val duration: Int,
     val description: String?,
     val isAvailable: Boolean,
-    val isAdded: Boolean = false
+    var isAdded: Boolean = false
 )

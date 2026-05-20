@@ -54,4 +54,5 @@ abstract class RepositoryModule {
         serviceRepositoryImpl: ServiceRepositoryImpl
     ): ServiceRepository
 
+
 }

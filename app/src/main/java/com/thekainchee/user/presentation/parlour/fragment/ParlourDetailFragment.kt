@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -226,6 +227,7 @@ class ParlourDetailFragment : Fragment() {
                                 }.take(6)
                                 binding.tvFacilities.text =
                                     points.joinToString("\n") { "✨ $it" }
+                                serviceViewModel.loadSelectedServices()
                             }
                             is ParlourDetailedState.Error -> {
                                 binding.shimmerLayout.stopShimmer()
@@ -312,6 +314,22 @@ class ParlourDetailFragment : Fragment() {
                                 ).show()
                                 serviceCategoryAdapter.disableLoading()
                             }
+                        }
+                    }
+                }
+                launch{
+                    serviceViewModel.selectedServiceIds.collect { selectedIds ->
+
+                        if(selectedIds.isNotEmpty()){
+
+                            binding.tvSelectedCount.text =
+                                "${selectedIds.size} Services Added"
+
+                            showBottomStrip()
+
+                        }else{
+
+                            hideBottomStrip()
                         }
                     }
                 }
@@ -402,6 +420,35 @@ class ParlourDetailFragment : Fragment() {
     }
 
 
+    private fun showBottomStrip() {
+
+        binding.bottomBookingStrip.apply {
+
+            if (visibility == View.VISIBLE) return
+
+            visibility = View.VISIBLE
+            alpha = 0f
+            translationX = 300f
+
+            animate()
+                .translationX(0f)
+                .alpha(1f)
+                .setDuration(350)
+                .setInterpolator(OvershootInterpolator())
+                .start()
+        }
+    }
+    private fun hideBottomStrip() {
+
+        binding.bottomBookingStrip.animate()
+            .translationX(300f)
+            .alpha(0f)
+            .setDuration(250)
+            .withEndAction {
+                binding.bottomBookingStrip.visibility = View.GONE
+            }
+            .start()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
 

@@ -1,5 +1,7 @@
 package com.thekainchee.user.data.repository
 
+import com.thekainchee.user.data.local.room.dao.SelectedServiceDao
+import com.thekainchee.user.data.local.room.entity.SelectedServiceEntity
 import com.thekainchee.user.data.mapper.toUI
 import com.thekainchee.user.data.remote.api.ServiceApi
 import com.thekainchee.user.domain.repository.ServiceRepository
@@ -8,7 +10,7 @@ import com.thekainchee.user.presentation.service.model.ServiceUiModel
 import com.thekainchee.user.utils.ErrorUtils
 import javax.inject.Inject
 
-class ServiceRepositoryImpl @Inject constructor(private val api  : ServiceApi) :
+class ServiceRepositoryImpl @Inject constructor(private val api  : ServiceApi, private val dao : SelectedServiceDao) :
     ServiceRepository {
         override suspend fun getServiceCategories(id: String): Result<List<ServiceCategory>> {
     return  try{
@@ -46,5 +48,23 @@ class ServiceRepositoryImpl @Inject constructor(private val api  : ServiceApi) :
             return Result.failure(e)
 
         }
+    }
+
+    override suspend fun insert(serviceId: String){
+        dao.insertSelectedService(SelectedServiceEntity(serviceId))
+    }
+
+    override suspend fun remove(serviceId: String){
+        dao.removeService(serviceId)
+    }
+
+    override suspend fun getAll():
+            List<SelectedServiceEntity> {
+
+        return dao.getSelectedServices()
+    }
+
+    override suspend fun clearAll() {
+        dao.clearAllService()
     }
 }

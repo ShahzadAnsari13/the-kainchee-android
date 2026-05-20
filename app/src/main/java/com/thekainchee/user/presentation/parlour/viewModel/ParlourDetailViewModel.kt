@@ -1,5 +1,6 @@
 package com.thekainchee.user.presentation.parlour.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thekainchee.user.domain.repository.ParlourRepository
@@ -26,17 +27,15 @@ class ParlourDetailViewModel @Inject constructor(private val repository: Parlour
     private val _event = MutableSharedFlow<ParlourEvent>()
 
     val event = _event.asSharedFlow()
+    private var loadedParlourId: String? = null
 
     fun checkParlourStatus(parlourId : String){
         viewModelScope.launch {
-            delay(1500)
             val result = repository.checkParlourStatus(parlourId)
             result.onSuccess { isOpenNow ->
                 if(isOpenNow){
-                    delay(2000)
                     _event.emit(ParlourEvent.NavigateToServices)
                 }else{
-                    delay(2000)
                     _event.emit(ParlourEvent.ParlourClosed)
                 }
             }.onFailure { error ->
@@ -50,6 +49,15 @@ class ParlourDetailViewModel @Inject constructor(private val repository: Parlour
         }
     }
     fun getParlourDetails(id : String){
+
+        if (
+            loadedParlourId == id &&
+            _parlourDetailedState.value is ParlourDetailedState.Success
+        ) {
+            return
+        }
+
+        loadedParlourId = id
         _parlourDetailedState.value = ParlourDetailedState.Loading
         viewModelScope.launch {
 
