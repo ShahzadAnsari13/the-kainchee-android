@@ -1,6 +1,6 @@
 package com.thekainchee.user.data.remote.api
 
-import com.thekainchee.user.data.remote.dto.ParlourStatusResponseDto
+import com.thekainchee.user.data.remote.dto.parlour.ParlourStatusResponseDto
 import com.thekainchee.user.data.remote.dto.parlour.NearbyParlourResponseDto
 import com.thekainchee.user.data.remote.dto.parlour.ParlourDetailsResponseDto
 import com.thekainchee.user.data.remote.dto.service.ServiceCategoryDto

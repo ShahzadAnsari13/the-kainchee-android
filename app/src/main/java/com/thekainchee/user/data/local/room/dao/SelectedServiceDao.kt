@@ -8,16 +8,16 @@ import com.thekainchee.user.data.local.room.entity.SelectedServiceEntity
 
 @Dao
 interface  SelectedServiceDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSelectedService(service: SelectedServiceEntity)
 
-    @Query("DELETE FROM selected_services WHERE serviceId = :serviceId")
-    suspend fun removeService(serviceId: String)
+    @Query("DELETE FROM selected_services WHERE parlourId = :parlourId AND serviceId = :serviceId ")
+    suspend fun removeService(parlourId: String, serviceId: String)
 
-    @Query("SELECT * FROM selected_services")
-    suspend fun getSelectedServices(): List<SelectedServiceEntity>
+    @Query("SELECT * FROM selected_services WHERE parlourId = :parlourId")
+    suspend fun getSelectedServices(parlourId: String): List<SelectedServiceEntity>
 
-    @Query("DELETE FROM selected_services")
-    suspend fun clearAllService()
+    @Query("DELETE FROM selected_services WHERE parlourId = :parlourId")
+    suspend fun clearAllService(parlourId: String)
 
 }

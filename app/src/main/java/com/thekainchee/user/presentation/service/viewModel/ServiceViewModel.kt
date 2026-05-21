@@ -1,13 +1,16 @@
 package com.thekainchee.user.presentation.service.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thekainchee.user.domain.repository.ServiceRepository
-import com.thekainchee.user.presentation.parlour.state.ParlourDetailedState
+import com.thekainchee.user.presentation.service.state.BookingPreviewEvent
 import com.thekainchee.user.presentation.service.state.ServiceCategoryState
 import com.thekainchee.user.presentation.service.state.ServiceListState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,36 +32,55 @@ class ServiceViewModel @Inject constructor(private val repository: ServiceReposi
 
     val selectedServiceIds: StateFlow<List<String>> = _selectedServiceIds
 
-    fun addService(serviceId: String){
+    private val _bookingPreviewEvent = MutableSharedFlow<BookingPreviewEvent>()
+    var bookingPreviewEvent : SharedFlow<BookingPreviewEvent> = _bookingPreviewEvent
+
+
+    fun getBookingPreview(parlourId: String,serviceIds : List<String>){
+        viewModelScope.launch {
+            val result = repository.getBookingPreview(parlourId,serviceIds)
+            if(result.isSuccess){
+                val data = result.getOrNull()
+                if(!data?.services.isNullOrEmpty()){
+                    _bookingPreviewEvent.emit(BookingPreviewEvent.OpenBottomSheet(data))
+                }else{
+                    _bookingPreviewEvent.emit(BookingPreviewEvent.ShowToast("No services selected"))
+                }
+            }else{
+                _bookingPreviewEvent.emit(BookingPreviewEvent.ShowToast(result.exceptionOrNull()?.message ?: "Failed to load booking preview"))
+            }
+        }
+    }
+    fun addService(parlourId: String,serviceId: String){
 
         viewModelScope.launch {
 
-            repository.insert(serviceId)
-            loadSelectedServices()
+            repository.insert(parlourId,serviceId)
+            loadSelectedServices(parlourId)
         }
     }
-    fun removeService(serviceId: String){
+    fun removeService(parlourId: String,serviceId: String){
 
         viewModelScope.launch {
 
-            repository.remove(serviceId)
-            loadSelectedServices()
+            repository.remove(parlourId,serviceId)
+            loadSelectedServices(parlourId)
         }
     }
-    fun loadSelectedServices(){
+    fun loadSelectedServices(parlourId: String){
 
         viewModelScope.launch {
 
             _selectedServiceIds.value =
-                repository.getAll()
+                repository.getAll(parlourId)
                     .map { it.serviceId }
         }
     }
-    fun clearAllServices(){
+    fun clearAllServices(parlourId: String){
 
         viewModelScope.launch {
 
-            repository.clearAll()
+            repository.clearAll(parlourId)
 
             _selectedServiceIds.value = emptyList()
         }
@@ -89,14 +111,15 @@ class ServiceViewModel @Inject constructor(private val repository: ServiceReposi
         }
     }
 
-    fun getServicesByCategory(parlourId : String, categoryId : String) {
+    fun getServicesByCategory(force : Boolean  = false, parlourId : String, categoryId : String) {
         if(
-            lastParlourId == parlourId &&
+            !force && lastParlourId == parlourId &&
             lastCategoryId == categoryId &&
             _serviceListState.value is ServiceListState.Success
         ){
             return
         }
+        Log.d("API_CHECK","CALLED REPOSITORY")
         lastParlourId = parlourId
         lastCategoryId = categoryId
         _serviceListState.value = ServiceListState.Loading
@@ -106,7 +129,7 @@ class ServiceViewModel @Inject constructor(private val repository: ServiceReposi
                 val data = result.getOrNull().orEmpty()
                 if (data.isNotEmpty()) {
                     val selectedIds = repository
-                        .getAll()
+                        .getAll(parlourId)
                         .map { it.serviceId }
 
                     val updatedServices = data.map {

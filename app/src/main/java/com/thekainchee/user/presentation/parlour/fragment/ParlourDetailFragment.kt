@@ -173,6 +173,11 @@ class ParlourDetailFragment : Fragment() {
                                 isOpened = data.isOpenNow
                                 binding.laIsOpen.isVisible = isOpened
                                 binding.lottieClosedOverlay.isVisible = !isOpened
+                                if(isOpened){
+                                    id?.let { id ->
+                                        serviceViewModel.loadSelectedServices(id)
+                                    }
+                                }
                                 binding.tvTiming.text = "🕒 ${data.openTime} - ${data.closeTime}"
                                 val days = listOf("SUN","MON","TUE","WED","THU","FRI","SAT")
                                 val today = days[Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1]
@@ -227,7 +232,6 @@ class ParlourDetailFragment : Fragment() {
                                 }.take(6)
                                 binding.tvFacilities.text =
                                     points.joinToString("\n") { "✨ $it" }
-                                serviceViewModel.loadSelectedServices()
                             }
                             is ParlourDetailedState.Error -> {
                                 binding.shimmerLayout.stopShimmer()

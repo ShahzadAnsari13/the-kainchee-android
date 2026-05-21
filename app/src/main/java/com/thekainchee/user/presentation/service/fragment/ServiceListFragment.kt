@@ -1,6 +1,7 @@
 package com.thekainchee.user.presentation.service.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -19,7 +21,9 @@ import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentServiceListBinding
 import com.thekainchee.user.presentation.parlour.ParlourActivity
 import com.thekainchee.user.presentation.service.adapter.ServiceAdapter
+import com.thekainchee.user.presentation.service.bottomSheet.BookingPreviewBottomSheet
 import com.thekainchee.user.presentation.service.model.ServiceUiModel
+import com.thekainchee.user.presentation.service.state.BookingPreviewEvent
 import com.thekainchee.user.presentation.service.state.ServiceListState
 import com.thekainchee.user.presentation.service.viewModel.ServiceViewModel
 import com.thekainchee.user.utils.NetworkUtils
@@ -32,7 +36,7 @@ class ServiceListFragment : Fragment() {
     private var _binding : FragmentServiceListBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: ServiceAdapter
-    private val serviceViewModel : ServiceViewModel by viewModels()
+    private val serviceViewModel : ServiceViewModel by activityViewModels()
     private val navArgs : ServiceListFragmentArgs by navArgs()
     private var parlourId : String? = null
     private var categoryId : String? = null
@@ -58,7 +62,7 @@ class ServiceListFragment : Fragment() {
         }else{
             parlourId?.let { parlourId ->
                 categoryId?.let { categoryId ->
-                    serviceViewModel.getServicesByCategory(parlourId,categoryId)
+                    serviceViewModel.getServicesByCategory(false,parlourId,categoryId)
                 }
             }
         }
@@ -70,7 +74,7 @@ class ServiceListFragment : Fragment() {
             }else{
                 parlourId?.let { parlourId ->
                     categoryId?.let { categoryId ->
-                        serviceViewModel.getServicesByCategory(parlourId,categoryId)
+                        serviceViewModel.getServicesByCategory(false,parlourId,categoryId)
                     }
                 }
             }
@@ -79,16 +83,25 @@ class ServiceListFragment : Fragment() {
         binding.btnTryAgain.setOnClickListener {
             if(!NetworkUtils.isInternetAvailable(requireContext())){
                 Snackbar.make(binding.root, "No Internet Connection", Snackbar.LENGTH_SHORT).show()
-
             }else{
-                parlourId?.let { parlourId ->
-                    categoryId?.let { categoryId ->
-                        serviceViewModel.getServicesByCategory(parlourId,categoryId)
-                    }
+                parlourId?.let{parlourId ->
+                    serviceViewModel.getBookingPreview(parlourId,serviceViewModel.selectedServiceIds.value)
                 }
             }
         }
 
+        binding.bottomBookingStrip.setOnClickListener {
+            Log.d("CLICK_TEST", "Clicked")
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                Snackbar.make(binding.root, "No Internet Connection", Snackbar.LENGTH_SHORT).show()
+            }else{
+                parlourId?.let { parlourId ->
+                    Log.d("parlourId",parlourId)
+                    serviceViewModel.getBookingPreview(parlourId,serviceViewModel.selectedServiceIds.value)
+                }
+
+            }
+        }
 
         adapter = ServiceAdapter(onAddClick = {item->
             val updatedList = adapter.currentList.map {
@@ -99,7 +112,9 @@ class ServiceListFragment : Fragment() {
                     it
                 }
             }
-            serviceViewModel.addService(item.id)
+            parlourId?.let { id ->
+                serviceViewModel.addService(id, item.id)
+            }
 
             adapter.submitList(updatedList)
         }, onRemoveClick = {item ->
@@ -110,7 +125,9 @@ class ServiceListFragment : Fragment() {
                     it
                 }
             }
-            serviceViewModel.removeService(item.id)
+            parlourId?.let { id ->
+                serviceViewModel.removeService(id, item.id)
+            }
 
             adapter.submitList(updatedList)
         })
@@ -142,7 +159,9 @@ class ServiceListFragment : Fragment() {
                                 binding.contentLayout.visibility = View.VISIBLE
                                 binding.errorLayout.visibility = View.GONE
                                 adapter.submitList(state.data)
-                                serviceViewModel.loadSelectedServices()
+                                parlourId?.let { id ->
+                                    serviceViewModel.loadSelectedServices(id)
+                                }
                             }
                             is ServiceListState.Empty -> {
                                 binding.shimmer.stopShimmer()
@@ -181,6 +200,30 @@ class ServiceListFragment : Fragment() {
                         }
                     }
                 }
+
+                launch {
+                    serviceViewModel.bookingPreviewEvent.collect { event ->
+
+                        when (event) {
+
+                            is BookingPreviewEvent.OpenBottomSheet -> {
+                                BookingPreviewBottomSheet
+                                    .newInstance(event.data,
+                                        onChangesDone = {
+
+                                            refreshAfterBottomSheet()
+                                        })
+                                    .show(
+                                        parentFragmentManager,
+                                        "BookingPreviewBottomSheet"
+                                    )
+                            }
+                            is BookingPreviewEvent.ShowToast -> {
+                                Snackbar.make(binding.root, event.message, Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -214,6 +257,23 @@ class ServiceListFragment : Fragment() {
                 binding.bottomBookingStrip.visibility = View.GONE
             }
             .start()
+    }
+
+    fun refreshAfterBottomSheet() {
+        if(!NetworkUtils.isInternetAvailable(requireContext())){
+            return
+        }
+
+        parlourId?.let { parlourId ->
+            categoryId?.let { categoryId ->
+
+                serviceViewModel.getServicesByCategory(
+                    force = true,
+                    parlourId = parlourId,
+                    categoryId = categoryId
+                )
+            }
+        }
     }
     override fun onDestroyView() {
         super.onDestroyView()
