@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/booking_nav_graph"
+    app:startDestination="@id/bookingSlotFragment">
+    <fragment
+        android:id="@+id/bookingSlotFragment"
+        android:name="com.thekainchee.user.presentation.booking.fragment.BookingSlotFragment"
+        android:label="BookingSlotFragment">
+
+        <argument android:name="services"
+            app:argType="com.thekainchee.user.presentation.service.model.BookingPreviewUiModel"/>
+    </fragment>
+
+</navigation>

@@ -1,18 +1,18 @@
 package com.thekainchee.user.presentation.service.bottomSheet
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.databinding.BottomSheetBookingPreviewBinding
+import com.thekainchee.user.presentation.booking.BookingActivity
 import com.thekainchee.user.presentation.service.adapter.BookingPreviewAdapter
-import com.thekainchee.user.presentation.service.fragment.ServiceListFragment
 import com.thekainchee.user.presentation.service.model.BookingPreviewUiModel
 import com.thekainchee.user.presentation.service.viewModel.ServiceViewModel
 import kotlin.getValue
@@ -85,7 +85,13 @@ class BookingPreviewBottomSheet : BottomSheetDialogFragment() {
                     totalPrice = totalPrice?.minus(item.price)
                     totalDuration = totalDuration?.minus(item.duration)
                     totalServices =  (totalServices ?: 1) - 1
-
+                    bookingPreviewData =
+                        bookingPreviewData?.copy(
+                            services = updatedList,
+                            totalPrice = totalPrice ?: 0,
+                            totalDuration = totalDuration ?: 0,
+                            totalServices = totalServices ?: 0
+                        )
                     updateSummaryUi()
                     hasChanges = true
                 }
@@ -106,6 +112,12 @@ class BookingPreviewBottomSheet : BottomSheetDialogFragment() {
         adapter.submitList(
             bookingPreviewData?.services ?: emptyList()
         )
+
+        binding.btnContinueBooking.setOnClickListener {
+            val intent = Intent(requireContext(), BookingActivity::class.java)
+            intent.putExtra("bookingPreviewData",bookingPreviewData)
+            startActivity(intent)
+        }
     }
     fun formatDuration(totalMinutes: Int): String {
 

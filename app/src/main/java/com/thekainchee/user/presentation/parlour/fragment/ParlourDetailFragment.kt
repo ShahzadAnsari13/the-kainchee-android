@@ -1,6 +1,7 @@
 package com.thekainchee.user.presentation.parlour.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +28,8 @@ import com.thekainchee.user.presentation.parlour.state.ParlourDetailedState
 import com.thekainchee.user.presentation.parlour.state.ParlourEvent
 import com.thekainchee.user.presentation.service.state.ServiceCategoryState
 import com.thekainchee.user.presentation.parlour.viewModel.ParlourDetailViewModel
+import com.thekainchee.user.presentation.service.bottomSheet.BookingPreviewBottomSheet
+import com.thekainchee.user.presentation.service.state.BookingPreviewEvent
 import com.thekainchee.user.presentation.service.viewModel.ServiceViewModel
 import com.thekainchee.user.utils.NetworkUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,7 +57,7 @@ class ParlourDetailFragment : Fragment() {
     private var isOpened = false
     private val parlourDetailedViewModel : ParlourDetailViewModel by viewModels()
     private var selectedCategory: ServiceCategory? = null
-    private val serviceViewModel : ServiceViewModel by viewModels()
+    private val serviceViewModel : ServiceViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -126,6 +130,19 @@ class ParlourDetailFragment : Fragment() {
                         findNavController().navigate(action)
                     }
                 }
+            }
+        }
+
+        binding.bottomBookingStrip.setOnClickListener {
+            Log.d("CLICK_TEST", "Clicked")
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                Snackbar.make(binding.root, "No Internet Connection", Snackbar.LENGTH_SHORT).show()
+            }else{
+                id?.let { parlourId ->
+                    Log.d("parlourId",parlourId)
+                    serviceViewModel.getBookingPreview(parlourId,serviceViewModel.selectedServiceIds.value)
+                }
+
             }
         }
         observeParlourDetails()
@@ -334,6 +351,28 @@ class ParlourDetailFragment : Fragment() {
                         }else{
 
                             hideBottomStrip()
+                        }
+                    }
+                }
+                launch {
+                    serviceViewModel.bookingPreviewEvent.collect { event ->
+
+                        when (event) {
+
+                            is BookingPreviewEvent.OpenBottomSheet -> {
+                                BookingPreviewBottomSheet
+                                    .newInstance(event.data,
+                                        onChangesDone = {
+                                            Snackbar.make(binding.root,"Booking preview updated", Snackbar.LENGTH_SHORT).show()
+                                        })
+                                    .show(
+                                        parentFragmentManager,
+                                        "BookingPreviewBottomSheet"
+                                    )
+                            }
+                            is BookingPreviewEvent.ShowToast -> {
+                                Snackbar.make(binding.root, event.message, Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
                 }
