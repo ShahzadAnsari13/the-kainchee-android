@@ -8,18 +8,19 @@
     android:layout_margin="6dp"
     app:cardBackgroundColor="@android:color/white"
     app:cardCornerRadius="18dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:strokeColor="@color/slot_stroke_selector"
+
+    android:foreground="?attr/selectableItemBackground"
     app:cardElevation="1dp"
-    app:strokeColor="#E6E6E6"
-    app:strokeWidth="1dp">
+    app:strokeWidth="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical">
-
-        <!-- SLOT TIME -->
-
         <TextView
             android:id="@+id/tvSlotTime"
             android:layout_width="wrap_content"
@@ -29,16 +30,7 @@
             android:textSize="14sp"
             android:textStyle="bold"/>
 
-        <!-- SLOT STATUS -->
 
-        <TextView
-            android:id="@+id/tvSlotStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="Available"
-            android:textColor="#777777"
-            android:textSize="10sp"/>
 
     </LinearLayout>
 

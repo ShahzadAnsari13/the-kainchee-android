@@ -100,8 +100,12 @@ class ServiceViewModel @Inject constructor(private val repository: ServiceReposi
             if (result.isSuccess){
                 val data = result.getOrNull().orEmpty()
                 if(data.isNotEmpty()){
+
+                    Log.d("API_CHECK","NOT_EMPTY")
                     _serviceCategoryState.value = ServiceCategoryState.Success(data)
                 }else{
+
+                    Log.d("API_CHECK","EMPTY")
                     _serviceCategoryState.value = ServiceCategoryState.Empty
                 }
             }else{

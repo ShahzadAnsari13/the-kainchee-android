@@ -39,7 +39,7 @@ class BookingStaffAdapter(private val onItemClick: (StaffUiModel) -> Unit) : Lis
 
                 tvStaffName.text = item.name
                 tvStaffInfo.text = "⭐ ${item.rating.average} • ${item.experience} yrs"
-                itemView.isSelected = position == selectedPosition
+                root.isSelected = position == selectedPosition
                 Glide.with(binding.root)
                     .load(item.image)
                     .placeholder(R.drawable.ic_no_data)

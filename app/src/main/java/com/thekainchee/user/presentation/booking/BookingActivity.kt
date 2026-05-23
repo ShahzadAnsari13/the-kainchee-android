@@ -10,7 +10,9 @@ import androidx.navigation.fragment.NavHostFragment
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.ActivityBookingBinding
 import com.thekainchee.user.presentation.service.model.BookingPreviewUiModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BookingActivity : AppCompatActivity() {
     private var bookingPreviewData: BookingPreviewUiModel? = null
     private lateinit var binding: ActivityBookingBinding
