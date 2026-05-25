@@ -44,6 +44,7 @@ class BookingViewModel @Inject constructor(val repository: BookingRepository) : 
     }
 
     fun getStaffSlots(parlourId: String, staffId: String, date: String){
+        _slotState.value = SlotState.Loading
         viewModelScope.launch {
             val result = repository.getStaffSlots(parlourId, staffId, date)
             if(result.isSuccess){

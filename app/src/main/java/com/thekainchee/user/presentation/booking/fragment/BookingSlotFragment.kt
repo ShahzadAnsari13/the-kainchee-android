@@ -1,9 +1,11 @@
 package com.thekainchee.user.presentation.booking.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -13,17 +15,23 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentBookingSlotBinding
+import com.thekainchee.user.presentation.booking.adapter.BookingDateAdapter
 import com.thekainchee.user.presentation.booking.adapter.BookingSlotAdapter
 import com.thekainchee.user.presentation.booking.adapter.BookingStaffAdapter
+import com.thekainchee.user.presentation.booking.model.DateUiModel
 import com.thekainchee.user.presentation.booking.model.SlotUiModel
+import com.thekainchee.user.presentation.booking.model.StaffUiModel
 import com.thekainchee.user.presentation.booking.state.SlotState
 import com.thekainchee.user.presentation.booking.state.StaffState
 import com.thekainchee.user.presentation.booking.viewModel.BookingViewModel
+import com.thekainchee.user.utils.NetworkUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import kotlin.math.log
 
 @AndroidEntryPoint
 class BookingSlotFragment : Fragment() {
@@ -36,9 +44,14 @@ class BookingSlotFragment : Fragment() {
     }
     private lateinit var bookingStaffAdapter: BookingStaffAdapter
     private lateinit var bookingSlotAdapter: BookingSlotAdapter
+    private lateinit var bookingDateAdapter: BookingDateAdapter
     private var _binding : FragmentBookingSlotBinding? = null
     private val binding get() = _binding!!
-    private val currentDate = LocalDate.now().toString()
+    private val today = LocalDate.now()
+    private var selectedStaff: StaffUiModel? = null
+
+    private var selectedDate: DateUiModel? = null
+    private val dates = mutableListOf<DateUiModel>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,12 +62,70 @@ class BookingSlotFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bookingStaffAdapter = BookingStaffAdapter {staff ->
-            viewModel.getStaffSlots(bookingPreviewData.parlourId,staff.id,currentDate)
+
+
+        for (i in 0..6) {
+
+            val date = today.plusDays(i.toLong())
+
+            dates.add(
+                DateUiModel(
+                    day = date.dayOfWeek.name.take(3),
+                    date = date.dayOfMonth.toString(),
+                    fullDate = date.toString()
+                )
+            )
         }
-        bookingSlotAdapter = BookingSlotAdapter{
+        bookingStaffAdapter = BookingStaffAdapter {staff ->
+            selectedStaff = staff
+            selectedDate?.let {date->
+
+                if(!NetworkUtils.isInternetAvailable(requireContext())){
+                    Snackbar.make(binding.root,"Check Internet Connection", Snackbar.LENGTH_SHORT).show()
+                }else{
+                    viewModel.getStaffSlots(
+                        staffId = staff.id, parlourId = bookingPreviewData.parlourId, date = date.fullDate
+                    )
+                }
+
+            }
+        }
+        bookingSlotAdapter = BookingSlotAdapter{slot->
+            selectedStaff?.let { staff->
+                selectedDate?.let { date->
+                    val isToday = date.fullDate == LocalDate.now().toString()
+                    val isTomorrow = date.fullDate == LocalDate.now().plusDays(1).toString()
+
+                    if(isToday){
+                        binding.tvSelectedAppointment.text = "${staff.name} • Today • ${slot.time}"
+                    }else if(isTomorrow){
+                        binding.tvSelectedAppointment.text = "${staff.name} • Tomorrow • ${slot.time}"
+                    }else{
+                        binding.tvSelectedAppointment.text = "${staff.name} • ${date.day} ${date.date} • ${slot.time}"
+                    }
+                }
+            }
+            Log.d("slot","selected")
+            showBottomStrip()
 
         }
+        bookingDateAdapter = BookingDateAdapter { date ->
+            selectedDate = date
+            hideBottomStrip()
+            selectedStaff?.let {staff->
+                if(!NetworkUtils.isInternetAvailable(requireContext())){
+                    Snackbar.make(binding.root,"Check Internet Connection", Snackbar.LENGTH_SHORT).show()
+                }else{
+                    viewModel.getStaffSlots(
+                        staffId = staff.id, parlourId = bookingPreviewData.parlourId, date = date.fullDate
+                    )
+                }
+            }
+
+
+        }
+        bookingDateAdapter.submitList(dates)
+        hideBottomStrip()
         binding.rvStaff.apply {
             layoutManager = LinearLayoutManager(
                 requireContext(),
@@ -71,19 +142,16 @@ class BookingSlotFragment : Fragment() {
 
             adapter = bookingSlotAdapter
         }
-        val dummySlots = listOf(
+        binding.rvDates.apply {
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
 
-            SlotUiModel("10:00 AM"),
-            SlotUiModel("11:00 AM"),
-            SlotUiModel("12:00 PM"),
-            SlotUiModel("01:00 PM"),
-            SlotUiModel("02:00 PM"),
-            SlotUiModel("03:00 PM"),
-            SlotUiModel("04:00 PM"),
-            SlotUiModel("05:00 PM"),
-            SlotUiModel("06:00 PM")
+            )
 
-        )
+            adapter = bookingDateAdapter
+        }
 
         val firstService = bookingPreviewData.services.firstOrNull() ?: return
         binding.tvServiceTitle.text ="${firstService.name} + ${bookingPreviewData.totalServices-1}"
@@ -93,8 +161,31 @@ class BookingSlotFragment : Fragment() {
             .placeholder(R.drawable.ic_oops)
             .into(binding.imgService)
 
-        viewModel.getParlourStaffs(bookingPreviewData.parlourId)
+        if(!NetworkUtils.isInternetAvailable(requireContext())){
+            binding.layoutNoInternet.visibility = View.VISIBLE
+            binding.mainContent.visibility = View.GONE
+        }else{
+            viewModel.getParlourStaffs(bookingPreviewData.parlourId)
+        }
 
+        binding.btnTryAgain.setOnClickListener {
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                binding.layoutNoInternet.visibility = View.VISIBLE
+                binding.mainContent.visibility = View.GONE
+            }else{
+                viewModel.getParlourStaffs(bookingPreviewData.parlourId)
+            }
+        }
+
+        binding.btnRetry.setOnClickListener {
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                binding.layoutNoInternet.visibility = View.VISIBLE
+                binding.mainContent.visibility = View.GONE
+            }else{
+                viewModel.getParlourStaffs(bookingPreviewData.parlourId)
+            }
+
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
@@ -105,8 +196,10 @@ class BookingSlotFragment : Fragment() {
 
                             }
                             is StaffState.Loading -> {
+                                binding.layoutNoInternet.visibility = View.GONE
+                                binding.mainContent.visibility = View.VISIBLE
+                                binding.layoutStaffContainer.visibility = View.VISIBLE
                                 binding.rvStaff.visibility = View.GONE
-                                binding.rvSlots.visibility = View.GONE
                                 binding.shimmerStaffLayout.visibility = View.VISIBLE
                                 binding.shimmerStaffLayout.startShimmer()
                             }
@@ -114,21 +207,33 @@ class BookingSlotFragment : Fragment() {
                                 binding.shimmerStaffLayout.stopShimmer()
                                 binding.shimmerStaffLayout.visibility = View.GONE
                                 binding.rvStaff.visibility = View.VISIBLE
-                                binding.rvSlots.visibility = View.VISIBLE
                                 bookingStaffAdapter.submitList(state.data)
-                                bookingSlotAdapter.submitList(dummySlots)
+                                binding.layoutDateContainer.visibility = View.VISIBLE
+                                val firstStaff = state.data.firstOrNull()
+                                val firstDate = dates.firstOrNull()
+                                firstStaff?.let {staff->
+                                    firstDate?.let {date->
+                                        viewModel.getStaffSlots(
+                                            staffId = staff.id, parlourId = bookingPreviewData.parlourId, date = date.fullDate
+                                        )
+                                        selectedStaff = staff
+                                        selectedDate = date
+                                    }
+
+                                }
+
                             }
                             is StaffState.Empty -> {
                                 binding.shimmerStaffLayout.stopShimmer()
                                 binding.shimmerStaffLayout.visibility = View.GONE
-                                binding.rvStaff.visibility = View.GONE
-                                binding.rvSlots.visibility = View.GONE
+                                binding.layoutStaffContainer.visibility = View.GONE
                             }
                             is StaffState.Error -> {
                                 binding.shimmerStaffLayout.stopShimmer()
                                 binding.shimmerStaffLayout.visibility = View.GONE
-                                binding.rvStaff.visibility = View.GONE
-                                binding.rvSlots.visibility = View.GONE
+                                binding.layoutStaffContainer.visibility = View.GONE
+                                binding.mainContent.visibility = View.GONE
+                                binding.errorLayout.visibility = View.VISIBLE
                             }
                         }
                     }
@@ -140,31 +245,69 @@ class BookingSlotFragment : Fragment() {
 
                             }
                             is SlotState.Loading -> {
+                                Log.d("slot","loading")
+                                binding.layoutSlotContainer.visibility = View.VISIBLE
                                 binding.rvSlots.visibility = View.GONE
                                 binding.shimmerSlotLayout.visibility = View.VISIBLE
                                 binding.shimmerSlotLayout.startShimmer()
                             }
                             is SlotState.Success -> {
+                                Log.d("slot","success")
                                 binding.shimmerSlotLayout.stopShimmer()
                                 binding.shimmerSlotLayout.visibility = View.GONE
                                 binding.rvSlots.visibility = View.VISIBLE
-                                bookingSlotAdapter.submitList(state.data)
+                                bookingSlotAdapter.submitSlots(state.data)
                             }
                             is SlotState.Empty -> {
+                                Log.d("slot","empty")
                                 binding.shimmerSlotLayout.stopShimmer()
                                 binding.shimmerSlotLayout.visibility = View.GONE
                                 binding.rvSlots.visibility = View.GONE
+                                binding.layoutSlotContainer.visibility = View.GONE
                             }
                             is SlotState.Error -> {
+                                Log.d("slot","error")
                                 binding.shimmerSlotLayout.stopShimmer()
                                 binding.shimmerSlotLayout.visibility = View.GONE
                                 binding.rvSlots.visibility = View.GONE
+                                binding.layoutSlotContainer.visibility = View.GONE
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun showBottomStrip() {
+
+        binding.cardBottomAction.apply {
+
+            Log.d("strip","show called")
+            if (visibility == View.VISIBLE) return
+            Log.d("strip","visible = ${visibility}")
+            visibility = View.VISIBLE
+            alpha = 0f
+            translationX =300f
+
+            animate()
+                .translationX(0f)
+                .alpha(1f)
+                .setDuration(350)
+                .setInterpolator(OvershootInterpolator())
+                .start()
+        }
+    }
+    private fun hideBottomStrip() {
+
+        binding.cardBottomAction.animate()
+            .translationX(300f)
+            .alpha(0f)
+            .setDuration(250)
+            .withEndAction {
+                binding.cardBottomAction.visibility = View.GONE
+            }
+            .start()
     }
 
 
