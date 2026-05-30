@@ -1,136 +1,166 @@
-# 📱 The Kainchee User
+# ✂️ THE KAINCHEE USER
 
-The Kainchee User is a modern salon & parlour booking Android application built using **Kotlin**, **MVVM**, **Clean Architecture**, **Hilt**, **Coroutines**, and **Retrofit**.
+A modern salon & parlour booking Android application built using **Kotlin, MVVM, Clean Architecture, Hilt, Retrofit, Coroutines, Navigation Component, and XML UI**.
 
-Users can discover nearby parlours, browse services, select stylists, schedule appointments, manage addresses, and complete bookings seamlessly.
+THE KAINCHEE enables users to discover nearby parlours, explore services, select stylists, book appointments, make secure payments, and manage bookings effortlessly.
 
 ---
 
-## ✨ Features
+## 📱 Features
 
-- 🔐 JWT Authentication
-- 📍 Multiple Address Management
-- 🗺️ Current Location Detection
-- 🔎 Search Locations
-- 💈 Nearby Parlour Discovery
-- 🏪 Parlour Details & Services
-- 👨‍🔧 Stylist Selection
-- 📅 Appointment Scheduling
-- ⏰ Time Slot Booking
-- 🛒 Booking Preview
-- 🧾 Booking History
-- 🧭 Google Maps Navigation
-- 🔔 Real-time Updates
-- 📱 Modern Material UI
+### 🔐 Authentication
+- OTP Based Login
+- JWT Authentication
+- Secure User Sessions
+- Auto Login Support
+
+---
+
+### 📍 Location Management
+- Current Location Detection
+- Google Places Search
+- Multiple Saved Addresses
+- Home / Work / Other Address Types
+- Default Address Selection
+- Location-Based Recommendations
+
+---
+
+### 🏠 Home Screen
+- Nearby Parlours
+- Trending Parlours
+- Trending Services
+- Category Based Filtering
+  - Men's
+  - Beauty
+  - Unisex
+- Dynamic Content Based on User Location
+
+---
+
+### 🔍 Search
+- Search Parlours
+- Search Services
+- Instant Search Suggestions
+
+---
+
+### 💈 Parlour Discovery
+- Detailed Parlour Profiles
+- Verified Parlour Badge
+- Open / Closed Status
+- Working Hours
+- Distance Calculation
+- Service Categories
+- Directions Support
+
+---
+
+### ✨ Service Booking
+- Browse Services by Category
+- View Price & Duration
+- Service Descriptions
+- Add / Remove Services
+- Dynamic Booking Cart
+
+---
+
+### 👨‍💼 Stylist Selection
+- Select Preferred Stylist
+- Experience Details
+- Availability Based Booking
+- Dynamic Slot Assignment
+
+---
+
+### 📅 Appointment Scheduling
+- Date Selection
+- Available Slot Selection
+- Real-Time Slot Availability
+- Multi-Service Duration Calculation
+- Conflict-Free Scheduling
+
+---
+
+### 🛒 Booking Preview
+- Selected Services Summary
+- Total Duration
+- Total Price
+- Remove Services
+- Appointment Review
+
+---
+
+### 💳 Payments
+- Razorpay Integration
+- Secure Payment Processing
+- Payment Verification
+- Booking Confirmation
+
+---
+
+### 📖 Booking Management
+- Upcoming Bookings
+- Booking Details
+- Booking History
+- Booking Status Tracking
+- Cancel Booking
+- Reschedule Booking
+
+---
+
+### 🗺️ Maps & Navigation
+- Google Maps Integration
+- Open Directions
+- Distance Tracking
+- Turn-by-Turn Navigation
+
+---
+
+### 🎨 User Experience
+- Material Design Components
+- Smooth Animations
+- Empty States
+- Error Handling
+- Loading States
+- Responsive UI
 
 ---
 
 ## 🏗️ Architecture
 
+The project follows **Clean Architecture + MVVM** principles.
+
 ```text
-Presentation (UI)
-      │
-      ▼
-ViewModel
-      │
-      ▼
-UseCases
-      │
-      ▼
-Repository
-      │
-      ▼
-Remote API / Local Storage
+Presentation Layer
+│
+├── Activities
+├── Fragments
+├── ViewModels
+├── Adapters
+├── UI State Management
+└── Navigation
+│
+Domain Layer
+│
+├── UseCases
+├── Repository Contracts
+└── Domain Models
+│
+Data Layer
+│
+├── Repository Implementations
+├── Remote APIs
+├── DTOs
+├── Mappers
+└── Data Sources
+│
+Dependency Injection
+│
+├── AppModule
+├── NetworkModule
+└── RepositoryModule
 ```
-
-- MVVM Architecture
-- Clean Architecture
-- Repository Pattern
-- Dependency Injection (Hilt)
-- Kotlin Coroutines & Flow
-
----
-
-## 🛠️ Tech Stack
-
-| Technology | Usage |
-|------------|--------|
-| Kotlin | Main Language |
-| XML | UI Design |
-| MVVM | Architecture |
-| Hilt | Dependency Injection |
-| Retrofit | Networking |
-| Coroutines | Async Operations |
-| StateFlow | UI State Management |
-| Navigation Component | Navigation |
-| Glide | Image Loading |
-| Google Maps | Location & Navigation |
-
----
-
-# 📸 Application Screenshots
-
-## 📍 Location Management
-
-<p align="center">
-  <img src="screenshots/location_search.png" width="250"/>
-  <img src="screenshots/saved_addresses.png" width="250"/>
-  <img src="screenshots/map_selection.png" width="250"/>
-</p>
-
----
-
-## 🏠 Home Experience
-
-<p align="center">
-  <img src="screenshots/home_screen.png" width="250"/>
-  <img src="screenshots/nearby_parlours.png" width="250"/>
-</p>
-
----
-
-## 💈 Parlour Discovery
-
-<p align="center">
-  <img src="screenshots/parlour_details.png" width="250"/>
-  <img src="screenshots/parlour_closed.png" width="250"/>
-</p>
-
----
-
-## ✨ Service Selection
-
-<p align="center">
-  <img src="screenshots/hair_spa_services.png" width="250"/>
-  <img src="screenshots/facial_services.png" width="250"/>
-  <img src="screenshots/head_massage_services.png" width="250"/>
-</p>
-
----
-
-## 🛒 Booking Preview
-
-<p align="center">
-  <img src="screenshots/booking_preview.png" width="250"/>
-</p>
-
----
-
-## 🗺️ Navigation Support
-
-<p align="center">
-  <img src="screenshots/parlour_location.png" width="250"/>
-  <img src="screenshots/google_maps_navigation.png" width="250"/>
-</p>
-
----
-
-## 📅 Appointment Booking
-
-<p align="center">
-  <img src="screenshots/stylist_selection.png" width="250"/>
-  <img src="screenshots/time_slot_selection.png" width="250"/>
-</p>
 
 ---
 
@@ -141,8 +171,12 @@ com.thekainchee.user
 │
 ├── data
 │   ├── remote
-│   ├── repository
-│   └── dto
+│   │   ├── api
+│   │   ├── dto
+│   │   └── interceptor
+│   │
+│   ├── mapper
+│   └── repository
 │
 ├── domain
 │   ├── model
@@ -155,30 +189,143 @@ com.thekainchee.user
 │   ├── location
 │   ├── parlour
 │   ├── booking
-│   └── profile
+│   ├── profile
+│   ├── common
+│   └── adapter
 │
 ├── di
 │
-└── utils
+├── utils
+│
+└── MainApplication.kt
 ```
+
+---
+
+## 🛠️ Tech Stack
+
+### Language
+- Kotlin
+
+### UI
+- XML
+- Material Components
+
+### Architecture
+- MVVM
+- Clean Architecture
+
+### Dependency Injection
+- Hilt
+
+### Networking
+- Retrofit
+- OkHttp
+
+### Async Programming
+- Coroutines
+- Flow
+- StateFlow
+- SharedFlow
+
+### Navigation
+- Navigation Component
+- Safe Args
+
+### Maps & Location
+- Google Maps SDK
+- Google Places API
+- Fused Location Provider
+
+### Payments
+- Razorpay Payment Gateway
+
+### Image Loading
+- Glide
+
+### Backend
+- Node.js
+- Express.js
+- MongoDB
+
+---
+
+## 🔥 Highlights
+
+- Production-Ready Android Architecture
+- Startup-Level Booking Platform
+- Dynamic Appointment Scheduling
+- Multi-Service Booking Flow
+- Stylist-Based Slot Management
+- Location-Aware Parlour Discovery
+- Google Maps Integration
+- Razorpay Payment Integration
+- Clean, Scalable, Maintainable Codebase
+- Interview-Ready Project Structure
+
+---
+
+## 📸 Screenshots
+
+### Authentication
+- OTP Verification
+- Login Flow
+
+### Location
+- Address Management
+- Place Search
+- Current Location Detection
+
+### Home
+- Nearby Parlours
+- Trending Services
+- Category Filtering
+
+### Parlour
+- Parlour Details
+- Services
+- Maps & Directions
+
+### Booking
+- Service Selection
+- Booking Preview
+- Stylist Selection
+- Slot Selection
+- Payment Flow
+
+### Profile
+- Booking History
+- Account Management
 
 ---
 
 ## 🚀 Future Enhancements
 
-- Razorpay Integration
 - Push Notifications
-- Live Booking Tracking
-- Chat Support
-- Loyalty Rewards
+- Coupon & Discount System
+- Reviews & Ratings
 - Favourite Parlours
+- Loyalty Rewards
+- Wallet Integration
+- Referral Program
 
 ---
 
 ## 👨‍💻 Developer
 
-**Shahzad Ansari**
+**Danish (Shahzad Ansari)**
 
-Android Developer | Kotlin | MVVM | Clean Architecture
+Android Developer
 
-Built with ❤️ using Kotlin.
+- Kotlin
+- MVVM
+- Clean Architecture
+- Hilt
+- Retrofit
+- Coroutines
+- Google Maps
+- Razorpay Integration
+
+---
+
+### ⭐ Star the repository if you found this project useful.
