@@ -1,8 +1,8 @@
 # ✂️ THE KAINCHEE USER
 
-A modern salon & parlour booking Android application built using **Kotlin, MVVM, Clean Architecture, Hilt, Retrofit, Coroutines, Navigation Component, and XML UI**.
+A modern Android salon & parlour booking application that enables users to discover nearby parlours, explore services, select stylists, choose appointment slots, and book grooming services seamlessly.
 
-THE KAINCHEE enables users to discover nearby parlours, explore services, select stylists, book appointments, make secure payments, and manage bookings effortlessly.
+Built with modern Android development practices using **Kotlin, MVVM, Clean Architecture, Hilt, Retrofit, Coroutines, Room Database, Google Maps, and Navigation Component**.
 
 ---
 
@@ -11,155 +11,75 @@ THE KAINCHEE enables users to discover nearby parlours, explore services, select
 ### 🔐 Authentication
 - OTP Based Login
 - JWT Authentication
-- Secure User Sessions
-- Auto Login Support
-
----
+- Secure Session Management
+- Persistent User Login
 
 ### 📍 Location Management
 - Current Location Detection
 - Google Places Search
-- Multiple Saved Addresses
+- Save Multiple Addresses
 - Home / Work / Other Address Types
 - Default Address Selection
-- Location-Based Recommendations
+- Location Switching
 
----
-
-### 🏠 Home Screen
+### 🏪 Parlour Discovery
 - Nearby Parlours
 - Trending Parlours
-- Trending Services
 - Category Based Filtering
-  - Men's
-  - Beauty
-  - Unisex
-- Dynamic Content Based on User Location
+- Distance Based Search
+- Verified Parlour Listings
+- Real-Time Availability
 
----
+### ✂️ Service Booking
+- Browse Services By Category
+- Service Details & Pricing
+- Dynamic Cart Management
+- Multi-Service Selection
+- Total Price Calculation
+- Total Duration Calculation
 
-### 🔍 Search
-- Search Parlours
-- Search Services
-- Instant Search Suggestions
-
----
-
-### 💈 Parlour Discovery
-- Detailed Parlour Profiles
-- Verified Parlour Badge
-- Open / Closed Status
-- Working Hours
-- Distance Calculation
-- Service Categories
-- Directions Support
-
----
-
-### ✨ Service Booking
-- Browse Services by Category
-- View Price & Duration
-- Service Descriptions
-- Add / Remove Services
-- Dynamic Booking Cart
-
----
-
-### 👨‍💼 Stylist Selection
-- Select Preferred Stylist
-- Experience Details
-- Availability Based Booking
-- Dynamic Slot Assignment
-
----
+### 👨‍🔧 Stylist Selection
+- View Available Stylists
+- Experience Information
+- Stylist Based Booking
 
 ### 📅 Appointment Scheduling
 - Date Selection
 - Available Slot Selection
-- Real-Time Slot Availability
-- Multi-Service Duration Calculation
-- Conflict-Free Scheduling
+- Dynamic Slot Availability
+- Appointment Summary
 
----
-
-### 🛒 Booking Preview
-- Selected Services Summary
-- Total Duration
-- Total Price
-- Remove Services
-- Appointment Review
-
----
-
-### 💳 Payments
-- Razorpay Integration
-- Secure Payment Processing
-- Payment Verification
-- Booking Confirmation
-
----
-
-### 📖 Booking Management
-- Upcoming Bookings
-- Booking Details
-- Booking History
-- Booking Status Tracking
-- Cancel Booking
-- Reschedule Booking
-
----
-
-### 🗺️ Maps & Navigation
+### 🗺️ Navigation & Maps
 - Google Maps Integration
-- Open Directions
-- Distance Tracking
-- Turn-by-Turn Navigation
+- Parlour Location View
+- Turn-By-Turn Directions
+- Distance Calculation
 
----
+### 📋 Booking Management
+- Booking Preview
+- Appointment Confirmation
+- Upcoming Bookings
+- Booking Tracking
 
 ### 🎨 User Experience
-- Material Design Components
-- Smooth Animations
-- Empty States
-- Error Handling
+- Empty State Handling
+- Error State Handling
 - Loading States
 - Responsive UI
+- Smooth Navigation Flow
 
 ---
 
-## 🏗️ Architecture
+# 🏗️ Architecture
 
-The project follows **Clean Architecture + MVVM** principles.
+The application follows **MVVM + Clean Architecture** principles with clear separation of concerns.
 
 ```text
 Presentation Layer
-│
-├── Activities
-├── Fragments
-├── ViewModels
-├── Adapters
-├── UI State Management
-└── Navigation
-│
+        ↓
 Domain Layer
-│
-├── UseCases
-├── Repository Contracts
-└── Domain Models
-│
+        ↓
 Data Layer
-│
-├── Repository Implementations
-├── Remote APIs
-├── DTOs
-├── Mappers
-└── Data Sources
-│
-Dependency Injection
-│
-├── AppModule
-├── NetworkModule
-└── RepositoryModule
 ```
 
 ---
@@ -170,12 +90,10 @@ Dependency Injection
 com.thekainchee.user
 │
 ├── data
-│   ├── remote
-│   │   ├── api
-│   │   ├── dto
-│   │   └── interceptor
-│   │
+│   ├── local
+│   ├── location
 │   ├── mapper
+│   ├── remote
 │   └── repository
 │
 ├── domain
@@ -183,139 +101,301 @@ com.thekainchee.user
 │   ├── repository
 │   └── usecase
 │
+├── di
+│   ├── DatabaseModule
+│   ├── NetworkModule
+│   └── RepositoryModule
+│
 ├── presentation
 │   ├── auth
-│   ├── home
-│   ├── location
-│   ├── parlour
+│   ├── base
 │   ├── booking
-│   ├── profile
 │   ├── common
-│   └── adapter
-│
-├── di
+│   ├── dashboard
+│   ├── location
+│   │   ├── adapter
+│   │   ├── fragment
+│   │   ├── model
+│   │   ├── state
+│   │   └── viewmodel
+│   │
+│   ├── parlour
+│   ├── service
+│   └── splash
 │
 ├── utils
 │
-└── MainApplication.kt
+└── MainActivity
 ```
 
 ---
 
-## 🛠️ Tech Stack
+# 📚 Layer Explanation
 
-### Language
+## Presentation Layer
+
+Responsible for UI rendering and user interaction.
+
+### Contains
+
+- Activities
+- Fragments
+- ViewModels
+- UI States
+- Adapters
+- Navigation Handling
+
+### Features
+
+```text
+presentation
+├── auth
+├── booking
+├── dashboard
+├── location
+├── parlour
+├── service
+├── splash
+├── common
+└── base
+```
+
+---
+
+## Domain Layer
+
+Contains pure business logic.
+
+### Contains
+
+- Domain Models
+- Repository Contracts
+- Use Cases
+
+```text
+domain
+├── model
+├── repository
+└── usecase
+```
+
+---
+
+## Data Layer
+
+Handles all data sources.
+
+### Contains
+
+- Retrofit APIs
+- DTO Models
+- Room Database
+- Repository Implementations
+- Data Mappers
+- Location Services
+
+```text
+data
+├── local
+├── location
+├── mapper
+├── remote
+└── repository
+```
+
+---
+
+## Dependency Injection
+
+Hilt is used for dependency management.
+
+```text
+di
+├── DatabaseModule
+├── NetworkModule
+└── RepositoryModule
+```
+
+### Responsibilities
+
+- Retrofit Initialization
+- OkHttp Configuration
+- Room Database Provision
+- Repository Injection
+- Singleton Management
+
+---
+
+# 🚀 Tech Stack
+
+## Language
+
 - Kotlin
 
-### UI
-- XML
-- Material Components
+## Architecture
 
-### Architecture
 - MVVM
 - Clean Architecture
 
-### Dependency Injection
+## Dependency Injection
+
 - Hilt
 
-### Networking
+## Networking
+
 - Retrofit
 - OkHttp
 
-### Async Programming
-- Coroutines
+## Async Programming
+
+- Kotlin Coroutines
 - Flow
-- StateFlow
-- SharedFlow
 
-### Navigation
-- Navigation Component
-- Safe Args
+## Local Storage
 
-### Maps & Location
+- Room Database
+- DataStore
+
+## Maps & Location
+
 - Google Maps SDK
 - Google Places API
 - Fused Location Provider
 
-### Payments
-- Razorpay Payment Gateway
+## UI
 
-### Image Loading
-- Glide
-
-### Backend
-- Node.js
-- Express.js
-- MongoDB
+- XML
+- Material Design 3
+- Navigation Component
 
 ---
 
-## 🔥 Highlights
+# 🔄 Complete User Flow
 
-- Production-Ready Android Architecture
-- Startup-Level Booking Platform
-- Dynamic Appointment Scheduling
-- Multi-Service Booking Flow
-- Stylist-Based Slot Management
-- Location-Aware Parlour Discovery
+```text
+Splash
+   ↓
+Authentication
+   ↓
+Location Selection
+   ↓
+Home Screen
+   ↓
+Nearby / Trending Parlours
+   ↓
+Parlour Details
+   ↓
+Service Selection
+   ↓
+Booking Preview
+   ↓
+Stylist Selection
+   ↓
+Date Selection
+   ↓
+Time Slot Selection
+   ↓
+Payment
+   ↓
+Booking Confirmation
+   ↓
+Upcoming Bookings
+```
+
+---
+
+# 📍 Location Flow
+
+```text
+Search Location
+        ↓
+Select Location
+        ↓
+Save Address
+        ↓
+Set Default Address
+        ↓
+Discover Nearby Parlours
+```
+
+---
+
+# ✂️ Service Booking Flow
+
+```text
+Select Parlour
+        ↓
+Explore Services
+        ↓
+Add Services
+        ↓
+View Booking Preview
+        ↓
+Calculate Price & Duration
+        ↓
+Proceed To Appointment
+```
+
+---
+
+# 📅 Appointment Flow
+
+```text
+Select Stylist
+        ↓
+Choose Date
+        ↓
+Choose Time Slot
+        ↓
+Review Appointment
+        ↓
+Proceed To Payment
+```
+
+---
+
+# 🛡️ Clean Architecture Benefits
+
+- Scalable Codebase
+- Testable Business Logic
+- Easy Maintenance
+- Separation Of Concerns
+- Feature Based Development
+- Better Team Collaboration
+- Independent Layer Testing
+
+---
+
+# 🎯 Key Highlights
+
+- Multi-Service Booking System
+- Stylist Based Appointment Scheduling
 - Google Maps Integration
-- Razorpay Payment Integration
-- Clean, Scalable, Maintainable Codebase
-- Interview-Ready Project Structure
+- Dynamic Slot Availability
+- Address Management System
+- Feature Based Modular UI Structure
+- MVVM + Clean Architecture
+- Hilt Dependency Injection
+- Production Ready Project Structure
 
 ---
 
-## 📸 Screenshots
+# 🔮 Future Enhancements
 
-### Authentication
-- OTP Verification
-- Login Flow
-
-### Location
-- Address Management
-- Place Search
-- Current Location Detection
-
-### Home
-- Nearby Parlours
-- Trending Services
-- Category Filtering
-
-### Parlour
-- Parlour Details
-- Services
-- Maps & Directions
-
-### Booking
-- Service Selection
-- Booking Preview
-- Stylist Selection
-- Slot Selection
-- Payment Flow
-
-### Profile
-- Booking History
-- Account Management
-
----
-
-## 🚀 Future Enhancements
-
+- Razorpay Payment Gateway
+- Booking Cancellation
+- Booking Rescheduling
 - Push Notifications
-- Coupon & Discount System
-- Reviews & Ratings
-- Favourite Parlours
+- Wallet System
 - Loyalty Rewards
-- Wallet Integration
-- Referral Program
+- Review & Rating System
+- Offers & Coupons
+- Dark Mode Support
+- Real-Time Booking Updates
 
 ---
 
-## 👨‍💻 Developer
-
-**Danish (Shahzad Ansari)**
-
-Android Developer
+# 🧑‍💻 Developed With
 
 - Kotlin
 - MVVM
@@ -323,9 +403,18 @@ Android Developer
 - Hilt
 - Retrofit
 - Coroutines
-- Google Maps
-- Razorpay Integration
+- Room
+- Google Maps SDK
+- Navigation Component
+- Material Design
 
 ---
 
-### ⭐ Star the repository if you found this project useful.
+## ⭐ Project Goal
+
+THE KAINCHEE USER aims to provide a seamless salon booking experience by connecting users with nearby parlours, simplifying appointment scheduling, and delivering a modern mobile booking experience.
+
+---
+```
+Made with ❤️ using Kotlin & Modern Android Development Practices
+```
