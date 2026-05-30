@@ -1,3 +1,4 @@
+````markdown
 # ✂️ THE KAINCHEE USER
 
 A modern salon & parlour booking Android application built using **Kotlin, MVVM, Clean Architecture, Hilt, Retrofit, Coroutines, Navigation Component, and XML UI**.
@@ -6,17 +7,71 @@ THE KAINCHEE enables users to discover nearby parlours, explore services, select
 
 ---
 
-## 📱 Features
+# 🎥 Demo Video
 
-### 🔐 Authentication
+https://youtube.com/shorts/mVcTSJBwLGE?si=Kun5t6e6-0twuU7c
+
+---
+
+# 📸 Application Preview
+
+## Authentication
+
+| Login | OTP Verification |
+|--------|--------|
+| <img src="screenshots/login.png" width="250"/> | <img src="screenshots/otp_verification.png" width="250"/> |
+
+---
+
+## Location Management
+
+| Location Search | Saved Addresses |
+|--------|--------|
+| <img src="screenshots/location_search.png" width="250"/> | <img src="screenshots/saved_addresses.png" width="250"/> |
+
+| Map Selection |
+|--------|
+| <img src="screenshots/map_selection.png" width="250"/> |
+
+---
+
+## Home Experience
+
+| Home Screen | Nearby Parlours |
+|--------|--------|
+| <img src="screenshots/home_screen.png" width="250"/> | <img src="screenshots/nearby_parlours.png" width="250"/> |
+
+---
+
+## Parlour Discovery
+
+| Parlour Details | Services |
+|--------|--------|
+| <img src="screenshots/parlour_details.png" width="250"/> | <img src="screenshots/service_selection.png" width="250"/> |
+
+---
+
+## Booking Flow
+
+| Booking Preview | Stylist Selection |
+|--------|--------|
+| <img src="screenshots/booking_preview.png" width="250"/> | <img src="screenshots/stylist_selection.png" width="250"/> |
+
+| Slot Selection | Google Maps Directions |
+|--------|--------|
+| <img src="screenshots/slot_selection.png" width="250"/> | <img src="screenshots/navigation.png" width="250"/> |
+
+---
+
+# 🚀 Features
+
+## 🔐 Authentication
 - OTP Based Login
 - JWT Authentication
 - Secure User Sessions
 - Auto Login Support
 
----
-
-### 📍 Location Management
+## 📍 Location Management
 - Current Location Detection
 - Google Places Search
 - Multiple Saved Addresses
@@ -24,28 +79,14 @@ THE KAINCHEE enables users to discover nearby parlours, explore services, select
 - Default Address Selection
 - Location-Based Recommendations
 
----
-
-### 🏠 Home Screen
+## 🏠 Home Screen
 - Nearby Parlours
 - Trending Parlours
 - Trending Services
 - Category Based Filtering
-  - Men's
-  - Beauty
-  - Unisex
 - Dynamic Content Based on User Location
 
----
-
-### 🔍 Search
-- Search Parlours
-- Search Services
-- Instant Search Suggestions
-
----
-
-### 💈 Parlour Discovery
+## 💈 Parlour Discovery
 - Detailed Parlour Profiles
 - Verified Parlour Badge
 - Open / Closed Status
@@ -54,52 +95,40 @@ THE KAINCHEE enables users to discover nearby parlours, explore services, select
 - Service Categories
 - Directions Support
 
----
-
-### ✨ Service Booking
+## ✨ Service Booking
 - Browse Services by Category
 - View Price & Duration
 - Service Descriptions
 - Add / Remove Services
 - Dynamic Booking Cart
 
----
-
-### 👨‍💼 Stylist Selection
+## 👨‍💼 Stylist Selection
 - Select Preferred Stylist
 - Experience Details
 - Availability Based Booking
 - Dynamic Slot Assignment
 
----
-
-### 📅 Appointment Scheduling
+## 📅 Appointment Scheduling
 - Date Selection
 - Available Slot Selection
 - Real-Time Slot Availability
 - Multi-Service Duration Calculation
 - Conflict-Free Scheduling
 
----
-
-### 🛒 Booking Preview
+## 🛒 Booking Preview
 - Selected Services Summary
 - Total Duration
 - Total Price
 - Remove Services
 - Appointment Review
 
----
-
-### 💳 Payments
+## 💳 Payments
 - Razorpay Integration
 - Secure Payment Processing
 - Payment Verification
 - Booking Confirmation
 
----
-
-### 📖 Booking Management
+## 📖 Booking Management
 - Upcoming Bookings
 - Booking Details
 - Booking History
@@ -107,9 +136,7 @@ THE KAINCHEE enables users to discover nearby parlours, explore services, select
 - Cancel Booking
 - Reschedule Booking
 
----
-
-### 🗺️ Maps & Navigation
+## 🗺️ Maps & Navigation
 - Google Maps Integration
 - Open Directions
 - Distance Tracking
@@ -117,17 +144,7 @@ THE KAINCHEE enables users to discover nearby parlours, explore services, select
 
 ---
 
-### 🎨 User Experience
-- Material Design Components
-- Smooth Animations
-- Empty States
-- Error Handling
-- Loading States
-- Responsive UI
-
----
-
-## 🏗️ Architecture
+# 🏗️ Architecture
 
 The project follows **Clean Architecture + MVVM** principles.
 
@@ -164,7 +181,7 @@ Dependency Injection
 
 ---
 
-## 📂 Project Structure
+# 📂 Project Structure
 
 ```text
 com.thekainchee.user
@@ -202,7 +219,7 @@ com.thekainchee.user
 
 ---
 
-## 🛠️ Tech Stack
+# 🛠️ Tech Stack
 
 ### Language
 - Kotlin
@@ -240,9 +257,6 @@ com.thekainchee.user
 ### Payments
 - Razorpay Payment Gateway
 
-### Image Loading
-- Glide
-
 ### Backend
 - Node.js
 - Express.js
@@ -250,7 +264,13 @@ com.thekainchee.user
 
 ---
 
-## 🔥 Highlights
+# 🌐 Backend Repository
+
+https://github.com/ShahzadAnsari13/the-kainchee-backend
+
+---
+
+# 🔥 Highlights
 
 - Production-Ready Android Architecture
 - Startup-Level Booking Platform
@@ -265,41 +285,7 @@ com.thekainchee.user
 
 ---
 
-## 📸 Screenshots
-
-### Authentication
-- OTP Verification
-- Login Flow
-
-### Location
-- Address Management
-- Place Search
-- Current Location Detection
-
-### Home
-- Nearby Parlours
-- Trending Services
-- Category Filtering
-
-### Parlour
-- Parlour Details
-- Services
-- Maps & Directions
-
-### Booking
-- Service Selection
-- Booking Preview
-- Stylist Selection
-- Slot Selection
-- Payment Flow
-
-### Profile
-- Booking History
-- Account Management
-
----
-
-## 🚀 Future Enhancements
+# 🚀 Future Enhancements
 
 - Push Notifications
 - Coupon & Discount System
@@ -311,21 +297,19 @@ com.thekainchee.user
 
 ---
 
-## 👨‍💻 Developer
+# 👨‍💻 Developer
 
-**Danish (Shahzad Ansari)**
+**Shahzad Ansari**
 
-Android Developer
+Android Developer | Kotlin | MVVM | Clean Architecture | Hilt | Retrofit | Coroutines
 
-- Kotlin
-- MVVM
-- Clean Architecture
-- Hilt
-- Retrofit
-- Coroutines
-- Google Maps
-- Razorpay Integration
+### Connect
+
+- LinkedIn: https://www.linkedin.com/in/shahzad-ansari-306345363
+- LeetCode: https://leetcode.com/ShahzadAnsari13
+- GitHub: https://github.com/ShahzadAnsari13
 
 ---
 
-### ⭐ Star the repository if you found this project useful.
+⭐ If you found this project interesting, consider giving it a star.
+````
