@@ -370,7 +370,7 @@ Upcoming Bookings
 - Multi-Service Booking
 - Location Based Parlour Discovery
 - Production Ready Folder Structure
-
+- Real Backend API Integration (Node.js + MongoDB)
 ---
 
 # 🌐 Backend Repository
