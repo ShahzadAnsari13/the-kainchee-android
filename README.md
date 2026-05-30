@@ -1,10 +1,11 @@
+````markdown
 # ✂️ THE KAINCHEE USER
 
 ### Modern Salon & Parlour Booking Application
 
 THE KAINCHEE USER is a production-ready Android application that enables users to discover nearby parlours, explore services, select stylists, choose appointment slots, and book grooming services seamlessly.
 
-Built using modern Android development practices with **Kotlin, MVVM, Clean Architecture, Hilt, Retrofit, Coroutines, Room Database, Google Maps SDK, Places API, and Navigation Component**.
+Built using modern Android development practices with **Kotlin, MVVM, Clean Architecture, Hilt, Retrofit, OkHttp, Coroutines, Room Database, DataStore, Google Maps SDK, Places API, and Navigation Component**.
 
 ---
 
@@ -12,52 +13,28 @@ Built using modern Android development practices with **Kotlin, MVVM, Clean Arch
 
 Watch the complete application walkthrough:
 
-👉 **[Watch Demo Video](YOUR_YOUTUBE_OR_DRIVE_LINK_HERE)**
+👉 https://youtube.com/shorts/mVcTSJBwLGE?si=Kun5t6e6-0twuU7c
 
 ---
 
-## 📱 Screenshots
+# 📱 Application Screenshots
 
-### Authentication
-- OTP Login
-- Secure Authentication Flow
+<p align="center">
+  <img src="screenshots/home_screen.jpg" width="220"/>
+  <img src="screenshots/parlour_details.jpg" width="220"/>
+  <img src="screenshots/service_selection.jpg" width="220"/>
+</p>
 
-### Location Management
-- Search Location
-- Current Location Detection
-- Save Address
-- Home / Work / Other Address Types
+<p align="center">
+  <img src="screenshots/booking_preview.jpg" width="220"/>
+  <img src="screenshots/stylist_selection.jpg" width="220"/>
+  <img src="screenshots/slot_selection.jpg" width="220"/>
+</p>
 
-### Home Screen
-- Nearby Parlours
-- Trending Parlours
-- Trending Services
-- Category Filtering
-
-### Parlour Details
-- Parlour Information
-- Open / Closed Status
-- Working Hours
-- Google Maps Integration
-- Direction Support
-
-### Service Booking
-- Service Categories
-- Dynamic Service Selection
-- Price Calculation
-- Duration Calculation
-
-### Appointment Scheduling
-- Stylist Selection
-- Date Selection
-- Time Slot Selection
-- Appointment Summary
-
-### Booking Preview
-- Selected Services
-- Total Price
-- Total Duration
-- Dynamic Booking Cart
+<p align="center">
+  <img src="screenshots/saved_addresses.jpg" width="220"/>
+  <img src="screenshots/location_picker.jpg" width="220"/>
+</p>
 
 ---
 
@@ -69,6 +46,7 @@ Watch the complete application walkthrough:
 - JWT Authentication
 - Secure Session Handling
 - Persistent Login Sessions
+- Secure Token Storage using DataStore
 
 ---
 
@@ -80,6 +58,7 @@ Watch the complete application walkthrough:
 - Home / Work / Other Labels
 - Default Address Selection
 - Dynamic Location Switching
+- Geocoder Address Resolution
 
 ---
 
@@ -116,7 +95,7 @@ Watch the complete application walkthrough:
 
 - Date Selection
 - Time Slot Selection
-- Slot Availability Handling
+- Dynamic Slot Availability
 - Appointment Summary
 
 ---
@@ -124,8 +103,8 @@ Watch the complete application walkthrough:
 ## 🗺️ Navigation Support
 
 - Google Maps Integration
-- Parlour Location
-- Turn By Turn Navigation
+- Parlour Location View
+- Turn By Turn Directions
 - Distance Calculation
 
 ---
@@ -142,11 +121,11 @@ Watch the complete application walkthrough:
 
 ## 🎨 User Experience
 
-- Empty States
-- Error States
+- Empty State Handling
+- Error State Handling
 - Loading States
-- Smooth Navigation
 - Responsive Design
+- Smooth Navigation Flow
 
 ---
 
@@ -193,12 +172,6 @@ com.thekainchee.user
 │   ├── common
 │   ├── dashboard
 │   ├── location
-│   │   ├── adapter
-│   │   ├── fragment
-│   │   ├── model
-│   │   ├── state
-│   │   └── viewmodel
-│   │
 │   ├── parlour
 │   ├── service
 │   └── splash
@@ -341,7 +314,7 @@ Provides:
 ## UI
 
 - XML
-- Material Design
+- Material Design 3
 - Navigation Component
 
 ---
@@ -380,45 +353,7 @@ Upcoming Bookings
 
 ---
 
-# 📍 Location Flow
-
-```text
-Search Location
-        ↓
-Select Location
-        ↓
-Save Address
-        ↓
-Set Default Address
-        ↓
-Discover Nearby Parlours
-```
-
----
-
-# ✂️ Booking Flow
-
-```text
-Select Parlour
-        ↓
-Explore Services
-        ↓
-Add Services
-        ↓
-Booking Preview
-        ↓
-Select Stylist
-        ↓
-Choose Date
-        ↓
-Choose Time Slot
-        ↓
-Proceed To Payment
-```
-
----
-
-# 🎯 Highlights
+# 🎯 Key Highlights
 
 - Feature Based Architecture
 - MVVM + Clean Architecture
@@ -433,9 +368,19 @@ Proceed To Payment
 
 ---
 
+# 🌐 Backend Repository
+
+THE KAINCHEE Android application is fully integrated with a custom Node.js backend.
+
+Backend Repository:
+
+https://github.com/ShahzadAnsari13/the-kainchee-backend
+
+---
+
 # 🔮 Upcoming Features
 
-- Razorpay Payment Integration
+- Razorpay Payment Gateway
 - Booking Cancellation
 - Booking Rescheduling
 - Push Notifications
@@ -443,7 +388,7 @@ Proceed To Payment
 - Loyalty Rewards
 - Reviews & Ratings
 - Coupons & Offers
-- Dark Theme
+- Dark Mode
 - Real-Time Booking Updates
 
 ---
@@ -453,7 +398,7 @@ Proceed To Payment
 ### Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/TheKaincheeUser.git
+git clone https://github.com/ShahzadAnsari13/the-kainchee-android.git
 ```
 
 ### Open Project
@@ -469,7 +414,7 @@ MAPS_API_KEY=YOUR_KEY
 PLACES_API_KEY=YOUR_KEY
 ```
 
-### Build
+### Build & Run
 
 ```bash
 Sync Gradle
@@ -478,20 +423,13 @@ Run Application
 
 ---
 
-# 🧑‍💻 Developed With
+# 👨‍💻 Developer
 
-- Kotlin
-- MVVM
-- Clean Architecture
-- Hilt
-- Retrofit
-- Coroutines
-- Flow
-- Room Database
-- DataStore
-- Google Maps SDK
-- Google Places API
-- Material Design
+### Shahzad Ansari
+
+- LinkedIn: https://www.linkedin.com/in/shahzad-ansari-306345363
+- GitHub: https://github.com/ShahzadAnsari13
+- LeetCode: https://leetcode.com/ShahzadAnsari13
 
 ---
 
@@ -501,4 +439,5 @@ THE KAINCHEE USER aims to simplify salon appointment booking through location-ba
 
 ---
 
-### Made with ❤️ using Kotlin and Modern Android Development Practices
+### Made with ❤️ using Kotlin & Modern Android Development Practices
+````
