@@ -20,9 +20,11 @@ Watch the complete application walkthrough:
 
 ### Login & Authentication
 
-![Login Screen](screenshots/login_screen.jpeg)
-
-![OTP Verification](screenshots/otp_verification.jpeg)
+<p align="center">
+  <img src="screenshots/login_screen.jpeg" width="220"/>
+  <img src="screenshots/otp_verification.jpeg" width="220"/>
+  <img src="screenshots/home_screen.jpeg" width="220"/>
+</p>
 
 ---
 
