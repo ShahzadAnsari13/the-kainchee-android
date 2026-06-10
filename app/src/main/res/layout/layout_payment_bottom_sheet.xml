@@ -4,14 +4,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginTop="12dp"
     app:cardBackgroundColor="@android:color/white"
     app:cardCornerRadius="32dp"
     app:cardElevation="0dp">
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -110,7 +111,7 @@
                             android:layout_height="wrap_content"
                             android:text="₹499"
                             android:textColor="@color/primaryColor"
-                            android:textSize="18sp"
+                            android:textSize="20sp"
                             android:textStyle="bold"/>
 
                     </LinearLayout>
@@ -135,9 +136,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 app:cardCornerRadius="16dp"
-
+                android:clickable="true"
+                android:focusable="true"
                 app:strokeColor="#EEEEEE"
-                app:strokeWidth="1dp">
+                app:strokeWidth="2dp"
+                app:cardElevation="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -145,20 +148,21 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:background="@color/white"
+
                     android:padding="16dp">
 
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         app:cardCornerRadius="20dp"
+                        app:cardBackgroundColor="@android:color/white"
 
-                        android:background="@color/white"
                         app:cardElevation="0dp">
 
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:padding="4dp"
+                            android:padding="10dp"
                             android:src="@drawable/ic_wallet"/>
 
                     </com.google.android.material.card.MaterialCardView>
@@ -196,9 +200,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 app:cardCornerRadius="16dp"
-
+                android:clickable="true"
+                android:focusable="true"
                 app:strokeColor="#EEEEEE"
-                app:strokeWidth="1dp">
+                app:strokeWidth="2dp"
+                app:cardElevation="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -212,7 +218,7 @@
                         android:layout_height="40dp"
                         app:cardCornerRadius="20dp"
 
-                        android:background="@color/white"
+                        app:cardBackgroundColor="@android:color/white"
                         app:cardElevation="0dp">
 
                         <ImageView
@@ -256,7 +262,10 @@
                 android:layout_marginTop="12dp"
                 app:cardCornerRadius="16dp"
                 app:strokeColor="#EEEEEE"
-                app:strokeWidth="1dp">
+                app:strokeWidth="2dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardElevation="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -270,7 +279,7 @@
                         android:layout_height="40dp"
                         app:cardCornerRadius="20dp"
 
-                        android:background="@color/white"
+                        app:cardBackgroundColor="@android:color/white"
                         app:cardElevation="0dp">
                         <ImageView
                             android:layout_width="40dp"
@@ -325,6 +334,8 @@
                 android:layout_marginTop="20dp"
                 android:text="CONTINUE"
                 android:textAllCaps="false"
+                android:enabled="false"
+                android:alpha="0.5"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
                 app:backgroundTint="@color/primaryColor"

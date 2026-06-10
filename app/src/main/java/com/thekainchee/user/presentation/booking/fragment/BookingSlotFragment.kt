@@ -22,9 +22,10 @@ import com.thekainchee.user.databinding.FragmentBookingSlotBinding
 import com.thekainchee.user.presentation.booking.adapter.BookingDateAdapter
 import com.thekainchee.user.presentation.booking.adapter.BookingSlotAdapter
 import com.thekainchee.user.presentation.booking.adapter.BookingStaffAdapter
-import com.thekainchee.user.presentation.booking.bottomSheet.PaymentMethodBottomSheet
+import com.thekainchee.user.presentation.payment.bottomSheet.PaymentMethodBottomSheet
 import com.thekainchee.user.presentation.booking.model.CreateBookingParams
 import com.thekainchee.user.presentation.booking.model.DateUiModel
+import com.thekainchee.user.presentation.booking.model.PaymentSummary
 import com.thekainchee.user.presentation.booking.model.SlotUiModel
 import com.thekainchee.user.presentation.booking.model.StaffUiModel
 import com.thekainchee.user.presentation.booking.state.CreateBookingState
@@ -35,12 +36,10 @@ import com.thekainchee.user.presentation.service.viewModel.ServiceViewModel
 import com.thekainchee.user.utils.NetworkUtils
 import com.thekainchee.user.utils.socket.SocketManager
 import dagger.hilt.android.AndroidEntryPoint
-import io.socket.client.Socket
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.time.LocalDate
 import kotlin.getValue
-import kotlin.math.log
 
 @AndroidEntryPoint
 class BookingSlotFragment : Fragment() {
@@ -423,7 +422,14 @@ class BookingSlotFragment : Fragment() {
                                     binding.progressStatusCheck.visibility = View.GONE
                                     binding.btnContinue.text = "Continue to Payment"
                                     binding.btnContinue.isEnabled = true
-                                    PaymentMethodBottomSheet().show(
+                                val paymentSummary = PaymentSummary(
+                                    bookingId = state.booking.bookingId,
+                                    staffName = selectedStaff?.name.orEmpty(),
+                                    dateTime = "${selectedDate?.day} • ${selectedDate?.fullDate} • ${bookingSlot}",
+                                    amount = bookingPreviewData.totalPrice.toString()
+                                )
+                                PaymentMethodBottomSheet.newInstance(paymentSummary)
+                                    .show(
                                         parentFragmentManager,
                                         "PaymentMethodBottomSheet"
                                     )
