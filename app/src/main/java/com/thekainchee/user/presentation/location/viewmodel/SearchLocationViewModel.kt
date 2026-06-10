@@ -28,7 +28,7 @@ class SearchLocationViewModel @Inject constructor(
         searchJob?.cancel()
 
         searchJob = viewModelScope.launch {
-            delay(400)
+            delay(200)
 
             if (query.length >= 3) {
                 try {

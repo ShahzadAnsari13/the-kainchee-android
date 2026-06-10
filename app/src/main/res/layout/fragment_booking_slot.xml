@@ -269,7 +269,6 @@
         android:layout_gravity="bottom"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
-        android:visibility="gone"
         app:cardBackgroundColor="@android:color/white"
         app:cardCornerRadius="24dp"
         app:cardElevation="10dp"
@@ -334,19 +333,33 @@
             </LinearLayout>
 
             <!-- BUTTON -->
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnContinue"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
-                android:layout_marginTop="16dp"
-                android:text="Continue to Payment"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                app:backgroundTint="@color/primaryColor"
-                app:cornerRadius="18dp"/>
+                android:layout_marginTop="16dp">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnContinue"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Continue to Payment"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/primaryColor"
+                    app:cornerRadius="18dp"/>
+
+                <ProgressBar
+                    android:id="@+id/progressStatusCheck"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="27dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    android:indeterminateTint="@color/white" />
+            </FrameLayout>
+
+
 
         </LinearLayout>
 

@@ -13,4 +13,8 @@
     <color name="blue">#00296F</color>
     <color name="red">#D32F2F</color>
     <color name="shimmer_bg_light">#F2F2F2</color>
+    <color name="gold_primary">#D4AF37</color>
+    <color name="black_bg">#1A1A1A</color>
+    <color name="grey_text">#757575</color>
+    <color name="card_bg">#F5F5F5</color>
 </resources>

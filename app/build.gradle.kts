@@ -123,6 +123,11 @@ dependencies {
 
     //Lottie Animation
     implementation("com.airbnb.android:lottie:6.4.0")
+
+    //Socket
+    implementation("io.socket:socket.io-client:2.1.1") {
+        exclude(group = "org.json", module = "json")
+    }
 }
 
 

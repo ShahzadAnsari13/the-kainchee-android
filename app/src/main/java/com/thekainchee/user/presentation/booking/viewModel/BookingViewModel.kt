@@ -3,6 +3,9 @@ package com.thekainchee.user.presentation.booking.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thekainchee.user.domain.repository.BookingRepository
+import com.thekainchee.user.presentation.booking.model.BookingUiModel
+import com.thekainchee.user.presentation.booking.model.CreateBookingParams
+import com.thekainchee.user.presentation.booking.state.CreateBookingState
 import com.thekainchee.user.presentation.booking.state.SlotState
 import com.thekainchee.user.presentation.booking.state.StaffState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +22,9 @@ class BookingViewModel @Inject constructor(val repository: BookingRepository) : 
     private val  _slotState = MutableStateFlow<SlotState> (SlotState.Idle)
     val slotState : StateFlow<SlotState> = _slotState
 
+    private val _createBookingState = MutableStateFlow<CreateBookingState>(CreateBookingState.Idle)
+    val createBookingState : StateFlow<CreateBookingState> = _createBookingState
+    private var createdBooking: BookingUiModel? = null
     fun getParlourStaffs(parlourId : String){
 
         _staffState.value = StaffState.Loading
@@ -60,4 +66,30 @@ class BookingViewModel @Inject constructor(val repository: BookingRepository) : 
         }
     }
 
+
+    fun createBooking(createBookingParams: CreateBookingParams){
+
+        if(createBookingState.value is CreateBookingState.Success) return
+        if(createBookingState.value is CreateBookingState.Loading) return
+        _createBookingState.value = CreateBookingState.Loading
+        viewModelScope.launch {
+            val result = repository.createBooking(createBookingParams)
+            if(result.isSuccess){
+                val data = result.getOrNull()
+                if (data != null) {
+                    createdBooking = data
+                    _createBookingState.value = CreateBookingState.Success(data)
+                } else {
+                    _createBookingState.value = CreateBookingState.Error("Failed to create booking")
+                }
+            }
+            else{
+                _createBookingState.value = CreateBookingState.Error(result.exceptionOrNull()?.message ?: "Failed to create booking")
+            }
+        }
+
+    }
+    fun resetCreateBookingState() {
+        _createBookingState.value = CreateBookingState.Idle
+    }
 }
