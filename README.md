@@ -41,57 +41,83 @@ Watch the complete application walkthrough:
 ---
 
 
-🚀 Features
-Authentication
-OTP Login
-JWT Authentication
-Secure Session Handling
-DataStore Token Storage
-Location & Discovery
-Current Location Detection
-Google Places Search
-Saved Addresses
-Nearby & Trending Parlours
-Category-Based Discovery
-Booking System
-Service Selection
-Stylist Selection
-Dynamic Slot Availability
-Appointment Scheduling
-Booking Tracking
-Maps & Navigation
-Google Maps Integration
-Parlour Location View
-Turn-by-Turn Navigation
-🏗️ Architecture
-MVVM Architecture
-Clean Architecture
-Repository Pattern
-Hilt Dependency Injection
-Kotlin Coroutines & Flow
-🛠️ Tech Stack
+## 🚀 Features
+### Authentication
+- OTP Login
+- JWT Authentication
+- Secure Session Handling
+- DataStore Token Storage
 
-Android: Kotlin, MVVM, Hilt, Retrofit, Coroutines, Room, DataStore
+### Location & Discovery
+- Current Location Detection
+- Google Places Search
+- Saved Addresses
+- Nearby & Trending Parlours
+- Category-Based Discovery
 
-Maps: Google Maps SDK, Places API
+### Booking System
+- Service Selection
+- Stylist Selection
+- Dynamic Slot Availability
+- Appointment Scheduling
+- Booking Tracking
 
-Backend: Node.js, MongoDB, REST APIs
+### Maps & Navigation
+- Google Maps Integration
+- Parlour Location View
+- Turn-by-Turn Navigation
 
-🌐 Backend Repository
+## 🏗️ Architecture
+- MVVM Architecture
+- Clean Architecture
+- Repository Pattern
+- Hilt Dependency Injection
+- Kotlin Coroutines & Flow
+## 🛠️ Tech Stack
+
+### Android
+- Kotlin
+- MVVM
+- Hilt
+- Retrofit
+- Coroutines
+- Room
+- DataStore
+
+### Maps
+- Google Maps SDK
+- Places API
+
+### Backend
+- Node.js
+- Express.js
+- MongoDB
+- REST APIs
+- Socket.IO
+- Redis
+
+## 🌐 Backend Repository
 
 https://github.com/ShahzadAnsari13/the-kainchee-backend
 
-⚙️ Setup
+## ⚙️ Setup
 git clone https://github.com/ShahzadAnsari13/the-kainchee-android.git
 
-Add:
+## Required API Keys
 
-MAPS_API_KEY=YOUR_KEY
-PLACES_API_KEY=YOUR_KEY
+Enable the following APIs in Google Cloud Console:
 
-Open in Android Studio and run.
+- Maps SDK for Android
+- Places API
 
-👨‍💻 Developer
+Add your keys in local.properties:
+
+```properties
+MAPS_API_KEY=YOUR_GOOGLE_MAPS_API_KEY
+PLACES_API_KEY=YOUR_GOOGLE_PLACES_API_KEY
+```
+
+## 👨‍💻 Developer
 
 Shahzad Ansari
 
