@@ -5,6 +5,7 @@ import com.thekainchee.user.data.remote.api.AuthApi
 import com.thekainchee.user.data.remote.api.BookingApi
 import com.thekainchee.user.data.remote.api.ParlourApi
 import com.thekainchee.user.data.remote.api.ServiceApi
+import com.thekainchee.user.data.remote.api.WalletApi
 import com.thekainchee.user.data.remote.interceptor.AuthInterceptor
 import com.thekainchee.user.data.remote.interceptor.RefreshTokenAuthenticator
 import com.thekainchee.user.data.remote.retrofit.LoggingInterceptorProvider
@@ -88,4 +89,10 @@ object NetworkModule {
     fun provideBookingApi(retrofit: Retrofit): BookingApi{
         return retrofit.create(BookingApi::class.java)
     }
+    @Provides
+    @Singleton
+    fun provideWalletApi(retrofit: Retrofit): WalletApi {
+        return retrofit.create(WalletApi::class.java)
+    }
+
 }

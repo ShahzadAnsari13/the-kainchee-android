@@ -7,6 +7,7 @@ import com.thekainchee.user.data.repository.DeviceLocationRepositoryImpl
 import com.thekainchee.user.data.repository.ParlourRepositoryImpl
 import com.thekainchee.user.data.repository.PlaceSearchRepositoryImpl
 import com.thekainchee.user.data.repository.ServiceRepositoryImpl
+import com.thekainchee.user.data.repository.WalletRepositoryImpl
 import com.thekainchee.user.domain.repository.AddressRepository
 import com.thekainchee.user.domain.repository.AuthRepository
 import com.thekainchee.user.domain.repository.BookingRepository
@@ -14,6 +15,7 @@ import com.thekainchee.user.domain.repository.DeviceLocationRepository
 import com.thekainchee.user.domain.repository.ParlourRepository
 import com.thekainchee.user.domain.repository.PlaceSearchRepository
 import com.thekainchee.user.domain.repository.ServiceRepository
+import com.thekainchee.user.domain.repository.WalletRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -62,4 +64,9 @@ abstract class RepositoryModule {
         bookingRepositoryImpl: BookingRepositoryImpl
     ) : BookingRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindWalletRepository(
+        walletRepositoryImpl: WalletRepositoryImpl
+    ) : WalletRepository
 }

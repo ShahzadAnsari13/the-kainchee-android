@@ -28,6 +28,7 @@ import com.thekainchee.user.presentation.booking.model.DateUiModel
 import com.thekainchee.user.presentation.booking.model.PaymentSummary
 import com.thekainchee.user.presentation.booking.model.SlotUiModel
 import com.thekainchee.user.presentation.booking.model.StaffUiModel
+import com.thekainchee.user.presentation.booking.state.BookingEvent
 import com.thekainchee.user.presentation.booking.state.CreateBookingState
 import com.thekainchee.user.presentation.booking.state.SlotState
 import com.thekainchee.user.presentation.booking.state.StaffState
@@ -66,6 +67,7 @@ class BookingSlotFragment : Fragment() {
     private val  serviceViewModel : ServiceViewModel by viewModels()
     private var bookingSlot : String? =null
     private var serviceIds : List<String>? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -422,8 +424,22 @@ class BookingSlotFragment : Fragment() {
                                     binding.progressStatusCheck.visibility = View.GONE
                                     binding.btnContinue.text = "Continue to Payment"
                                     binding.btnContinue.isEnabled = true
+
+                            }
+                            is CreateBookingState.Error -> {
+                                binding.progressStatusCheck.visibility = View.GONE
+                                binding.btnContinue.text = "Continue to Payment"
+                                binding.btnContinue.isEnabled = true
+                            }
+                        }
+                    }
+                }
+                launch{
+                    viewModel.bookingEvent.collect { event ->
+                        when(event){
+                            is BookingEvent.OpenPaymentSheet -> {
                                 val paymentSummary = PaymentSummary(
-                                    bookingId = state.booking.bookingId,
+                                    bookingId = event.booking.bookingId,
                                     staffName = selectedStaff?.name.orEmpty(),
                                     dateTime = "${selectedDate?.day} • ${selectedDate?.fullDate} • ${bookingSlot}",
                                     amount = bookingPreviewData.totalPrice.toString()
@@ -433,11 +449,6 @@ class BookingSlotFragment : Fragment() {
                                         parentFragmentManager,
                                         "PaymentMethodBottomSheet"
                                     )
-                            }
-                            is CreateBookingState.Error -> {
-                                binding.progressStatusCheck.visibility = View.GONE
-                                binding.btnContinue.text = "Continue to Payment"
-                                binding.btnContinue.isEnabled = true
                             }
                         }
                     }

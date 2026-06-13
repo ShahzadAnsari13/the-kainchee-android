@@ -5,12 +5,16 @@ import androidx.lifecycle.viewModelScope
 import com.thekainchee.user.domain.repository.BookingRepository
 import com.thekainchee.user.presentation.booking.model.BookingUiModel
 import com.thekainchee.user.presentation.booking.model.CreateBookingParams
+import com.thekainchee.user.presentation.booking.state.BookingEvent
 import com.thekainchee.user.presentation.booking.state.CreateBookingState
 import com.thekainchee.user.presentation.booking.state.SlotState
 import com.thekainchee.user.presentation.booking.state.StaffState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 @HiltViewModel
@@ -24,7 +28,10 @@ class BookingViewModel @Inject constructor(val repository: BookingRepository) : 
 
     private val _createBookingState = MutableStateFlow<CreateBookingState>(CreateBookingState.Idle)
     val createBookingState : StateFlow<CreateBookingState> = _createBookingState
-    private var createdBooking: BookingUiModel? = null
+    private val _bookingEvent =
+        MutableSharedFlow<BookingEvent>()
+    val bookingEvent =_bookingEvent.asSharedFlow()
+
     fun getParlourStaffs(parlourId : String){
 
         _staffState.value = StaffState.Loading
@@ -77,8 +84,10 @@ class BookingViewModel @Inject constructor(val repository: BookingRepository) : 
             if(result.isSuccess){
                 val data = result.getOrNull()
                 if (data != null) {
-                    createdBooking = data
                     _createBookingState.value = CreateBookingState.Success(data)
+                    _bookingEvent.emit(
+                        BookingEvent.OpenPaymentSheet(data)
+                    )
                 } else {
                     _createBookingState.value = CreateBookingState.Error("Failed to create booking")
                 }
