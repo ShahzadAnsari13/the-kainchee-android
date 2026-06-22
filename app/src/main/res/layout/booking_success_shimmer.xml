@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="24dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Lottie Placeholder -->
+
+    <View
+        android:id="@+id/shimmerLottie"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:background="@drawable/bg_shimmer"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Title -->
+
+    <View
+        android:id="@+id/shimmerTitle"
+        android:layout_width="180dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_shimmer"
+        app:layout_constraintTop_toBottomOf="@id/shimmerLottie"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Message Line 1 -->
+
+    <View
+        android:id="@+id/shimmerMessage1"
+        android:layout_width="260dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_shimmer"
+        app:layout_constraintTop_toBottomOf="@id/shimmerTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Message Line 2 -->
+
+    <View
+        android:id="@+id/shimmerMessage2"
+        android:layout_width="220dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_shimmer"
+        app:layout_constraintTop_toBottomOf="@id/shimmerMessage1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Divider -->
+
+    <View
+        android:id="@+id/shimmerDivider1"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/bg_shimmer"
+        app:layout_constraintTop_toBottomOf="@id/shimmerMessage2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Parlour Name -->
+
+    <View
+        android:id="@+id/shimmerParlour"
+        android:layout_width="180dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_shimmer"
+        app:layout_constraintTop_toBottomOf="@id/shimmerDivider1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Date Time -->
+
+    <View
+        android:id="@+id/shimmerDate"
+        android:layout_width="220dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_shimmer"
+        app:layout_constraintTop_toBottomOf="@id/shimmerParlour"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Divider -->
+
+    <View
+        android:id="@+id/shimmerDivider2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_shimmer"
+        app:layout_constraintTop_toBottomOf="@id/shimmerDate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Button 1 -->
+
+    <View
+        android:id="@+id/shimmerBtnViewBooking"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_shimmer"
+        app:layout_constraintBottom_toTopOf="@id/shimmerBtnHome"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Button 2 -->
+
+    <View
+        android:id="@+id/shimmerBtnHome"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_shimmer"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

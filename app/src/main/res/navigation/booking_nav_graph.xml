@@ -10,6 +10,20 @@
 
         <argument android:name="services"
             app:argType="com.thekainchee.user.presentation.service.model.BookingPreviewUiModel"/>
+
+        <action android:id="@+id/action_bookingSlotFragment_to_bookingSuccessFragment"
+            app:destination="@id/bookingSuccessFragment">
+
+        </action>
+    </fragment>
+
+
+    <fragment android:id="@+id/bookingSuccessFragment"
+        android:name="com.thekainchee.user.presentation.booking.fragment.BookingSuccess"
+        android:label="BookingSuccessFragment">
+        <argument
+            android:name="bookingId"
+            app:argType="string" />
     </fragment>
 
 </navigation>

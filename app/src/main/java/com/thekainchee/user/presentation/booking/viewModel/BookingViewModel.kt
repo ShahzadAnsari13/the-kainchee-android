@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.thekainchee.user.domain.repository.BookingRepository
 import com.thekainchee.user.presentation.booking.model.BookingUiModel
 import com.thekainchee.user.presentation.booking.model.CreateBookingParams
+import com.thekainchee.user.presentation.booking.state.BookingDetailUiState
 import com.thekainchee.user.presentation.booking.state.BookingEvent
 import com.thekainchee.user.presentation.booking.state.CreateBookingState
 import com.thekainchee.user.presentation.booking.state.SlotState
@@ -32,6 +33,8 @@ class BookingViewModel @Inject constructor(val repository: BookingRepository) : 
         MutableSharedFlow<BookingEvent>()
     val bookingEvent =_bookingEvent.asSharedFlow()
 
+    private val _bookingDetailState = MutableStateFlow<BookingDetailUiState>(BookingDetailUiState.Idle)
+    val bookingDetailState : StateFlow<BookingDetailUiState> = _bookingDetailState
     fun getParlourStaffs(parlourId : String){
 
         _staffState.value = StaffState.Loading
@@ -100,5 +103,25 @@ class BookingViewModel @Inject constructor(val repository: BookingRepository) : 
     }
     fun resetCreateBookingState() {
         _createBookingState.value = CreateBookingState.Idle
+    }
+
+    fun getBookingDetails(bookingId: String) {
+
+        _bookingDetailState.value = BookingDetailUiState.Loading
+
+        viewModelScope.launch {
+
+            repository.getBookingDetails(bookingId)
+                .onSuccess {
+                    _bookingDetailState.value =
+                        BookingDetailUiState.Success(it)
+                }
+                .onFailure {
+                    _bookingDetailState.value =
+                        BookingDetailUiState.Error(
+                            it.message ?: "Failed to load booking details"
+                        )
+                }
+        }
     }
 }

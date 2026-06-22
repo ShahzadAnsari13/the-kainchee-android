@@ -5,26 +5,40 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
+import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.gson.JsonObject
+import com.razorpay.Checkout
+import com.razorpay.PaymentData
+import com.razorpay.PaymentResultWithDataListener
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.LayoutPaymentBottomSheetBinding
 import com.thekainchee.user.presentation.booking.model.PaymentSummary
 import com.thekainchee.user.presentation.payment.model.PaymentMethod
+import com.thekainchee.user.presentation.payment.model.VerifyPaymentParams
+import com.thekainchee.user.presentation.payment.state.OnlinePaymentEvent
+import com.thekainchee.user.presentation.payment.state.PaymentEvent
 import com.thekainchee.user.presentation.payment.state.WalletBalanceState
 import com.thekainchee.user.presentation.payment.viewModel.PaymentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.json.JSONObject
+import com.thekainchee.user.BuildConfig
+import com.thekainchee.user.presentation.payment.state.PaymentCallbackEvent
+
 @AndroidEntryPoint
-class PaymentMethodBottomSheet : BottomSheetDialogFragment() {
+class PaymentMethodBottomSheet : BottomSheetDialogFragment(){
+    var onPaymentSuccess: ((String) -> Unit)? = null
     private var _binding: LayoutPaymentBottomSheetBinding? = null
     private var selectedPaymentMethod: PaymentMethod? = null
     private val binding get() = _binding!!
     private lateinit var paymentSummary: PaymentSummary
-    private val paymentViewModel: PaymentViewModel by viewModels()
+    private val paymentViewModel: PaymentViewModel by activityViewModels()
+    private var walletBalance: Double = 0.0
     companion object {
 
         private const val KEY_PAYMENT_SUMMARY = "payment_summary"
@@ -85,15 +99,26 @@ class PaymentMethodBottomSheet : BottomSheetDialogFragment() {
             when(selectedPaymentMethod) {
 
                 PaymentMethod.WALLET -> {
-                    Log.d("PAYMENT", "Wallet Selected")
+                    val bookingAmount = paymentSummary.amount.toDouble()
+                    if(walletBalance<bookingAmount){
+                        Toast.makeText(
+                            requireContext(),
+                            "Insufficient balance. Please choose another payment method.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        return@setOnClickListener
+                    }
+
+                    paymentViewModel.payWithWallet(bookingId = paymentSummary.bookingId)
                 }
 
                 PaymentMethod.ONLINE -> {
-                    Log.d("PAYMENT", "Online Selected")
+                    paymentViewModel.createOrder(bookingId = paymentSummary.bookingId)
                 }
 
                 PaymentMethod.CASH -> {
-                    Log.d("PAYMENT", "Cash Selected")
+                   paymentViewModel.payWithCash(bookingId = paymentSummary.bookingId)
                 }
 
                 null -> {
@@ -120,7 +145,18 @@ class PaymentMethodBottomSheet : BottomSheetDialogFragment() {
                             }
 
                             is WalletBalanceState.Success -> {
-                                binding.tvWalletBalance.text = "Available Balance ₹${state.balance}"
+                                walletBalance = state.balance
+                                val bookingAmount = paymentSummary.amount.toDouble()
+                                if (walletBalance < bookingAmount) {
+
+                                    binding.tvWalletBalance.text =
+                                        "Available Balance ₹$walletBalance • Insufficient Balance"
+
+                                } else {
+
+                                    binding.tvWalletBalance.text =
+                                        "Available Balance ₹$walletBalance"
+                                }
                             }
 
                             is WalletBalanceState.Error -> {
@@ -129,7 +165,66 @@ class PaymentMethodBottomSheet : BottomSheetDialogFragment() {
                         }
                     }
                 }
+                launch {
+                    paymentViewModel.paymentEvent.collect {event->
+                        when(event){
+                            is PaymentEvent.NavigateToSuccess -> {
+                                Toast.makeText(requireContext(), "Payment Successful", Toast.LENGTH_SHORT).show()
+                                dismiss()
+                                onPaymentSuccess?.invoke(paymentSummary.bookingId)
+                            }
+                            is PaymentEvent.Message -> {
+                                Toast.makeText(requireContext(), event.msg, Toast.LENGTH_SHORT).show()
+                            }
+                        }
 
+                    }
+                }
+                launch {
+                    paymentViewModel.onlinePaymentEvent.collect{event->
+                        when(event){
+                            is  OnlinePaymentEvent.OpenRazorpay -> {
+                                Toast.makeText(requireContext(), "Open razorpay", Toast.LENGTH_SHORT).show()
+                                openRazorpay(event)
+                            }
+                            is OnlinePaymentEvent.Message -> {
+                                Log.d("RAZORPAY", event.message)
+
+                                Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
+                            }
+                            is OnlinePaymentEvent.NavigateToSuccess -> {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Payment Successful",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                onPaymentSuccess?.invoke(paymentSummary.bookingId)
+
+                                dismiss()
+                            }
+                        }
+
+                            }
+                }
+                launch{
+                    paymentViewModel.paymentCallbackEvent.collect{event->
+                        when(event){
+                            is PaymentCallbackEvent.Success -> {
+                                Log.d("PAYMENT", "Payment Success")
+                                val params = VerifyPaymentParams(
+                                    orderId = event.orderId,
+                                    paymentId = event.paymentId,
+                                    signature = event.signature
+                                )
+
+                                paymentViewModel.verifyPayment(params)
+                            }
+                            is PaymentCallbackEvent.Error -> {
+                                Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -164,5 +259,21 @@ class PaymentMethodBottomSheet : BottomSheetDialogFragment() {
         super.onDestroyView()
         _binding = null
     }
+    private fun openRazorpay(event: OnlinePaymentEvent.OpenRazorpay){
+        val checkout = Checkout()
+        Log.d("RAZORPAY", event.orderId)
+        Log.d("RAZORPAY", BuildConfig.RAZORPAY_KEY_ID)
+        checkout.setKeyID(BuildConfig.RAZORPAY_KEY_ID)
+        val options = JSONObject().apply {
 
+            put("name", "THE KAINCHEE")
+            put("description", "Salon Booking")
+            put("order_id", event.orderId)
+            put("currency", event.currency)
+            put("amount", event.amount)
+        }
+        checkout.open(requireActivity(),options)
+
+
+    }
 }

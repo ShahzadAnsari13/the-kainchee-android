@@ -5,6 +5,7 @@ import com.thekainchee.user.data.repository.AuthRepositoryImpl
 import com.thekainchee.user.data.repository.BookingRepositoryImpl
 import com.thekainchee.user.data.repository.DeviceLocationRepositoryImpl
 import com.thekainchee.user.data.repository.ParlourRepositoryImpl
+import com.thekainchee.user.data.repository.PaymentRepositoryImpl
 import com.thekainchee.user.data.repository.PlaceSearchRepositoryImpl
 import com.thekainchee.user.data.repository.ServiceRepositoryImpl
 import com.thekainchee.user.data.repository.WalletRepositoryImpl
@@ -13,6 +14,7 @@ import com.thekainchee.user.domain.repository.AuthRepository
 import com.thekainchee.user.domain.repository.BookingRepository
 import com.thekainchee.user.domain.repository.DeviceLocationRepository
 import com.thekainchee.user.domain.repository.ParlourRepository
+import com.thekainchee.user.domain.repository.PaymentRepository
 import com.thekainchee.user.domain.repository.PlaceSearchRepository
 import com.thekainchee.user.domain.repository.ServiceRepository
 import com.thekainchee.user.domain.repository.WalletRepository
@@ -69,4 +71,10 @@ abstract class RepositoryModule {
     abstract fun bindWalletRepository(
         walletRepositoryImpl: WalletRepositoryImpl
     ) : WalletRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPaymentRepository(
+        paymentRepositoryImpl: PaymentRepositoryImpl
+    ) : PaymentRepository
 }

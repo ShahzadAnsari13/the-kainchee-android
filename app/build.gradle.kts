@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -19,6 +21,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField(
+            "String",
+            "RAZORPAY_KEY_ID",
+            "\"rzp_test_T33XQGm6JLWudv\""
+        )
     }
 
     buildTypes {
@@ -42,6 +49,7 @@ android {
         viewBinding = true
         buildConfig = true
     }
+
 }
 
 
@@ -128,6 +136,9 @@ dependencies {
     implementation("io.socket:socket.io-client:2.1.1") {
         exclude(group = "org.json", module = "json")
     }
+
+    //Razorpay
+    implementation("com.razorpay:checkout:1.6.40")
 }
 
 

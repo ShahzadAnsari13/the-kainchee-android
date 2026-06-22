@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -217,11 +218,23 @@ class BookingSlotFragment : Fragment() {
                 if (serviceIds.isNullOrEmpty()) {
                     return@setOnClickListener
                 }
-                when(val state = viewModel.createBookingState.value){
+                when(viewModel.createBookingState.value){
 
                     is CreateBookingState.Success -> {
 
-                        PaymentMethodBottomSheet().show(
+                        val bottomSheet =
+                            PaymentMethodBottomSheet()
+                        bottomSheet.onPaymentSuccess = { bookingId ->
+
+                            findNavController().navigate(
+                                BookingSlotFragmentDirections
+                                    .actionBookingSlotFragmentToBookingSuccessFragment(
+                                        bookingId
+                                    )
+                            )
+                        }
+
+                        bottomSheet.show(
                             parentFragmentManager,
                             "PaymentMethodBottomSheet"
                         )
@@ -444,11 +457,26 @@ class BookingSlotFragment : Fragment() {
                                     dateTime = "${selectedDate?.day} • ${selectedDate?.fullDate} • ${bookingSlot}",
                                     amount = bookingPreviewData.totalPrice.toString()
                                 )
-                                PaymentMethodBottomSheet.newInstance(paymentSummary)
-                                    .show(
-                                        parentFragmentManager,
-                                        "PaymentMethodBottomSheet"
+                                val bottomSheet =
+                                    PaymentMethodBottomSheet.newInstance(
+                                        paymentSummary
                                     )
+
+                                bottomSheet.onPaymentSuccess = { bookingId ->
+
+                                    findNavController().navigate(
+                                        BookingSlotFragmentDirections
+                                            .actionBookingSlotFragmentToBookingSuccessFragment(
+                                                bookingId
+                                            )
+                                    )
+                                }
+
+                                bottomSheet.show(
+                                    parentFragmentManager,
+                                    "PaymentMethodBottomSheet"
+                                )
+
                             }
                         }
                     }

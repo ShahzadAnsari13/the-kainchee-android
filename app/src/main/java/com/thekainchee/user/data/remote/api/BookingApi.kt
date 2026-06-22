@@ -1,5 +1,6 @@
 package com.thekainchee.user.data.remote.api
 
+import com.thekainchee.user.data.remote.dto.booking.BookingDetailResponseDto
 import com.thekainchee.user.data.remote.dto.booking.BookingRequestDto
 import com.thekainchee.user.data.remote.dto.booking.BookingResponseDto
 import com.thekainchee.user.data.remote.dto.booking.SlotResponseDto
@@ -29,4 +30,11 @@ interface BookingApi {
     suspend fun createBooking(
         @Body bookingRequest: BookingRequestDto
     ): Response<BookingResponseDto>
+
+    @GET ("user/booking-detail/{bookingId}")
+    suspend fun getBookingDetails(
+        @Path("bookingId") bookingId: String
+    ): Response<BookingDetailResponseDto>
+
+
 }

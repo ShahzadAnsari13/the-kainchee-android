@@ -4,6 +4,7 @@ import com.thekainchee.user.data.remote.api.AddressApi
 import com.thekainchee.user.data.remote.api.AuthApi
 import com.thekainchee.user.data.remote.api.BookingApi
 import com.thekainchee.user.data.remote.api.ParlourApi
+import com.thekainchee.user.data.remote.api.PaymentApi
 import com.thekainchee.user.data.remote.api.ServiceApi
 import com.thekainchee.user.data.remote.api.WalletApi
 import com.thekainchee.user.data.remote.interceptor.AuthInterceptor
@@ -93,6 +94,11 @@ object NetworkModule {
     @Singleton
     fun provideWalletApi(retrofit: Retrofit): WalletApi {
         return retrofit.create(WalletApi::class.java)
+    }
+    @Provides
+    @Singleton
+    fun providePaymentApi(retrofit: Retrofit): PaymentApi{
+        return retrofit.create(PaymentApi::class.java)
     }
 
 }

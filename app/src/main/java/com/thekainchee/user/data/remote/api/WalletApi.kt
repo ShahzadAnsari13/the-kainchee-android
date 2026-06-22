@@ -7,7 +7,7 @@ import retrofit2.http.GET
 
 interface WalletApi {
 
-    @GET("api/wallet/balance")
+    @GET("wallet/balance")
     suspend fun getWalletBalance(): Response<WalletBalanceResponseDto>
 
 }

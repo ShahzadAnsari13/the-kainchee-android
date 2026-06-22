@@ -2,19 +2,26 @@ package com.thekainchee.user.presentation.booking
 
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.NavHostFragment
+import com.razorpay.PaymentData
+import com.razorpay.PaymentResultWithDataListener
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.ActivityBookingBinding
+import com.thekainchee.user.presentation.payment.viewModel.PaymentViewModel
 import com.thekainchee.user.presentation.service.model.BookingPreviewUiModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class BookingActivity : AppCompatActivity() {
+class BookingActivity : AppCompatActivity(), PaymentResultWithDataListener {
     private var bookingPreviewData: BookingPreviewUiModel? = null
+
+    private val paymentViewModel: PaymentViewModel by viewModels()
     private lateinit var binding: ActivityBookingBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +57,28 @@ class BookingActivity : AppCompatActivity() {
         }
     }
 
+    override fun onPaymentSuccess(razorpayPaymentId: String?,
+                                  paymentData: PaymentData?) {
+        paymentViewModel.onPaymentSuccess(
+            paymentId = razorpayPaymentId.orEmpty(),
+            orderId = paymentData?.orderId.orEmpty(),
+            signature = paymentData?.signature.orEmpty()
+        )
+    }
+
+    override fun onPaymentError(
+        code: Int,
+        response: String?,
+        paymentData: PaymentData?
+    ) {
+        paymentViewModel.onPaymentError(
+            response ?: "Payment Failed"
+        )
+    }
+    fun showToolbar(show: Boolean) {
+        binding.toolbar.visibility =
+            if (show) View.VISIBLE else View.GONE
+    }
 
 
 }

@@ -2,8 +2,8 @@ package com.thekainchee.user.presentation.booking.state
 
 import com.thekainchee.user.presentation.booking.model.BookingUiModel
 
-sealed interface BookingEvent {
+sealed class BookingEvent {
     data class OpenPaymentSheet(
         val booking: BookingUiModel
-    ) : BookingEvent
+    ) : BookingEvent()
 }

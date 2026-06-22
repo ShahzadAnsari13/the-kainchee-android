@@ -3,8 +3,10 @@ package com.thekainchee.user.data.repository
 import com.thekainchee.user.data.mapper.toBookingRequestDto
 import com.thekainchee.user.data.mapper.toBookingUiModel
 import com.thekainchee.user.data.mapper.toUi
+import com.thekainchee.user.data.mapper.toUiModel
 import com.thekainchee.user.data.remote.api.BookingApi
 import com.thekainchee.user.domain.repository.BookingRepository
+import com.thekainchee.user.presentation.booking.model.BookingDetailUiModel
 import com.thekainchee.user.presentation.booking.model.BookingUiModel
 import com.thekainchee.user.presentation.booking.model.CreateBookingParams
 import com.thekainchee.user.presentation.booking.model.SlotUiModel
@@ -67,6 +69,47 @@ class BookingRepositoryImpl @Inject constructor(private val api: BookingApi) : B
                 Result.failure(Exception(error.message ?: "Failed to fetch staff"))
             }
         }catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getBookingDetails(
+        bookingId: String
+    ): Result<BookingDetailUiModel> {
+
+        return try {
+
+            val response = api.getBookingDetails(bookingId)
+
+            if (response.isSuccessful) {
+
+                val body = response.body()
+
+                if (body != null) {
+                    Result.success(
+                        body.booking.toUiModel()
+                    )
+                } else {
+                    Result.failure(
+                        Exception("Empty response")
+                    )
+                }
+
+            } else {
+
+                val error = ErrorUtils.parseError(
+                    response.errorBody()?.string()
+                )
+
+                Result.failure(
+                    Exception(
+                        error.message ?: "Failed to fetch booking details"
+                    )
+                )
+            }
+
+        } catch (e: Exception) {
+
             Result.failure(e)
         }
     }
