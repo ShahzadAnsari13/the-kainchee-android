@@ -8,9 +8,11 @@ import com.thekainchee.user.presentation.booking.model.CreateBookingParams
 import com.thekainchee.user.presentation.booking.state.BookingDetailUiState
 import com.thekainchee.user.presentation.booking.state.BookingEvent
 import com.thekainchee.user.presentation.booking.state.CreateBookingState
+import com.thekainchee.user.presentation.booking.state.MyBookingsUiState
 import com.thekainchee.user.presentation.booking.state.SlotState
 import com.thekainchee.user.presentation.booking.state.StaffState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -18,6 +20,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
+
 @HiltViewModel
 class BookingViewModel @Inject constructor(val repository: BookingRepository) : ViewModel() {
 
@@ -35,6 +39,10 @@ class BookingViewModel @Inject constructor(val repository: BookingRepository) : 
 
     private val _bookingDetailState = MutableStateFlow<BookingDetailUiState>(BookingDetailUiState.Idle)
     val bookingDetailState : StateFlow<BookingDetailUiState> = _bookingDetailState
+
+    private val  _myBookingsState = MutableStateFlow<MyBookingsUiState>(MyBookingsUiState.Loading)
+    val myBookingsState : StateFlow<MyBookingsUiState> = _myBookingsState
+    private var bookingsJob: Job? = null
     fun getParlourStaffs(parlourId : String){
 
         _staffState.value = StaffState.Loading
@@ -121,6 +129,38 @@ class BookingViewModel @Inject constructor(val repository: BookingRepository) : 
                         BookingDetailUiState.Error(
                             it.message ?: "Failed to load booking details"
                         )
+                }
+        }
+    }
+    fun getMyBookings(status: String){
+        _myBookingsState.value = MyBookingsUiState.Loading
+        bookingsJob?.cancel()
+        bookingsJob = viewModelScope.launch {
+
+            repository.getMyBookings(status)
+                .onSuccess { bookings ->
+
+                    if(bookings.isEmpty()){
+
+                        _myBookingsState.value =
+                            MyBookingsUiState.Empty
+
+                    }else{
+
+                        _myBookingsState.value =
+                            MyBookingsUiState.Success(
+                                bookings
+                            )
+
+                    }
+                }
+                .onFailure {
+                    if (it is CancellationException) return@onFailure
+                    _myBookingsState.value =
+                        MyBookingsUiState.Error(
+                            it.message ?: "Failed to load bookings"
+                        )
+
                 }
         }
     }

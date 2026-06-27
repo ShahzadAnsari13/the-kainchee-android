@@ -5,12 +5,14 @@ import com.thekainchee.user.data.remote.dto.booking.BookingDetailResponseDto
 import com.thekainchee.user.data.remote.dto.booking.BookingDetailsServiceDto
 import com.thekainchee.user.data.remote.dto.booking.BookingRequestDto
 import com.thekainchee.user.data.remote.dto.booking.BookingResponseDto
+import com.thekainchee.user.data.remote.dto.booking.MyBookingDto
 import com.thekainchee.user.data.remote.dto.booking.StaffDto
 import com.thekainchee.user.data.remote.dto.parlour.RatingDto
 import com.thekainchee.user.presentation.booking.model.BookingDetailUiModel
 import com.thekainchee.user.presentation.booking.model.BookingServiceUiModel
 import com.thekainchee.user.presentation.booking.model.BookingUiModel
 import com.thekainchee.user.presentation.booking.model.CreateBookingParams
+import com.thekainchee.user.presentation.booking.model.MyBookingUiModel
 import com.thekainchee.user.presentation.booking.model.RatingModel
 import com.thekainchee.user.presentation.booking.model.StaffUiModel
 
@@ -75,5 +77,19 @@ fun BookingDetailsServiceDto.toUiModel(): BookingServiceUiModel {
         price = price,
         durationMinutes = durationMinutes,
         image = image
+    )
+}
+
+fun MyBookingDto.toUiModel(): MyBookingUiModel {
+    return MyBookingUiModel(
+        bookingId = bookingId,
+        parlourName = parlourName,
+        staffName = staffName,
+        bookingDate = bookingDate,
+        slotStartTime = slotStartTime,
+        bookingStatus = bookingStatus,
+        totalPrice = totalPrice,
+        serviceName = serviceName,
+        serviceCount = serviceCount
     )
 }

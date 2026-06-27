@@ -3,6 +3,7 @@ package com.thekainchee.user.domain.repository
 import com.thekainchee.user.presentation.booking.model.BookingDetailUiModel
 import com.thekainchee.user.presentation.booking.model.BookingUiModel
 import com.thekainchee.user.presentation.booking.model.CreateBookingParams
+import com.thekainchee.user.presentation.booking.model.MyBookingUiModel
 import com.thekainchee.user.presentation.booking.model.SlotUiModel
 import com.thekainchee.user.presentation.booking.model.StaffUiModel
 
@@ -14,4 +15,7 @@ interface BookingRepository {
     suspend fun createBooking(params: CreateBookingParams): Result<BookingUiModel>
 
     suspend fun getBookingDetails(bookingId: String): Result<BookingDetailUiModel>
+    suspend fun getMyBookings(
+        status: String
+    ): Result<List<MyBookingUiModel>>
 }

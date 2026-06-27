@@ -6,10 +6,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
@@ -53,7 +55,6 @@ class BookingSuccess : Fragment() {
             binding.layoutNoInternet.visibility = View.GONE
             binding.shimmerLayout.visibility = View.VISIBLE
             binding.shimmerLayout.startShimmer()
-
             successViewModel.getBookingDetails(bookingId)
         }
         viewLifecycleOwner.lifecycleScope.launch {
@@ -100,7 +101,11 @@ class BookingSuccess : Fragment() {
 
             requireActivity().finish()
         }
-        binding.btnViewBooking.setOnClickListener {  }
+        binding.btnViewBooking.setOnClickListener {
+            findNavController().navigate(
+                BookingSuccessDirections.actionBookingSuccessFragmentToBookingDetailFragment(bookingId)
+            )
+        }
         binding.btnTryAgain.setOnClickListener {
             if(!NetworkUtils.isInternetAvailable(requireContext())){
                 Snackbar.make(binding.root,"No Internet Connection",Snackbar.LENGTH_SHORT).show()
@@ -123,6 +128,23 @@ class BookingSuccess : Fragment() {
                 successViewModel.getBookingDetails(bookingId)
             }
         }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner
+        ) {
+
+            val intent = Intent(
+                requireContext(),
+                DashboardActivity::class.java
+            )
+
+            intent.flags =
+                Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP
+
+            startActivity(intent)
+
+            requireActivity().finish()
+        }
     }
     override fun onResume() {
         super.onResume()
@@ -130,6 +152,7 @@ class BookingSuccess : Fragment() {
         (requireActivity() as BookingActivity)
             .showToolbar(false)
     }
+
 
 
     override fun onDestroyView() {

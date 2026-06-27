@@ -9,10 +9,12 @@ import com.thekainchee.user.domain.repository.BookingRepository
 import com.thekainchee.user.presentation.booking.model.BookingDetailUiModel
 import com.thekainchee.user.presentation.booking.model.BookingUiModel
 import com.thekainchee.user.presentation.booking.model.CreateBookingParams
+import com.thekainchee.user.presentation.booking.model.MyBookingUiModel
 import com.thekainchee.user.presentation.booking.model.SlotUiModel
 import com.thekainchee.user.presentation.booking.model.StaffUiModel
 import com.thekainchee.user.utils.ErrorUtils
 import javax.inject.Inject
+import kotlin.collections.emptyList
 
 class BookingRepositoryImpl @Inject constructor(private val api: BookingApi) : BookingRepository {
 
@@ -110,6 +112,23 @@ class BookingRepositoryImpl @Inject constructor(private val api: BookingApi) : B
 
         } catch (e: Exception) {
 
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getMyBookings(status: String): Result<List<MyBookingUiModel>> {
+        return try{
+            val response  =  api.getMyBookings(status)
+            if(response.isSuccessful){
+                val body = response.body()?.bookings ?: emptyList()
+                Result.success(body.map { it.toUiModel() })
+
+            }else{
+                val error = ErrorUtils.parseError(response.errorBody()?.string())
+                Result.failure(Exception(error.message ?: "Failed to fetch bookings"))
+            }
+        }
+        catch(e : Exception){
             Result.failure(e)
         }
     }
