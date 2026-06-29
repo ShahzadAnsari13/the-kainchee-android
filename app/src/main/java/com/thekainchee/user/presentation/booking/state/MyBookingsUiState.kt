@@ -3,6 +3,7 @@ package com.thekainchee.user.presentation.booking.state
 import com.thekainchee.user.presentation.booking.model.MyBookingUiModel
 
 sealed class MyBookingsUiState {
+    object Idle : MyBookingsUiState()
 
     object Loading : MyBookingsUiState()
 

@@ -34,6 +34,7 @@ import com.thekainchee.user.presentation.dashboard.home.viewModel.LocationViewMo
 import com.thekainchee.user.presentation.dashboard.home.adapter.HomeTabsAdapter
 import com.thekainchee.user.presentation.dashboard.home.state.LocationUiState
 import com.thekainchee.user.presentation.location.LocationActivity
+import com.thekainchee.user.presentation.profile.ProfileActivity
 import com.thekainchee.user.utils.LocationUtils
 import com.thekainchee.user.utils.NetworkUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -97,7 +98,9 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.tvGreeting.text = getGreeting()
-
+        binding.imgProfile.setOnClickListener {
+            startActivity(Intent(requireContext(), ProfileActivity::class.java))
+        }
 
         if(!NetworkUtils.isInternetAvailable(requireContext())){
             binding.layoutNoInternet.visibility = View.VISIBLE

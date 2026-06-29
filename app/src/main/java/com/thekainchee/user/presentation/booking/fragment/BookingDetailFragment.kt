@@ -50,8 +50,6 @@ class BookingDetailFragment : Fragment() {
             binding.layoutNoInternet.visibility = View.VISIBLE
         }else{
             binding.layoutNoInternet.visibility = View.GONE
-            binding.shimmerLayout.visibility = View.VISIBLE
-            binding.shimmerLayout.startShimmer()
             successViewModel.getBookingDetails(bookingId)
         }
         viewLifecycleOwner.lifecycleScope.launch {
@@ -152,8 +150,6 @@ class BookingDetailFragment : Fragment() {
                 Snackbar.make(binding.root,"No Internet Connection",Snackbar.LENGTH_SHORT).show()
             }else{
                 binding.layoutNoInternet.visibility = View.GONE
-                binding.shimmerLayout.visibility = View.VISIBLE
-                binding.shimmerLayout.startShimmer()
                 successViewModel.getBookingDetails(bookingId)
             }
         }
@@ -173,19 +169,13 @@ class BookingDetailFragment : Fragment() {
 
 
 
-    override fun onResume() {
-        super.onResume()
-
-        (requireActivity() as BookingActivity)
-            .showToolbar(false)
-    }
 
 
     override fun onDestroyView() {
         super.onDestroyView()
 
         (requireActivity() as BookingActivity)
-            .showToolbar(true)
+            .setToolbarTitle("Booking Details")
         _binding = null
     }
 

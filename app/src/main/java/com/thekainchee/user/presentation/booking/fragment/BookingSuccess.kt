@@ -103,7 +103,7 @@ class BookingSuccess : Fragment() {
         }
         binding.btnViewBooking.setOnClickListener {
             findNavController().navigate(
-                BookingSuccessDirections.actionBookingSuccessFragmentToBookingDetailFragment(bookingId)
+                BookingSuccessDirections.actionBookingSuccessFragmentToMyBookingFragment()
             )
         }
         binding.btnTryAgain.setOnClickListener {

@@ -90,6 +90,8 @@ fun MyBookingDto.toUiModel(): MyBookingUiModel {
         bookingStatus = bookingStatus,
         totalPrice = totalPrice,
         serviceName = serviceName,
-        serviceCount = serviceCount
+        serviceCount = serviceCount,
+        serviceImage = serviceImage
+
     )
 }

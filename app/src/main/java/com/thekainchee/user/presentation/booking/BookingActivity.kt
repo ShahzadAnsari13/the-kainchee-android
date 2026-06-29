@@ -79,6 +79,9 @@ class BookingActivity : AppCompatActivity(), PaymentResultWithDataListener {
         binding.toolbar.visibility =
             if (show) View.VISIBLE else View.GONE
     }
+    fun setToolbarTitle(title: String) {
+        binding.tvTitle.text = title
+    }
 
 
 }

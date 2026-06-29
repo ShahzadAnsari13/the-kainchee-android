@@ -37,7 +37,7 @@ interface BookingApi {
         @Path("bookingId") bookingId: String
     ): Response<BookingDetailResponseDto>
 
-    @GET("booking/my-bookings")
+    @GET("user/bookings")
     suspend fun getMyBookings(
         @Query("status") status: String
     ): Response<MyBookingsResponseDto>

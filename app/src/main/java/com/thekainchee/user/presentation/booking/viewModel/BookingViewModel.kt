@@ -1,5 +1,6 @@
 package com.thekainchee.user.presentation.booking.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thekainchee.user.domain.repository.BookingRepository
@@ -40,7 +41,7 @@ class BookingViewModel @Inject constructor(val repository: BookingRepository) : 
     private val _bookingDetailState = MutableStateFlow<BookingDetailUiState>(BookingDetailUiState.Idle)
     val bookingDetailState : StateFlow<BookingDetailUiState> = _bookingDetailState
 
-    private val  _myBookingsState = MutableStateFlow<MyBookingsUiState>(MyBookingsUiState.Loading)
+    private val  _myBookingsState = MutableStateFlow<MyBookingsUiState>(MyBookingsUiState.Idle)
     val myBookingsState : StateFlow<MyBookingsUiState> = _myBookingsState
     private var bookingsJob: Job? = null
     fun getParlourStaffs(parlourId : String){
@@ -133,13 +134,14 @@ class BookingViewModel @Inject constructor(val repository: BookingRepository) : 
         }
     }
     fun getMyBookings(status: String){
+        Log.d("BOOKING", "Status = $status")
         _myBookingsState.value = MyBookingsUiState.Loading
         bookingsJob?.cancel()
         bookingsJob = viewModelScope.launch {
 
             repository.getMyBookings(status)
                 .onSuccess { bookings ->
-
+                    Log.d("BOOKING", "Size = ${bookings.size}")
                     if(bookings.isEmpty()){
 
                         _myBookingsState.value =
@@ -155,6 +157,8 @@ class BookingViewModel @Inject constructor(val repository: BookingRepository) : 
                     }
                 }
                 .onFailure {
+
+                    Log.e("BOOKING", it.toString())
                     if (it is CancellationException) return@onFailure
                     _myBookingsState.value =
                         MyBookingsUiState.Error(

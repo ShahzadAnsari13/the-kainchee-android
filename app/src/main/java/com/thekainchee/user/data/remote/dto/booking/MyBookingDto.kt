@@ -9,5 +9,6 @@ data class MyBookingDto(
     val bookingStatus: String,
     val totalPrice: Double,
     val serviceName: String,
-    val serviceCount: Int
+    val serviceCount: Int,
+    val serviceImage: String
 )

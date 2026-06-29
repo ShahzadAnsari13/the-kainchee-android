@@ -25,7 +25,16 @@
             android:name="bookingId"
             app:argType="string" />
         <action
-            android:id="@+id/action_bookingSuccessFragment_to_bookingDetailFragment"
+            android:id="@+id/action_bookingSuccessFragment_to_myBookingFragment"
+            app:destination="@id/myBookingFragment" />
+    </fragment>
+
+    <fragment android:id="@+id/myBookingFragment"
+        android:name="com.thekainchee.user.presentation.booking.fragment.MyBookings"
+        android:label="MyBookingsFragment">
+
+        <action
+            android:id="@+id/myBookingFragment_to_bookingDetailFragment"
             app:destination="@id/bookingDetailFragment" />
     </fragment>
 

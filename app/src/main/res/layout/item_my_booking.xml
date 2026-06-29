@@ -8,6 +8,10 @@
     android:layout_marginTop="12dp"
     android:clickable="true"
     android:focusable="true"
+
+
+    app:cardBackgroundColor="@android:color/white"
+
     app:cardCornerRadius="20dp"
     app:cardElevation="2dp"
     app:strokeColor="#EAEAEA"
@@ -17,10 +21,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
-        <!-- ========================= -->
-        <!-- Main Content -->
-        <!-- ========================= -->
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -107,7 +107,8 @@
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="5dp"
                         android:text="Upcoming"
-                        android:textColor="@android:color/white"
+                        android:background="@drawable/bg_status_confirmed"
+                        android:textColor="@color/primaryColor"
                         android:textSize="11sp"
                         android:textStyle="bold"
                         tools:text="Upcoming" />

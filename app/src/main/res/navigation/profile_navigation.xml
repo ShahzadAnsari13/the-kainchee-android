@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/profile_navigation"
+    app:startDestination="@id/myProfileFragment">
+    <fragment
+        android:id="@+id/myProfileFragment"
+        android:name="com.thekainchee.user.presentation.profile.fragment.MyProfileFragment"
+        android:label="MyProfileFragment">
+
+    </fragment>
+</navigation>

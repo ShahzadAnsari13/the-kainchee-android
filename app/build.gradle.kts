@@ -139,6 +139,9 @@ dependencies {
 
     //Razorpay
     implementation("com.razorpay:checkout:1.6.40")
+
+    //SwipeRefreshLayout
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 }
 
 
