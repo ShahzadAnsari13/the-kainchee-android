@@ -1,4 +1,3 @@
-import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -7,6 +6,7 @@ plugins {
     alias(libs.plugins.ksp)
     id("androidx.navigation.safeargs.kotlin")
     id("kotlin-parcelize")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -142,6 +142,9 @@ dependencies {
 
     //SwipeRefreshLayout
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
+    //Firebase(FCM)
+    implementation("com.google.firebase:firebase-messaging:24.1.2")
 }
 
 

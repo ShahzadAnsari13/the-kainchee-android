@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="#F8FCFB"
+    app:strokeColor="#E7ECEB"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <!-- Profile Image -->
+
+        <View
+            android:id="@+id/viewProfile"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:background="@drawable/bg_shimmer_circle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Name -->
+
+        <View
+            android:id="@+id/viewName"
+            android:layout_width="160dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="16dp"
+            android:background="@drawable/bg_shimmer_rect"
+            app:layout_constraintStart_toEndOf="@id/viewProfile"
+            app:layout_constraintTop_toTopOf="@id/viewProfile" />
+
+        <!-- User Badge -->
+
+        <View
+            android:id="@+id/viewBadge"
+            android:layout_width="70dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_shimmer_round"
+            app:layout_constraintStart_toStartOf="@id/viewName"
+            app:layout_constraintTop_toBottomOf="@id/viewName" />
+
+        <!-- Phone -->
+
+        <View
+            android:id="@+id/viewPhone"
+            android:layout_width="180dp"
+            android:layout_height="14dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_shimmer_rect"
+            app:layout_constraintStart_toStartOf="@id/viewName"
+            app:layout_constraintTop_toBottomOf="@id/viewBadge" />
+
+        <!-- Member Since -->
+
+        <View
+            android:id="@+id/viewMember"
+            android:layout_width="140dp"
+            android:layout_height="14dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_shimmer_rect"
+            app:layout_constraintStart_toStartOf="@id/viewName"
+            app:layout_constraintTop_toBottomOf="@id/viewPhone" />
+
+        <!-- Edit Button -->
+
+        <View
+            android:id="@+id/viewButton"
+            android:layout_width="100dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_shimmer_round"
+            app:layout_constraintEnd_toEndOf="@+id/viewMember"
+            app:layout_constraintTop_toBottomOf="@id/viewMember" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

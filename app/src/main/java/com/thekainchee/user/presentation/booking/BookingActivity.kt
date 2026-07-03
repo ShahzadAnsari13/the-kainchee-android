@@ -26,6 +26,7 @@ class BookingActivity : AppCompatActivity(), PaymentResultWithDataListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val openMyBookings = intent.getBooleanExtra("openMyBookings", false)
 
         binding = ActivityBookingBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -48,10 +49,20 @@ class BookingActivity : AppCompatActivity(), PaymentResultWithDataListener {
 
 
         val navController = bookingNavHostFragment.navController
-        val bundle = Bundle().apply {
-            putParcelable("services", bookingPreviewData)
+        val graph = navController.navInflater.inflate(R.navigation.booking_nav_graph)
+
+        if (openMyBookings) {
+            graph.setStartDestination(R.id.myBookingFragment)
+            navController.graph = graph
+        } else {
+            graph.setStartDestination(R.id.bookingSlotFragment)
+
+            val bundle = Bundle().apply {
+                putParcelable("services", bookingPreviewData)
+            }
+
+            navController.setGraph(graph, bundle)
         }
-        navController.setGraph(R.navigation.booking_nav_graph, bundle)
         binding.toolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }

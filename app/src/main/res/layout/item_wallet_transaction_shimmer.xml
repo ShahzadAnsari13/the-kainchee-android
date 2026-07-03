@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="2dp"
+    app:strokeColor="#EAEAEA"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="18dp">
+
+        <!-- Icon -->
+
+        <View
+            android:id="@+id/viewIcon"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:background="@drawable/bg_shimmer_circle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <!-- Amount -->
+
+        <View
+            android:id="@+id/viewAmount"
+            android:layout_width="72dp"
+            android:layout_height="18dp"
+            android:background="@drawable/bg_shimmer_rect"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <!-- Chip -->
+
+        <View
+            android:id="@+id/viewChip"
+            android:layout_width="60dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="8dp"
+
+            android:background="@drawable/bg_shimmer_rect"
+            app:layout_constraintEnd_toEndOf="@id/viewAmount"
+            app:layout_constraintTop_toBottomOf="@id/viewAmount"/>
+
+        <!-- Reason -->
+
+        <View
+            android:id="@+id/viewReason"
+            android:layout_width="0dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/bg_shimmer_rect"
+            app:layout_constraintStart_toEndOf="@id/viewIcon"
+            app:layout_constraintEnd_toStartOf="@id/viewAmount"
+            app:layout_constraintTop_toTopOf="@id/viewIcon"/>
+
+        <!-- Description -->
+
+        <View
+            android:id="@+id/viewDescription"
+            android:layout_width="0dp"
+            android:layout_height="14dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_shimmer_rect"
+            app:layout_constraintStart_toStartOf="@id/viewReason"
+            app:layout_constraintEnd_toStartOf="@id/viewAmount"
+            app:layout_constraintTop_toBottomOf="@id/viewReason"/>
+
+        <!-- Date -->
+
+        <View
+            android:id="@+id/viewDate"
+            android:layout_width="110dp"
+            android:layout_height="12dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_shimmer_rect"
+            app:layout_constraintStart_toStartOf="@id/viewReason"
+            app:layout_constraintTop_toBottomOf="@id/viewDescription"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

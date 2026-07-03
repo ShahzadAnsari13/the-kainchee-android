@@ -27,4 +27,11 @@
     <color name="booking_cancelled">#D32F2F</color>
 
     <color name="booking_no_show">#EF6C00</color>
+    <!-- Wallet Credit -->
+    <color name="wallet_credit">#0F9D58</color>
+    <color name="wallet_credit_bg">#E8F5E9</color>
+
+    <!-- Wallet Debit -->
+    <color name="wallet_debit">#E53935</color>
+    <color name="wallet_debit_bg">#FDECEC</color>
 </resources>

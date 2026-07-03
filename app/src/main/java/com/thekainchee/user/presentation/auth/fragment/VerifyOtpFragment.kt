@@ -13,6 +13,7 @@ import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.ImageSpan
 import android.text.style.StyleSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,8 +22,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.media3.common.MediaItem
@@ -30,15 +33,18 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.messaging.FirebaseMessaging
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentVerifyOtpBinding
 import com.thekainchee.user.presentation.auth.state.AuthState
 import com.thekainchee.user.presentation.auth.viewModel.AuthViewModel
 import com.thekainchee.user.presentation.dashboard.DashboardActivity
+import com.thekainchee.user.presentation.profile.viewModel.ProfileViewModel
 import com.thekainchee.user.utils.NetworkUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.getValue
 
 @AndroidEntryPoint
 class VerifyOtpFragment : Fragment() {
@@ -50,6 +56,8 @@ class VerifyOtpFragment : Fragment() {
     private var countDownTimer: CountDownTimer? = null
     private var player: ExoPlayer? = null
     private val args : VerifyOtpFragmentArgs by navArgs()
+
+    private val profileViewModel : ProfileViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -300,13 +308,14 @@ class VerifyOtpFragment : Fragment() {
                             binding.progressBar.isVisible = false
                             binding.btnVerifyOtp.isEnabled = false
 
-                            Toast.makeText(
-                                requireContext(),
-                                state.message,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            startActivity(Intent(requireContext(), DashboardActivity::class.java))
-                            requireActivity().finish()
+                            FirebaseMessaging.getInstance().token
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        profileViewModel.updateFcmToken(task.result)
+                                    }
+                                    startActivity(Intent(requireContext(), DashboardActivity::class.java))
+                                    requireActivity().finish()
+                                }
                         }
                         is AuthState.Error->{
 

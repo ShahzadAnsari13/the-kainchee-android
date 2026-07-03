@@ -1,20 +1,41 @@
 package com.thekainchee.user.presentation.profile.fragment
 
-import android.R.attr.text
-import android.content.res.ColorStateList
+
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentMyProfileBinding
+import com.thekainchee.user.presentation.booking.BookingActivity
+import com.thekainchee.user.presentation.location.LocationActivity
+import com.thekainchee.user.presentation.profile.bottomSheet.EditProfileBottomSheet
+import com.thekainchee.user.presentation.profile.model.ProfileUiModel
+import com.thekainchee.user.presentation.profile.state.EditProfileEvent
+import com.thekainchee.user.presentation.profile.state.ProfileState
+import com.thekainchee.user.presentation.profile.viewModel.ProfileViewModel
+import com.thekainchee.user.utils.NetworkUtils
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import kotlin.jvm.java
 
+@AndroidEntryPoint
 class MyProfileFragment : Fragment() {
     private var _binding : FragmentMyProfileBinding? = null
     private val binding get() = _binding!!
+    private val profileViewModel : ProfileViewModel by activityViewModels()
+    private var isSwipeRefresh  = false
+    private var profile: ProfileUiModel? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -26,6 +47,7 @@ class MyProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setupAccountSection()
         setupSupportSection()
         binding.quickActions.actionBookings.apply {
@@ -50,6 +72,150 @@ class MyProfileFragment : Fragment() {
             ivIcon.setImageResource(R.drawable.ic_gift)
             tvTitle.text = "Refer"
             tvSubtitle.text = "Invite"
+        }
+        if(!NetworkUtils.isInternetAvailable(requireContext())){
+            binding.mainContent.visibility = View.GONE
+            binding.layoutNoInternet.visibility = View.VISIBLE
+        }else{
+            profileViewModel.getProfile()
+        }
+        binding.btnTryAgain.setOnClickListener {
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                Snackbar.make(
+                    binding.root,
+                    "No Internet Connection",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }else{
+                profileViewModel.getProfile()
+            }
+        }
+        binding.btnRetry.setOnClickListener {
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+               binding.errorLayout.visibility = View.GONE
+                binding.layoutNoInternet.visibility = View.VISIBLE
+            }else{
+                profileViewModel.getProfile()
+            }
+        }
+        binding.swipeRefresh.setOnRefreshListener {
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                binding.errorLayout.visibility = View.GONE
+                binding.layoutNoInternet.visibility = View.VISIBLE
+            }else{
+                isSwipeRefresh  =  true
+                profileViewModel.getProfile()
+            }
+        }
+        binding.quickActions.actionAddress.root.setOnClickListener {
+            startActivity(Intent(requireContext(), LocationActivity::class.java))
+        }
+        binding.quickActions.actionBookings.root.setOnClickListener {
+            val intent = Intent(requireContext(), BookingActivity::class.java)
+            intent.putExtra("openMyBookings", true)
+            startActivity(intent)
+        }
+        binding.profileHeaderCard.btnEditProfile.setOnClickListener {
+
+            profile?.let {
+                EditProfileBottomSheet.newInstance(
+                    it.name,
+                    it.countryCode,
+                    it.phoneNumber
+                ).show(parentFragmentManager, "EditProfile")
+            } ?: run {
+                Snackbar.make(
+                    binding.root,
+                    "Something went wrong",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }
+        }
+        binding.walletCard.layoutTransaction.setOnClickListener {
+            findNavController().navigate(
+                MyProfileFragmentDirections
+                    .actionMyProfileFragmentToWalletTransactionFragment(
+                        profile?.walletBalance?.toFloat() ?: 0f
+                    )
+            )
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                profileViewModel.profileState.collect{state ->
+                    when(state){
+                        is ProfileState.Idle -> {
+
+                        }
+                        is ProfileState.Loading -> {
+                            if(!isSwipeRefresh ){
+                                binding.shimmerLayout.visibility = View.VISIBLE
+                                binding.mainContent.visibility = View.GONE
+                                binding.layoutNoInternet.visibility = View.GONE
+                                binding.errorLayout.visibility = View.GONE
+                                binding.shimmerLayout.startShimmer()
+                            }
+
+                        }
+
+                        is ProfileState.Success -> {
+                            if(!isSwipeRefresh ){
+
+                                binding.shimmerLayout.stopShimmer()
+                                binding.shimmerLayout.visibility = View.GONE
+                            }else{
+                                binding.swipeRefresh.isRefreshing = false
+                                isSwipeRefresh  = false
+                            }
+                            binding.layoutNoInternet.visibility = View.GONE
+                            binding.errorLayout.visibility = View.GONE
+                            binding.mainContent.visibility = View.VISIBLE
+                            profile = state.data
+                            binding.profileHeaderCard.tvName.text = state.data.name
+                            binding.profileHeaderCard.tvPhone.text = "${state.data.countryCode} ${state.data.phoneNumber}"
+                            binding.profileHeaderCard.tvMemberSince.text ="Member since ${state.data.memberSince}"
+                            binding.walletCard.tvWalletBalance.text = "${"₹%.2f".format(state.data.walletBalance)}"
+                            binding.accountSection.itemAccountStatus.tvStatus.text =
+                            if (state.data.isActive) "Active" else "Inactive"
+                            if(state.data.notificationsEnabled){
+
+                                binding.quickActions.actionNotification.tvSubtitle.text  = "\uD83D\uDFE2 On"
+                            }else{
+                                binding.quickActions.actionNotification.tvSubtitle.text  = "\uD83D\uDD34 Off"
+                            }
+                        }
+                        is ProfileState.Error -> {
+                            if(!isSwipeRefresh ){
+                                binding.shimmerLayout.stopShimmer()
+                                binding.shimmerLayout.visibility = View.GONE
+                            }else{
+                                binding.swipeRefresh.isRefreshing = false
+                                isSwipeRefresh  = false
+                            }
+                            binding.mainContent.visibility = View.GONE
+                            binding.layoutNoInternet.visibility = View.GONE
+                            binding.errorLayout.visibility = View.VISIBLE
+
+                        }
+
+                    }
+
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch{
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                profileViewModel.event.collect{event ->
+                    when(event){
+                        is EditProfileEvent.Success -> {
+                            binding.profileHeaderCard.tvName.text = event.data
+                        }
+                        is EditProfileEvent.Error -> {
+                            Snackbar.make(requireView(), event.message, Snackbar
+                                .LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
         }
     }
     private fun setupAccountSection() {
@@ -115,5 +281,9 @@ class MyProfileFragment : Fragment() {
             tvSubtitle.text = "Version 1.0.0"
             tvStatus.isGone = true
         }
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

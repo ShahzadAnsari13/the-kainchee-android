@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "547486007030",
+    "project_id": "the-kainchee",
+    "storage_bucket": "the-kainchee.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:547486007030:android:1b40e4f1ce47ec748236d7",
+        "android_client_info": {
+          "package_name": "com.thekainchee.user"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHnx8mjgH1OJe01gki8nTr7KRjNU39ExQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

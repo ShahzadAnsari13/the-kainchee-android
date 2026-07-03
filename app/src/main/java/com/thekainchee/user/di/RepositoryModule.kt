@@ -4,18 +4,22 @@ import com.thekainchee.user.data.repository.AddressRepositoryImpl
 import com.thekainchee.user.data.repository.AuthRepositoryImpl
 import com.thekainchee.user.data.repository.BookingRepositoryImpl
 import com.thekainchee.user.data.repository.DeviceLocationRepositoryImpl
+import com.thekainchee.user.data.repository.NotificationRepositoryImpl
 import com.thekainchee.user.data.repository.ParlourRepositoryImpl
 import com.thekainchee.user.data.repository.PaymentRepositoryImpl
 import com.thekainchee.user.data.repository.PlaceSearchRepositoryImpl
+import com.thekainchee.user.data.repository.ProfileRepositoryImpl
 import com.thekainchee.user.data.repository.ServiceRepositoryImpl
 import com.thekainchee.user.data.repository.WalletRepositoryImpl
 import com.thekainchee.user.domain.repository.AddressRepository
 import com.thekainchee.user.domain.repository.AuthRepository
 import com.thekainchee.user.domain.repository.BookingRepository
 import com.thekainchee.user.domain.repository.DeviceLocationRepository
+import com.thekainchee.user.domain.repository.NotificationRepository
 import com.thekainchee.user.domain.repository.ParlourRepository
 import com.thekainchee.user.domain.repository.PaymentRepository
 import com.thekainchee.user.domain.repository.PlaceSearchRepository
+import com.thekainchee.user.domain.repository.ProfileRepository
 import com.thekainchee.user.domain.repository.ServiceRepository
 import com.thekainchee.user.domain.repository.WalletRepository
 import dagger.Binds
@@ -77,4 +81,15 @@ abstract class RepositoryModule {
     abstract fun bindPaymentRepository(
         paymentRepositoryImpl: PaymentRepositoryImpl
     ) : PaymentRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindProfileRepository(
+        profileRepositoryImpl: ProfileRepositoryImpl
+    ): ProfileRepository
+    @Binds
+    @Singleton
+    abstract fun bindNotificationRepository(
+        impl: NotificationRepositoryImpl
+    ): NotificationRepository
 }

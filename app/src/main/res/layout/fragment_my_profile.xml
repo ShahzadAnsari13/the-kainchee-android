@@ -1,140 +1,258 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:layout_height="match_parent">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefresh"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/mainContent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/nestedScrollView"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true"
-            android:clipToPadding="false"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="24dp">
+            android:layout_height="match_parent">
 
-            <LinearLayout
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nestedScrollView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:clipToPadding="false"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="24dp">
 
-                <!-- ===================== -->
-                <!-- Profile Header Card -->
-                <!-- ===================== -->
-
-                <include
-                    android:id="@+id/profileHeaderCard"
-                    layout="@layout/layout_profile_header"/>
-
-                <!-- Space -->
-
-                <Space
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="16dp"/>
-
-                <!-- ===================== -->
-                <!-- Wallet Card -->
-                <!-- ===================== -->
-
-                <include
-                    android:id="@+id/walletCard"
-                    layout="@layout/layout_wallet_card"/>
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="16dp"/>
-
-                <!-- ===================== -->
-                <!-- Quick Actions -->
-                <!-- ===================== -->
-
-                <include
-                    android:id="@+id/quickActions"
-                    layout="@layout/layout_profile_quick_actions"/>
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp"/>
-
-                <!-- ===================== -->
-                <!-- Account Section -->
-                <!-- ===================== -->
-
-                <include
-                    android:id="@+id/accountSection"
-                    layout="@layout/layout_profile_account"/>
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp"/>
-
-                <!-- ===================== -->
-                <!-- Support Section -->
-                <!-- ===================== -->
-
-                <include
-                    android:id="@+id/supportSection"
-                    layout="@layout/layout_profile_support"/>
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp"/>
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardLogout"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="24dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="#FFF8F8"
-                    app:cardCornerRadius="18dp"
-                    app:cardElevation="2dp"
-                    app:strokeColor="#FDE2E2"
-                    app:strokeWidth="1dp">
+                    <include
+                        android:id="@+id/profileHeaderCard"
+                        layout="@layout/layout_profile_header"/>
 
-                    <LinearLayout
+
+                    <Space
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="horizontal">
+                        android:layout_height="16dp"/>
 
-                        <ImageView
-                            android:id="@+id/ivLogout"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginEnd="10dp"
-                            android:src="@drawable/ic_logout"
-                            app:tint="#F44336" />
+                    <include
+                        android:id="@+id/walletCard"
+                        layout="@layout/layout_wallet_card"/>
 
-                        <TextView
-                            android:id="@+id/tvLogout"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Logout"
-                            android:textColor="#F44336"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp"/>
 
-                    </LinearLayout>
 
-                </com.google.android.material.card.MaterialCardView>
+                    <include
+                        android:id="@+id/quickActions"
+                        layout="@layout/layout_profile_quick_actions"/>
 
-            </LinearLayout>
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"/>
 
-        </androidx.core.widget.NestedScrollView>
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                    <include
+                        android:id="@+id/accountSection"
+                        layout="@layout/layout_profile_account"/>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"/>
+
+
+                    <include
+                        android:id="@+id/supportSection"
+                        layout="@layout/layout_profile_support"/>
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"/>
+
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardLogout"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="24dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        app:cardBackgroundColor="#FFF8F8"
+                        app:cardCornerRadius="18dp"
+                        app:cardElevation="2dp"
+                        app:strokeColor="#FDE2E2"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/ivLogout"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_marginEnd="10dp"
+                                android:src="@drawable/ic_logout"
+                                app:tint="#F44336" />
+
+                            <TextView
+                                android:id="@+id/tvLogout"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Logout"
+                                android:textColor="#F44336"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+            </androidx.core.widget.NestedScrollView>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:shimmer_auto_start="true"
+        app:shimmer_duration="1200"
+        app:shimmer_base_color="#D6D6D6"
+        app:shimmer_highlight_color="#F5F5F5">
+
+        <include layout="@layout/layout_profile_shimmer"/>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutNoInternet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="24dp"
+
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@android:color/white">
+
+        <ImageView
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:src="@drawable/no_internet"
+            android:contentDescription="No Internet"
+            android:scaleType="centerInside" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Oops! We are not able to Connect 😔"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#222222"
+            android:fontFamily="sans-serif-medium" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Please check your internet connection"
+            android:textSize="14sp"
+            android:textColor="#777777"
+            android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:lineSpacingExtra="2dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTryAgain"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:text="Try Again"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:textColor="@color/primaryColor"
+            android:backgroundTint="@android:color/transparent"
+            app:strokeColor="@color/primaryColor"
+            app:strokeWidth="1dp"
+            app:cornerRadius="12dp" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/errorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="24dp"
+        android:visibility="gone"
+        android:background="@android:color/white">
+
+        <!-- Illustration -->
+        <ImageView
+            android:id="@+id/imgEmpty"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:src="@drawable/ic_oops"
+            android:contentDescription="No Data"
+            android:scaleType="centerInside" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvEmptyTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="No Data Found 😔"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#222222"
+            android:fontFamily="sans-serif-medium" />
+
+        <!-- Subtitle -->
+        <TextView
+            android:id="@+id/tvEmptySubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="We couldn’t load the details right now.\nPlease try again."
+            android:textSize="14sp"
+            android:textColor="#777777"
+            android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:lineSpacingExtra="2dp" />
+
+        <!-- Retry Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRetry"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="24dp"
+            android:text="Retry"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/primaryColor"
+            app:cornerRadius="12dp" />
+
+    </LinearLayout>
+</FrameLayout>

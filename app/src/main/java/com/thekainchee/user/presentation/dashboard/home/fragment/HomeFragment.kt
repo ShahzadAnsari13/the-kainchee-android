@@ -4,7 +4,9 @@ import android.Manifest
 import android.app.Activity
 import android.app.Notification
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.icu.util.Calendar
+import android.os.Build
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -98,6 +100,17 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.tvGreeting.text = getGreeting()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                100
+            )
+        }
         binding.imgProfile.setOnClickListener {
             startActivity(Intent(requireContext(), ProfileActivity::class.java))
         }

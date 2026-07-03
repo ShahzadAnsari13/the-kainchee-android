@@ -8,5 +8,16 @@
         android:name="com.thekainchee.user.presentation.profile.fragment.MyProfileFragment"
         android:label="MyProfileFragment">
 
+        <action
+            android:id="@+id/action_myProfileFragment_to_walletTransactionFragment"
+            app:destination="@id/walletTransactionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/walletTransactionFragment"
+        android:name="com.thekainchee.user.presentation.wallet.fragment.WalletTransactionFragment"
+        android:label="Wallet Transactions" >
+        <argument
+            android:name="balance"
+            app:argType="float"/>
     </fragment>
 </navigation>
