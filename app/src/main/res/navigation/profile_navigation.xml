@@ -20,4 +20,8 @@
             android:name="balance"
             app:argType="float"/>
     </fragment>
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.thekainchee.user.presentation.notification.fragment.NotificationFragment"
+        android:label="Notifications" />
 </navigation>

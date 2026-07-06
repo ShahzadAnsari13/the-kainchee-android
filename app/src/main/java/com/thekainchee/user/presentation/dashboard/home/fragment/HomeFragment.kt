@@ -100,17 +100,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.tvGreeting.text = getGreeting()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                100
-            )
-        }
+
         binding.imgProfile.setOnClickListener {
             startActivity(Intent(requireContext(), ProfileActivity::class.java))
         }
@@ -249,6 +239,7 @@ class HomeFragment : Fragment() {
                             )
 
                             setLocationText(spannable)
+                            askNotificationPermission()
                         }
 
                         is LocationUiState.Error -> {
@@ -350,6 +341,21 @@ class HomeFragment : Fragment() {
         binding.tvLocation.apply {
             movementMethod = LinkMovementMethod.getInstance()
             text = spannable
+        }
+    }
+    private fun askNotificationPermission() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
+            requestPermissions(
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                100
+            )
         }
     }
     override fun onDestroyView() {

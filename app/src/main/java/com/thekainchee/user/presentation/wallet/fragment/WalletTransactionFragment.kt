@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentWalletTransactionBinding
+import com.thekainchee.user.presentation.profile.ProfileActivity
 import com.thekainchee.user.presentation.wallet.adapter.WalletTransactionAdapter
 import com.thekainchee.user.presentation.wallet.state.WalletTransactionUiState
 import com.thekainchee.user.presentation.wallet.viewModel.WalletViewModel
@@ -122,6 +123,11 @@ class WalletTransactionFragment : Fragment() {
             }
         }
     }
+    override fun onResume() {
+        super.onResume()
+        (requireActivity() as ProfileActivity).setToolbarTitle("Transactions")
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

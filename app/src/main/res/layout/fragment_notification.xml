@@ -1,14 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.notification.fragment.NotificationFragment">
+    android:background="@color/white"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:fillViewport="true">
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <include
+                layout="@layout/layout_notification_hero" />
+
+            <TextView
+                android:id="@+id/tvRecent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Recent"
+                android:textStyle="bold"
+                android:textSize="20sp" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvNotifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginTop="8dp"
+                    tools:listitem="@layout/item_notification"
+                    android:nestedScrollingEnabled="false" />
+
+                <include
+                    android:id="@+id/layoutEmptyNotification"
+                    layout="@layout/layout_empty_notification"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+
+                </include>
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmerLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <include layout="@layout/item_notification_shimmer"/>
+
+                        <include layout="@layout/item_notification_shimmer"/>
+
+                        <include layout="@layout/item_notification_shimmer"/>
+
+                        <include layout="@layout/item_notification_shimmer"/>
+
+                        <include layout="@layout/item_notification_shimmer"/>
+
+                        <include layout="@layout/item_notification_shimmer"/>
+                    </LinearLayout>
+
+                </com.facebook.shimmer.ShimmerFrameLayout>
+                <LinearLayout
+                    android:id="@+id/layoutNoInternet"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="24dp"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@android:color/white">
+
+                    <ImageView
+                        android:layout_width="180dp"
+                        android:layout_height="180dp"
+                        android:src="@drawable/no_internet"
+                        android:contentDescription="No Internet"
+                        android:scaleType="centerInside" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="Oops! We are not able to Connect 😔"
+                        android:gravity="center"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#222222"
+                        android:fontFamily="sans-serif-medium" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Please check your internet connection"
+                        android:textSize="14sp"
+                        android:textColor="#777777"
+                        android:gravity="center"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:lineSpacingExtra="2dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnTryAgain"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="12dp"
+                        android:text="Try Again"
+                        android:textAllCaps="false"
+                        android:textSize="14sp"
+                        android:textColor="@color/primaryColor"
+                        android:backgroundTint="@android:color/transparent"
+                        app:strokeColor="@color/primaryColor"
+                        app:strokeWidth="1dp"
+                        app:cornerRadius="12dp" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/errorLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="24dp"
+                    android:visibility="gone"
+                    android:background="@android:color/white">
+
+                    <!-- Illustration -->
+                    <ImageView
+                        android:id="@+id/imgEmpty"
+                        android:layout_width="180dp"
+                        android:layout_height="180dp"
+                        android:src="@drawable/error_img"
+                        android:contentDescription="No Data"
+                        android:scaleType="centerInside" />
+
+                    <!-- Title -->
+                    <TextView
+                        android:id="@+id/tvEmptyTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="Something went wrong"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#222222"
+                        android:fontFamily="sans-serif-medium" />
+
+                    <!-- Subtitle -->
+                    <TextView
+                        android:id="@+id/tvEmptySubtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="We couldn't load your notifications. Please check your internet connection and try again."
+                        android:textSize="14sp"
+                        android:textColor="#777777"
+                        android:gravity="center"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:lineSpacingExtra="2dp" />
+
+                    <!-- Retry Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnRetry"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="24dp"
+                        android:text="Retry"
+                        android:textAllCaps="false"
+                        android:textSize="14sp"
+                        android:textColor="@android:color/white"
+                        android:backgroundTint="@color/primaryColor"
+                        app:cornerRadius="12dp" />
+
+                </LinearLayout>
+            </FrameLayout>
+
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

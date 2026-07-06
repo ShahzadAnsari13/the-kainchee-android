@@ -19,6 +19,7 @@ import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentMyProfileBinding
 import com.thekainchee.user.presentation.booking.BookingActivity
 import com.thekainchee.user.presentation.location.LocationActivity
+import com.thekainchee.user.presentation.profile.ProfileActivity
 import com.thekainchee.user.presentation.profile.bottomSheet.EditProfileBottomSheet
 import com.thekainchee.user.presentation.profile.model.ProfileUiModel
 import com.thekainchee.user.presentation.profile.state.EditProfileEvent
@@ -281,6 +282,10 @@ class MyProfileFragment : Fragment() {
             tvSubtitle.text = "Version 1.0.0"
             tvStatus.isGone = true
         }
+    }
+    override fun onResume() {
+        super.onResume()
+        (requireActivity() as ProfileActivity).setToolbarTitle("My Profile")
     }
     override fun onDestroyView() {
         super.onDestroyView()
