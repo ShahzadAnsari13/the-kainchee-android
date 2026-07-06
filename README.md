@@ -1,16 +1,18 @@
-✂️ THE KAINCHEE USER
-Production-Grade Appointment Booking Application
+# ✂️ THE KAINCHEE USER
 
-THE KAINCHEE USER is a modern Android application that enables users to discover nearby parlours, explore services, select stylists, choose appointment slots, and book grooming services seamlessly.
+## Production-Grade Android Appointment Booking Platform
 
-Built using Kotlin, MVVM, Clean Architecture, Hilt, Retrofit, Coroutines, Room, DataStore, Google Maps SDK, Places API, and Navigation Component.
+THE KAINCHEE USER is a modern Android application that enables users to discover nearby parlours, explore services, book appointments, complete secure payments, manage bookings, receive real-time notifications, and track wallet transactions through a seamless and intuitive user experience.
+
+Built using **Kotlin, MVVM, Clean Architecture, Hilt, Retrofit, Coroutines, StateFlow, Room, DataStore, Google Maps SDK, Places API, Navigation Component, Socket.IO, and Firebase Cloud Messaging (FCM).**
+
 ---
 
-## 🎥 Demo Video
+# 🎥 Demo Video
 
 Watch the complete application walkthrough:
 
-👉 https://youtube.com/shorts/mVcTSJBwLGE?si=Kun5t6e6-0twuU7c
+👉 https://youtu.be/abGSdyXQKCM
 
 ---
 
@@ -56,89 +58,248 @@ Watch the complete application walkthrough:
 </p>
 ---
 
+# ✨ Features
 
-## 🚀 Features
-### Authentication
+## 🔐 Authentication
+
 - OTP Login
 - JWT Authentication
 - Secure Session Handling
 - DataStore Token Storage
 
-### Location & Discovery
+---
+
+## 📍 Location & Discovery
+
 - Current Location Detection
+- Google Maps Integration
 - Google Places Search
 - Saved Addresses
-- Nearby & Trending Parlours
+- Nearby Parlours
+- Trending Parlours
 - Category-Based Discovery
+- Personalized Recommendations
 
-### Booking System
+---
+
+## 💈 Appointment Booking
+
+- Browse Parlours
+- Explore Services
 - Service Selection
 - Stylist Selection
-- Dynamic Slot Availability
+- Date Selection
+- Real-Time Slot Availability
+- Booking Preview
 - Appointment Scheduling
+- Booking Confirmation
 - Booking Tracking
+- Booking History
+- Booking Details
 
-### Maps & Navigation
-- Google Maps Integration
-- Parlour Location View
+---
+
+## 💳 Payments
+
+- Razorpay Integration
+- Online Payments
+- Cash Payments
+- Wallet Payments
+- Secure Payment Verification
+- Payment Success Flow
+
+---
+
+## 👛 Wallet
+
+- Wallet Balance
+- Wallet Transactions
+- Payment History
+- Refund Support
+
+---
+
+## 🔔 Notifications
+
+- Booking Confirmation
+- Booking Cancellation
+- Payment Updates
+- Wallet Updates
+- Promotional Notifications
+- System Notifications
+
+---
+
+## 👤 User Profile
+
+- Profile Management
+- Edit Profile
+- Saved Addresses
+- Booking History
+- Booking Details
+
+---
+
+## 🗺 Maps & Navigation
+
+- Google Maps SDK
+- Places API
+- Current Location
+- Parlour Location
 - Turn-by-Turn Navigation
 
-## 🏗️ Architecture
+---
+
+# 🏗 Architecture
+
+The application follows modern Android development practices using **Clean Architecture** and **MVVM**.
+
+```
+Presentation Layer
+        │
+        ▼
+ViewModel (StateFlow)
+        │
+        ▼
+Repository
+   │          │
+   ▼          ▼
+Remote API   Room Database
+        │
+        ▼
+Node.js Backend
+```
+
+### Architecture Components
+
 - MVVM Architecture
 - Clean Architecture
 - Repository Pattern
 - Hilt Dependency Injection
-- Kotlin Coroutines & Flow
-## 🛠️ Tech Stack
+- Kotlin Coroutines
+- StateFlow
+- Room Database
+- DataStore
+- Socket.IO
+- Firebase Cloud Messaging (FCM)
 
-### Android
+---
+
+# 🛠 Tech Stack
+
+## Android
+
 - Kotlin
 - MVVM
+- Clean Architecture
 - Hilt
 - Retrofit
+- OkHttp
 - Coroutines
+- StateFlow
 - Room
 - DataStore
+- Navigation Component
+- Material 3
 
-### Maps
-- Google Maps SDK
-- Places API
+---
 
-### Backend
+## Backend
+
 - Node.js
 - Express.js
 - MongoDB
-- REST APIs
-- Socket.IO
 - Redis
+- Socket.IO
+- JWT Authentication
+- REST APIs
 
-## 🌐 Backend Repository
+---
+
+## Maps
+
+- Google Maps SDK
+- Places API
+
+---
+
+## Payments
+
+- Razorpay
+
+---
+
+## Notifications
+
+- Firebase Cloud Messaging (FCM)
+
+---
+
+# 🌐 Backend Repository
+
+The backend powering THE KAINCHEE is available here:
 
 https://github.com/ShahzadAnsari13/the-kainchee-backend
 
-## ⚙️ Setup
+---
+
+# ⚙️ Getting Started
+
+Clone the repository:
+
+```bash
 git clone https://github.com/ShahzadAnsari13/the-kainchee-android.git
+```
+
+Open the project using Android Studio.
+
+---
 
 ## Required API Keys
 
-Enable the following APIs in Google Cloud Console:
+Enable the following Google Cloud APIs:
 
 - Maps SDK for Android
 - Places API
 
-Add your keys in local.properties:
+Add your API keys to **local.properties**
 
 ```properties
 MAPS_API_KEY=YOUR_GOOGLE_MAPS_API_KEY
 PLACES_API_KEY=YOUR_GOOGLE_PLACES_API_KEY
 ```
 
-## 👨‍💻 Developer
+Sync Gradle and run the application.
 
-Shahzad Ansari
+---
 
-LinkedIn:
+# 🚀 Highlights
+
+- Production-Grade Android Application
+- Real-Time Appointment Booking
+- Secure OTP Authentication
+- Google Maps & Places Integration
+- Socket.IO Real-Time Updates
+- Wallet System
+- Razorpay Payment Integration
+- Firebase Push Notifications
+- Modern MVVM + Clean Architecture
+- Scalable Backend Integration
+
+---
+
+# 👨‍💻 Developer
+
+**Shahzad Ansari**
+
+### LinkedIn
+
 https://www.linkedin.com/in/shahzad-ansari-306345363
 
-GitHub:
+### GitHub
+
 https://github.com/ShahzadAnsari13
+
+---
+
+⭐ If you found this project useful, consider giving it a star.
