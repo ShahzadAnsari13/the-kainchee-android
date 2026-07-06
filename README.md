@@ -31,13 +31,29 @@ Watch the complete application walkthrough:
 <p align="center">
   <img src="screenshots/service_selection.jpeg" width="220"/>
   <img src="screenshots/booking_preview.jpeg" width="220"/>
-  <img src="screenshots/stylist_selection.jpeg" width="220"/>
+  <img src="screenshots/stylish_selection.png" width="220"/>
 </p>
 
 <p align="center">
   <img src="screenshots/slot_selection.jpeg" width="220"/>
+  <img src="screenshots/payment_screen.png" width="220"/>
+  <img src="screenshots/razorpay_screen.png" width="220"/>
 </p>
-
+<p align="center">
+  <img src="screenshots/razorpay_success_screen.png" width="220"/>
+  <img src="screenshots/booking_success_screen.png" width="220"/>
+  <img src="screenshots/profile_screen.png" width="220"/>
+</p>
+<p align="center">
+  <img src="screenshots/notification_screen.png" width="220"/>
+  <img src="screenshots/edit_profile_screen.png" width="220"/>
+  <img src="screenshots/waller_screen.png" width="220"/>
+</p>
+</p>
+<p align="center">
+  <img src="screenshots/booking_history_screen.png" width="220"/>
+  <img src="screenshots/booking_detailed_screen.png" width="220"/>
+</p>
 ---
 
 
