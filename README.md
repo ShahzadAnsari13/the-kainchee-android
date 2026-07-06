@@ -243,35 +243,6 @@ https://github.com/ShahzadAnsari13/the-kainchee-backend
 
 ---
 
-# ⚙️ Getting Started
-
-Clone the repository:
-
-```bash
-git clone https://github.com/ShahzadAnsari13/the-kainchee-android.git
-```
-
-Open the project using Android Studio.
-
----
-
-## Required API Keys
-
-Enable the following Google Cloud APIs:
-
-- Maps SDK for Android
-- Places API
-
-Add your API keys to **local.properties**
-
-```properties
-MAPS_API_KEY=YOUR_GOOGLE_MAPS_API_KEY
-PLACES_API_KEY=YOUR_GOOGLE_PLACES_API_KEY
-```
-
-Sync Gradle and run the application.
-
----
 
 # 🚀 Highlights
 
