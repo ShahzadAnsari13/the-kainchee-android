@@ -28,9 +28,7 @@ graph TD
     UC -->|Fetch/Sync| Data[Data Layer]
     Data -->|API| Remote[Retrofit/Socket.IO]
     Data -->|Local| DB[Room/DataStore]
-
-
----
+```
 
 # 📱 Application Screenshots
 
