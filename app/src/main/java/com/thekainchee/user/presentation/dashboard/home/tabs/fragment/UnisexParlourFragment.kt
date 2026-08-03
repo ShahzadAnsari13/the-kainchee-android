@@ -20,6 +20,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentAllParlourBinding
+import com.thekainchee.user.presentation.common.extensions.hide
+import com.thekainchee.user.presentation.common.extensions.show
+import com.thekainchee.user.presentation.common.state.StateViewData
 import com.thekainchee.user.presentation.dashboard.home.adapter.ParlourHorizontalAdapter
 import com.thekainchee.user.presentation.dashboard.home.adapter.ParlourVerticalAdapter
 import com.thekainchee.user.presentation.dashboard.home.model.ParlourUI
@@ -58,100 +61,14 @@ class UnisexParlourFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if(!NetworkUtils.isInternetAvailable(requireContext())){
-            binding.mainContent.visibility = View.GONE
-            binding.layoutNoInternet.visibility = View.VISIBLE
-        }
         binding.rvNearbyParlours.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.rvTrendingParlours.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.layoutTrendingServicesSection.isVisible = false
         binding.layoutBookingsSection.isVisible = false
-//        val dummyParlours = listOf(
-//            ParlourUI(
-//                id = "1",
-//                name = "Style Studio",
-//                image = "https://images.unsplash.com/photo-1600948836101-f9ffda59d250",
-//                rating = 4.2,
-//                distance = 1.2,
-//                type = "UNISEX"
-//            ),
-//            ParlourUI(
-//                id = "2",
-//                name = "Urban Cuts",
-//                image = "https://images.unsplash.com/photo-1585747860715-2ba37e788b70",
-//                rating = 4.3,
-//                distance = 3.5,
-//                type = "UNISEX"
-//            ),
-//            ParlourUI(
-//                id = "3",
-//                name = "Trendy Touch Salon",
-//                image = "https://images.unsplash.com/photo-1560066984-138dadb4c035",
-//                rating = 4.6,
-//                distance = 0.9,
-//                type = "UNISEX"
-//            ),
-//            ParlourUI(
-//                id = "4",
-//                name = "Mirror Magic Studio",
-//                image = "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9",
-//                rating = 4.5,
-//                distance = 1.8,
-//                type = "UNISEX"
-//            ),
-//            ParlourUI(
-//                id = "5",
-//                name = "Glow & Style Hub",
-//                image = "https://images.unsplash.com/photo-1559599101-f09722fb4948",
-//                rating = 4.7,
-//                distance = 2.4,
-//                type = "UNISEX"
-//            ),
-//            ParlourUI(
-//                id = "6",
-//                name = "Perfect Look Studio",
-//                image = "https://images.unsplash.com/photo-1512496015851-a90fb38ba796",
-//                rating = 4.4,
-//                distance = 1.6,
-//                type = "UNISEX"
-//            )
-//        )
-        binding.btnRetry.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                binding.layoutFullEmpty.visibility = View.GONE
-                binding.layoutNoInternet.visibility = View.VISIBLE
-            }else {
 
-                hideFullEmpty()
 
-                binding.mainContent.isVisible = false
-                retryAllData()
-            }
-        }
-        binding.btnTryAgain.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                Snackbar.make(
-                    binding.root,
-                    "No Internet Connection",
-                    Snackbar.LENGTH_SHORT
-                ).show()
-            }else{
-                binding.layoutNoInternet.visibility = View.GONE
-                if(lat != null && lng != null){
-                   retryAllData()
-                }else{
-                    binding.layoutNoInternet.visibility = View.GONE
-                    locationViewModel.fetchUserLocation()
-                }
-            }
-        }
-
-        binding.btnChangeLocation.setOnClickListener {
-            val intent = Intent(requireContext(), LocationActivity::class.java)
-            startActivity(intent)
-        }
         nearbyAdapter = ParlourVerticalAdapter ( onItemClick = { item ->
             val intent = Intent(requireContext(), ParlourActivity::class.java)
             intent.putExtra("parlourId", item.id)
@@ -167,8 +84,6 @@ class UnisexParlourFragment : Fragment() {
         })
         binding.rvNearbyParlours.adapter = nearbyAdapter
         binding.rvTrendingParlours.adapter = trendingAdapter
-//        nearbyAdapter.submitList(dummyParlours)
-//        trendingAdapter.submitList(dummyParlours)
         observeUiStates()
         binding.rvNearbyParlours.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -179,14 +94,39 @@ class UnisexParlourFragment : Fragment() {
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
                 if (dy > 0 && lastVisibleItem >= totalItemCount - 2) {
-
                     parlourViewModel.nearbyLoadNextPage("UNISEX")
                 }
 
             }
         })
-
-
+        if(!NetworkUtils.isInternetAvailable(requireContext())){
+            binding.mainContent.visibility = View.GONE
+            binding.stateView.show(
+                StateViewData(
+                    image = R.drawable.no_internet,
+                    title = "No Internet Connection",
+                    subtitle = "Please check your internet connection and try again.",
+                    primaryButtonText = "Try Again",
+                    onPrimaryClick = {
+                        if(!NetworkUtils.isInternetAvailable(requireContext())){
+                            Snackbar.make(
+                                binding.root,
+                                "No Internet Connection",
+                                Snackbar.LENGTH_SHORT
+                            ).show()
+                        }else{
+                            binding.stateView.hide()
+                            if(lat != null && lng != null){
+                                retryAllData()
+                            }else{
+                                locationViewModel.fetchUserLocation()
+                            }
+                        }
+                    }
+                )
+            )
+            return
+        }
     }
     private fun observeUiStates(){
 
@@ -201,14 +141,12 @@ class UnisexParlourFragment : Fragment() {
                                 binding.shimmerLayout.isVisible = false
                                 binding.shimmerLayoutVerticalParlour.isVisible = false
                                 binding.mainContent.isVisible = false
-                                binding.layoutFullEmpty.isVisible = false
                             }
                             is LocationUiState.Loading -> {
                                 binding.shimmerLayout.isVisible = false
                                 binding.shimmerLayoutVerticalParlour.isVisible = true
                                 binding.shimmerLayoutVerticalParlour.startShimmer()
                                 binding.mainContent.isVisible = false
-                                binding.layoutFullEmpty.isVisible = false
                             }
                             is LocationUiState.Success -> {
                                 val currentLat = state.address.latitude
@@ -222,7 +160,6 @@ class UnisexParlourFragment : Fragment() {
                                 if(!NetworkUtils.isInternetAvailable(requireContext())){
                                     binding.shimmerLayoutVerticalParlour.stopShimmer()
                                     binding.shimmerLayoutVerticalParlour.visibility = View.GONE
-                                    binding.layoutNoInternet.visibility = View.VISIBLE
                                 }
                                 else {
 
@@ -239,11 +176,7 @@ class UnisexParlourFragment : Fragment() {
                                         binding.shimmerLayoutVerticalParlour.stopShimmer()
                                         binding.shimmerLayoutVerticalParlour.visibility = View.GONE
                                         binding.mainContent.visibility = View.VISIBLE
-                                        Toast.makeText(
-                                            requireContext(),
-                                            "Using current location",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+
                                     }
 
 
@@ -255,14 +188,46 @@ class UnisexParlourFragment : Fragment() {
                                 binding.shimmerLayoutVerticalParlour.stopShimmer()
                                 binding.shimmerLayoutVerticalParlour.isVisible = false
                                 binding.mainContent.isVisible = false
-                                binding.layoutFullEmpty.isVisible = true
-                                binding.btnRetry.isVisible = false
-                                binding.btnChangeLocation.isVisible = false
-                                binding.tvEmptyTitle.text = "Location unavailable 📍"
-                                binding.imgEmpty.setImageResource(R.drawable.img_loc)
-                                binding.tvEmptySubtitle.text =
-                                    "We couldn't access your location.\n" +
-                                            "Please retry from the top location bar."
+                                binding.stateView.show(StateViewData(
+                                    image = R.drawable.ic_no_loc,
+                                    title = "Location unavailable",
+                                    subtitle = "We couldn't access your location.\n" +
+                                            "Please retry from the top location bar.",
+                                    primaryButtonText = "Retry",
+                                    onPrimaryClick = {
+                                        if(!NetworkUtils.isInternetAvailable(requireContext())){
+                                            binding.stateView.hide()
+                                            binding.stateView.show(StateViewData(
+                                                image = R.drawable.no_internet,
+                                                title = "No Internet Connection",
+                                                subtitle = "Please check your internet connection and try again.",
+                                                primaryButtonText = "Try Again",
+                                                onPrimaryClick = {
+                                                    if(!NetworkUtils.isInternetAvailable(requireContext())){
+                                                        Snackbar.make(
+                                                            binding.root,
+                                                            "No Internet Connection",
+                                                            Snackbar.LENGTH_SHORT
+                                                        ).show()
+                                                    }else{
+                                                        binding.stateView.hide()
+                                                        retryAllData()
+                                                    }
+                                                }
+
+                                            ))
+                                        }else{
+                                            binding.mainContent.isVisible = false
+                                            retryAllData()
+                                        }
+                                    },
+                                    secondaryButtonText = "Change Location",
+                                    onSecondaryClick = {
+                                        val intent = Intent(requireContext(), LocationActivity::class.java)
+                                        startActivity(intent)
+                                    }
+
+                                ))
                             }
 
 
@@ -308,13 +273,45 @@ class UnisexParlourFragment : Fragment() {
                                 binding.loaderNearby.isVisible = false
                                 binding.layoutNearbySection.isVisible = false
                                 binding.mainContent.isVisible = false
-                                binding.layoutFullEmpty.isVisible = true
-                                binding.btnRetry.isVisible = true
-                                binding.btnChangeLocation.isVisible = true
-                                binding.tvEmptyTitle.text = "Unable to load parlours \uD83D\uDE14"
-                                binding.imgEmpty.setImageResource(R.drawable.ic_oops)
-                                binding.tvEmptySubtitle.text =
-                                    "Something went wrong while loading nearby parlours.\nPlease retry or change your location."
+                                binding.stateView.show(
+                                    StateViewData(
+                                        image = R.drawable.ic_oops,
+                                        title = "Unable to load parlours \uD83D\uDE14",
+                                        subtitle = "Something went wrong while loading nearby parlours.\nPlease retry or change your location",
+                                        primaryButtonText = "Retry",
+                                        onPrimaryClick = {
+                                            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                                                binding.stateView.hide()
+                                                binding.stateView.show(StateViewData(
+                                                    image = R.drawable.no_internet,
+                                                    title = "No Internet Connection",
+                                                    subtitle = "Please check your internet connection and try again.",
+                                                    primaryButtonText = "Retry",
+                                                    onPrimaryClick = {
+                                                        if(!NetworkUtils.isInternetAvailable(requireContext())){
+                                                            Snackbar.make(
+                                                                binding.root,
+                                                                "No Internet Connection",
+                                                                Snackbar.LENGTH_SHORT
+                                                            ).show()
+                                                        }else{
+                                                            binding.stateView.hide()
+                                                            retryAllData()
+                                                        }
+                                                    }
+                                                ))
+                                            }else{
+                                                binding.stateView.hide()
+                                                retryAllData()
+                                            }
+                                        },
+                                        secondaryButtonText = "Change Location",
+                                        onSecondaryClick = {
+                                            val intent = Intent(requireContext(), LocationActivity::class.java)
+                                            startActivity(intent)
+                                        }
+                                    )
+                                )
                             }
 
                             else -> Unit
@@ -360,11 +357,44 @@ class UnisexParlourFragment : Fragment() {
     }
     private fun showFullEmpty() {
         binding.mainContent.isVisible = false
-        binding.layoutFullEmpty.isVisible = true
+        binding.stateView.show(StateViewData(
+            image = R.drawable.ic_oops,
+            title = "No Parlour Found",
+            subtitle = "No parlours found in your area.",
+            primaryButtonText = "Retry",
+            onPrimaryClick = {
+                if(!NetworkUtils.isInternetAvailable(requireContext())){
+                    binding.stateView.hide()
+                    binding.stateView.show(StateViewData(
+                        image = R.drawable.no_internet,
+                        title = "No Internet Connection",
+                        subtitle = "Please check your internet connection and try again.",
+                        primaryButtonText = "Try Again",
+                        onPrimaryClick = {
+                            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                                Snackbar.make(
+                                    binding.root,
+                                    "No Internet Connection",
+                                    Snackbar.LENGTH_SHORT
+                                ).show()
+                            }
+                            else{
+                                binding.stateView.hide()
+                                retryAllData()
+                            }
+                        }
+                    ))
+                }else{
+                    binding.stateView.hide()
+                    retryAllData()
+
+                }
+            }
+        ))
     }
     private fun hideFullEmpty() {
         binding.mainContent.isVisible = true
-        binding.layoutFullEmpty.isVisible = false
+        binding.stateView.hide()
     }
 
     override fun onDestroyView() {

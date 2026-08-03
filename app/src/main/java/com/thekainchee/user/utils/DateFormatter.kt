@@ -7,13 +7,25 @@ import java.time.format.DateTimeFormatter
 
 object DateFormatter {
     fun formatBookingDate(date: String): String {
-        val today = java.time.LocalDate.now()
-        val booking = java.time.LocalDate.parse(date)
 
-        return when (booking) {
+        val today = LocalDate.now()
+
+        val bookingDate = try {
+            // ISO format
+            Instant.parse(date)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+        } catch (e: Exception) {
+            // LocalDate format
+            LocalDate.parse(date)
+        }
+
+        return when (bookingDate) {
             today -> "Today"
             today.plusDays(1) -> "Tomorrow"
-            else -> booking.format(java.time.format.DateTimeFormatter.ofPattern("dd MMM"))
+            else -> bookingDate.format(
+                DateTimeFormatter.ofPattern("dd MMM")
+            )
         }
     }
 

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="top|center"
+    android:padding="24dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:id="@+id/root"
+    android:background="@android:color/white">
+
+    <ImageView
+        android:id="@+id/imgState"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:src="@drawable/ic_no_loc"
+        android:scaleType="centerInside"/>
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#222222"/>
+
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:paddingHorizontal="16dp"
+        android:textSize="14sp"
+        android:textColor="#777777"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginTop="20dp"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/primaryColor"
+        app:cornerRadius="12dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSecondary"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
+        android:textColor="@color/primaryColor"
+        android:backgroundTint="@android:color/transparent"
+        app:strokeColor="@color/primaryColor"
+        app:strokeWidth="1dp"
+        app:cornerRadius="12dp"/>
+
+
+</LinearLayout>

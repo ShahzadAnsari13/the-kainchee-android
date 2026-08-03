@@ -149,22 +149,15 @@ class ParlourViewModel @Inject constructor(private val parlourRepository: Parlou
         type: String?,
         forceRefresh: Boolean = false
     ) {
-        Log.d("RETRY_CHECK", "FUNCTION STARTED")
-        Log.d("RETRY_CHECK", "TYPE " + type)
         val lat = currentLat ?: return
         val lng = currentLng ?: return
-        Log.d("RETRY_CHECK", "currentLat = $currentLat")
-        Log.d("RETRY_CHECK", "currentLng = $currentLng")
 
-        Log.d("RETRY_CHECK", "forceRefresh = $forceRefresh")
-        Log.d("RETRY_CHECK", "nearbyIsLoading = $nearbyIsLoading")
         if (nearbyIsLoading) {
             Log.d("RETRY_CHECK", "BLOCKED BY LOADING")
             return
         }
 
         if (forceRefresh) {
-            Log.d("RETRY_CHECK", "FORCE REFRESH TRUE")
             nearbyCurrentPage = 1
             nearbyIsLastPage = false
         }
