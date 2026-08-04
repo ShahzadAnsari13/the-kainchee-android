@@ -105,7 +105,6 @@ class MensParlourFragment : Fragment() {
                             binding.mainContent.isVisible = false
                         }
                         is LocationUiState.Loading -> {
-                            binding.shimmerLayout.isVisible = false
                             showMainLoading()
                         }
                         is LocationUiState.Success -> {
@@ -189,6 +188,7 @@ class MensParlourFragment : Fragment() {
                             binding.stateView.hide()
                             binding.mainContent.isVisible = false
                             binding.loaderNearby.isVisible = true
+                            binding.shimmerLayout.isVisible = false
                         }
 
                         is ParlourState.Success -> {

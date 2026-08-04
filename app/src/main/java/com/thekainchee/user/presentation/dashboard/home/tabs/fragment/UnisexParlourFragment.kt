@@ -243,6 +243,8 @@ class UnisexParlourFragment : Fragment() {
                             binding.stateView.hide()
                             binding.mainContent.isVisible = false
                             binding.loaderNearby.isVisible = true
+
+                            binding.shimmerLayout.isVisible = false
                         }
 
                         is ParlourState.Success -> {
