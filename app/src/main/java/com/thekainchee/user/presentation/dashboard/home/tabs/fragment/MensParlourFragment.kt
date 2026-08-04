@@ -1,6 +1,7 @@
 package com.thekainchee.user.presentation.dashboard.home.tabs.fragment
 
 import android.content.Intent
+import android.net.NetworkRequest
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -60,81 +61,233 @@ class MensParlourFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupRecyclerViews()
+        setupPagination()
+        observeUiStates()
+
+
+        if(!NetworkUtils.isInternetAvailable(requireContext())){
+            binding.mainContent.visibility = View.GONE
+            showNoInternetState(retryText = "Try Again") {
+                if (!NetworkUtils.isInternetAvailable(requireContext())) {
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                } else {
+                    binding.stateView.hide()
+
+                    if (lat != null && lng != null) {
+                        retryAllData()
+                    } else {
+                        locationViewModel.fetchUserLocation()
+                    }
+                }
+            }
+            return
+        }
+
+    }
+    private fun observeUiStates(){
+        observeLocation()
+        observeNearby()
+        observeTrending()
+    }
+    private fun observeLocation() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                locationViewModel.location.collect { state ->
+                    when(state){
+                        is LocationUiState.Idle -> {
+                            binding.shimmerLayout.isVisible = false
+                            binding.shimmerLayoutVerticalParlour.isVisible = false
+                            binding.mainContent.isVisible = false
+                        }
+                        is LocationUiState.Loading -> {
+                            binding.shimmerLayout.isVisible = false
+                            showMainLoading()
+                        }
+                        is LocationUiState.Success -> {
+                            val currentLat = state.address.latitude
+                            val currentLng = state.address.longitude
+
+                            lat = currentLat
+                            lng = currentLng
+
+                            parlourViewModel.setLocation(currentLat, currentLng)
+                            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                                hideMainLoading()
+                                showNoInternetState(retryText = "Try Again"){
+                                    if(!NetworkUtils.isInternetAvailable(requireContext())){
+                                        Snackbar.make(
+                                            binding.root,
+                                            "No Internet Connection",
+                                            Snackbar.LENGTH_SHORT
+                                        ).show()
+                                    }else{
+                                        binding.stateView.hide()
+                                        if (lastLat != currentLat || lastLng != currentLng) {
+                                            lastLat = currentLat
+                                            lastLng = currentLng
+                                            parlourViewModel.getNearbyParlours(type = "MENS")
+                                            parlourViewModel.trendingParlours(type = "MENS")
+                                        }else{
+                                            hideMainLoading()
+                                            binding.mainContent.isVisible = true
+
+                                        }
+                                    }
+                                }
+                            }
+                            else {
+                                if (lastLat != currentLat || lastLng != currentLng) {
+                                    lastLat = currentLat
+                                    lastLng = currentLng
+                                    parlourViewModel.getNearbyParlours(type = "MENS")
+                                    parlourViewModel.trendingParlours(type = "MENS")
+                                }else{
+                                    hideMainLoading()
+                                    binding.mainContent.visibility = View.VISIBLE
+
+                                }
+                            }
+
+
+                        }
+                        is LocationUiState.Error -> {
+                            binding.shimmerLayout.isVisible = false
+                            hideMainLoading()
+                            binding.mainContent.isVisible = false
+                            showLocationError(
+                                onRetry = {
+                                    withInternet {
+                                        binding.mainContent.isVisible = false
+                                        retryAllData()
+                                    }
+                                },
+                                onChangeLocation = {
+                                    openLocationScreen()
+                                }
+                            )
+
+                        }
+
+
+                    }
+                }
+            }
+        }
+    }
+    private fun observeNearby() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                parlourViewModel.nearbyParlourState.collect { state ->
+                    when (state) {
+
+                        is ParlourState.Loading -> {
+                            binding.stateView.hide()
+                            binding.mainContent.isVisible = false
+                            binding.loaderNearby.isVisible = true
+                        }
+
+                        is ParlourState.Success -> {
+                            binding.mainContent.isVisible = true
+                            hideMainLoading()
+                            binding.loaderNearby.isVisible = false
+                            binding.layoutNearbySection.isVisible = state.data.isNotEmpty()
+
+                            if (state.data.isEmpty()) {
+                                showFullEmpty()
+                            } else {
+                                hideFullEmpty()
+                            }
+
+                            nearbyAdapter.submitList(state.data)
+                        }
+
+                        is ParlourState.Error -> {
+
+                            binding.shimmerLayout.isVisible = false
+
+                            hideMainLoading()
+                            binding.loaderNearby.isVisible = false
+                            binding.layoutNearbySection.isVisible = false
+                            binding.mainContent.isVisible = false
+                            showNearbyError(
+                                onRetry = {
+                                    withInternet {
+                                        binding.stateView.hide()
+                                        retryAllData()
+                                    }
+                                },
+                                onChangeLocation = {
+                                    openLocationScreen()
+                                }
+                            )
+                        }
+
+                        else -> Unit
+                    }
+                }
+            }
+        }
+    }
+    private fun observeTrending() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                parlourViewModel.trendingParlourState.collect { state ->
+                    when (state){
+                        is ParlourState.Loading -> {
+                            binding.layoutTrendingParloursSection.isVisible = true
+                            binding.loaderTrendingParlour.isVisible = true
+                        }
+                        is ParlourState.Success ->{
+                            binding.loaderTrendingParlour.isVisible = false
+                            binding.layoutTrendingParloursSection.isVisible = state.data.isNotEmpty()
+                            trendingAdapter.submitList(state.data)
+                        }
+                        is ParlourState.Error->{
+
+                            binding.layoutTrendingParloursSection.isVisible = false
+                            binding.loaderTrendingParlour.isVisible = false
+                            Toast.makeText(requireContext(),state.message, Toast.LENGTH_SHORT).show()
+                        }
+                        else -> Unit
+                    }
+                }
+            }
+        }
+    }
+    private fun retryAllData() {
+
+        showMainLoading()
+
+        parlourViewModel.getNearbyParlours(
+            type = "MENS",
+            forceRefresh = true
+        )
+
+        parlourViewModel.trendingParlours(type = "MENS")
+
+
+    }
+    private fun setupRecyclerViews() {
         binding.rvNearbyParlours.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.rvTrendingParlours.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        binding.layoutTrendingServicesSection.isVisible = false
-        binding.layoutBookingsSection.isVisible = false
-        val dummyParlours = listOf(
-            ParlourUI(
-                id = "1",
-                name = "Royal Mens Salon",
-                image = "https://images.unsplash.com/photo-1599351431202-1e0f0137899a",
-                rating = 4.5,
-                distance = 0.8,
-                type = "MENS"
-            ),
-            ParlourUI(
-                id = "2",
-                name = "Elite Gents Studio",
-                image = "https://images.unsplash.com/photo-1503951914875-452162b0f3f1",
-                rating = 4.6,
-                distance = 1.1,
-                type = "MENS"
-            ),
-            ParlourUI(
-                id = "3",
-                name = "Urban Mens Hub",
-                image = "https://images.unsplash.com/photo-1585747860715-2ba37e788b70",
-                rating = 4.3,
-                distance = 2.0,
-                type = "MENS"
-            ),
-            ParlourUI(
-                id = "4",
-                name = "Gentlemen's Lounge",
-                image = "https://images.unsplash.com/photo-1519415943484-9fa1873496d4",
-                rating = 4.8,
-                distance = 0.5,
-                type = "MENS"
-            ),
-            ParlourUI(
-                id = "5",
-                name = "Classic Barber Shop",
-                image = "https://images.unsplash.com/photo-1517836357463-d25dfeac3438",
-                rating = 4.4,
-                distance = 1.7,
-                type = "MENS"
-            ),
-            ParlourUI(
-                id = "6",
-                name = "King's Cut Salon",
-                image = "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f",
-                rating = 4.7,
-                distance = 2.3,
-                type = "MENS"
-            )
-        )
-        nearbyAdapter = ParlourVerticalAdapter ( onItemClick = { item ->
-            val intent = Intent(requireContext(), ParlourActivity::class.java)
-            intent.putExtra("parlourId", item.id)
-            intent.putExtra("distance", item.distance.toString())
-            startActivity(intent)
-        })
 
-        trendingAdapter = ParlourHorizontalAdapter ( onItemClick = { item ->
-            val intent = Intent(requireContext(), ParlourActivity::class.java)
-            intent.putExtra("parlourId", item.id)
-            intent.putExtra("distance", item.distance.toString())
-            startActivity(intent)
-        })
+
+        nearbyAdapter = ParlourVerticalAdapter ( onItemClick = ::openParlour)
+
+        trendingAdapter = ParlourHorizontalAdapter ( onItemClick = ::openParlour)
         binding.rvNearbyParlours.adapter = nearbyAdapter
         binding.rvTrendingParlours.adapter = trendingAdapter
-        nearbyAdapter.submitList(dummyParlours)
-        trendingAdapter.submitList(dummyParlours)
-
-        observeUiStates()
+        binding.layoutTrendingServicesSection.isVisible = false
+        binding.layoutBookingsSection.isVisible = false
+    }
+    private fun setupPagination(){
         binding.rvNearbyParlours.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -150,303 +303,111 @@ class MensParlourFragment : Fragment() {
 
             }
         })
-
-        if(!NetworkUtils.isInternetAvailable(requireContext())){
-            binding.mainContent.visibility = View.GONE
-            binding.stateView.show(
-                StateViewData(
-                    image = R.drawable.no_internet,
-                    title = "No Internet Connection",
-                    subtitle = "Please check your internet connection and try again.",
-                    primaryButtonText = "Try Again",
-                    onPrimaryClick = {
-                        if(!NetworkUtils.isInternetAvailable(requireContext())){
-                            Snackbar.make(
-                                binding.root,
-                                "No Internet Connection",
-                                Snackbar.LENGTH_SHORT
-                            ).show()
-                        }else{
-                            binding.stateView.hide()
-                            if(lat != null && lng != null){
-                                retryAllData()
-                            }else{
-                                locationViewModel.fetchUserLocation()
-                            }
-                        }
-                    }
-                )
-            )
-            return
-        }
-
     }
-    private fun observeUiStates(){
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                launch{
-                    locationViewModel.location.collect { state ->
-
-
-                        when(state){
-                            is LocationUiState.Idle -> {
-                                binding.shimmerLayout.isVisible = false
-                                binding.shimmerLayoutVerticalParlour.isVisible = false
-                                binding.mainContent.isVisible = false
-                            }
-                            is LocationUiState.Loading -> {
-                                binding.shimmerLayout.isVisible = false
-                                binding.shimmerLayoutVerticalParlour.isVisible = true
-                                binding.shimmerLayoutVerticalParlour.startShimmer()
-                                binding.mainContent.isVisible = false
-                            }
-                            is LocationUiState.Success -> {
-                                val currentLat = state.address.latitude
-                                val currentLng = state.address.longitude
-
-                                lat = currentLat
-                                lng = currentLng
-
-                                parlourViewModel.setLocation(currentLat, currentLng)
-                                if(!NetworkUtils.isInternetAvailable(requireContext())){
-                                    binding.shimmerLayoutVerticalParlour.stopShimmer()
-                                    binding.shimmerLayoutVerticalParlour.visibility = View.GONE
-                                }
-                                else {
-
-
-                                    if (lastLat != currentLat || lastLng != currentLng) {
-
-                                        lastLat = currentLat
-                                        lastLng = currentLng
-
-
-
-                                        parlourViewModel.getNearbyParlours(type = "MENS")
-                                        parlourViewModel.trendingParlours(type = "MENS")
-                                    }else{
-                                        binding.shimmerLayoutVerticalParlour.stopShimmer()
-                                        binding.shimmerLayoutVerticalParlour.visibility = View.GONE
-                                        binding.mainContent.visibility = View.VISIBLE
-
-                                    }
-                                }
-
-
-                            }
-                            is LocationUiState.Error -> {
-                                binding.shimmerLayout.isVisible = false
-                                binding.shimmerLayoutVerticalParlour.stopShimmer()
-                                binding.shimmerLayoutVerticalParlour.isVisible = false
-                                binding.mainContent.isVisible = false
-                                binding.stateView.show(StateViewData(
-                                    image = R.drawable.ic_no_loc,
-                                    title = "Location unavailable",
-                                    subtitle = "We couldn't access your location.\n" +
-                                            "Please retry from the top location bar.",
-                                    primaryButtonText = "Retry",
-                                    onPrimaryClick = {
-                                        if(!NetworkUtils.isInternetAvailable(requireContext())){
-                                            binding.stateView.hide()
-                                            binding.stateView.show(StateViewData(
-                                                image = R.drawable.no_internet,
-                                                title = "No Internet Connection",
-                                                subtitle = "Please check your internet connection and try again.",
-                                                primaryButtonText = "Try Again",
-                                                onPrimaryClick = {
-                                                    if(!NetworkUtils.isInternetAvailable(requireContext())){
-                                                        Snackbar.make(
-                                                            binding.root,
-                                                            "No Internet Connection",
-                                                            Snackbar.LENGTH_SHORT
-                                                        ).show()
-                                                    }else{
-                                                        binding.stateView.hide()
-                                                        retryAllData()
-                                                    }
-                                                }
-
-                                            ))
-                                        }else{
-                                            binding.mainContent.isVisible = false
-                                            retryAllData()
-                                        }
-                                    },
-                                    secondaryButtonText = "Change Location",
-                                    onSecondaryClick = {
-                                        val intent = Intent(requireContext(), LocationActivity::class.java)
-                                        startActivity(intent)
-                                    }
-
-                                ))
-
-                            }
-
-
-                        }
-                    }
-                }
-
-
-
-                launch{
-                    parlourViewModel.nearbyParlourState.collect { state ->
-
-                        when (state) {
-
-                            is ParlourState.Loading -> {
-                                binding.loaderNearby.isVisible = true
-                            }
-
-                            is ParlourState.Success -> {
-
-                                binding.mainContent.isVisible = true
-                                binding.shimmerLayout.isVisible = false
-
-                                binding.shimmerLayoutVerticalParlour.stopShimmer()
-                                binding.shimmerLayoutVerticalParlour.isVisible = false
-                                binding.loaderNearby.isVisible = false
-                                binding.layoutNearbySection.isVisible = state.data.isNotEmpty()
-
-                                if (state.data.isEmpty()) {
-                                    showFullEmpty()
-                                } else {
-                                    hideFullEmpty()
-                                }
-
-                                nearbyAdapter.submitList(state.data)
-                            }
-
-                            is ParlourState.Error -> {
-
-                                binding.shimmerLayout.isVisible = false
-
-                                binding.shimmerLayoutVerticalParlour.stopShimmer()
-                                binding.shimmerLayoutVerticalParlour.isVisible = false
-                                binding.loaderNearby.isVisible = false
-                                binding.layoutNearbySection.isVisible = false
-                                binding.mainContent.isVisible = false
-                                binding.stateView.show(
-                                    StateViewData(
-                                        image = R.drawable.ic_oops,
-                                        title = "Unable to load parlours \uD83D\uDE14",
-                                        subtitle = "Something went wrong while loading nearby parlours.\nPlease retry or change your location",
-                                        primaryButtonText = "Retry",
-                                        onPrimaryClick = {
-                                            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                                                binding.stateView.hide()
-                                                binding.stateView.show(StateViewData(
-                                                    image = R.drawable.no_internet,
-                                                    title = "No Internet Connection",
-                                                    subtitle = "Please check your internet connection and try again.",
-                                                    primaryButtonText = "Retry",
-                                                    onPrimaryClick = {
-                                                        if(!NetworkUtils.isInternetAvailable(requireContext())){
-                                                            Snackbar.make(
-                                                                binding.root,
-                                                                "No Internet Connection",
-                                                                Snackbar.LENGTH_SHORT
-                                                            ).show()
-                                                        }else{
-                                                            binding.stateView.hide()
-                                                            retryAllData()
-                                                        }
-                                                    }
-                                                ))
-                                            }else{
-                                                binding.stateView.hide()
-                                                retryAllData()
-                                            }
-                                        },
-                                        secondaryButtonText = "Change Location",
-                                        onSecondaryClick = {
-                                            val intent = Intent(requireContext(), LocationActivity::class.java)
-                                            startActivity(intent)
-                                        }
-                                    )
-                                )
-                            }
-
-                            else -> Unit
-                        }
-                    }
-                }
-                launch {
-                    parlourViewModel.trendingParlourState.collect {state ->
-                        when (state){
-                            is ParlourState.Loading -> {
-                                binding.layoutTrendingParloursSection.isVisible = true
-                                binding.loaderTrendingParlour.isVisible = true
-                            }
-                            is ParlourState.Success ->{
-                                binding.loaderTrendingParlour.isVisible = false
-                                binding.layoutTrendingParloursSection.isVisible = state.data.isNotEmpty()
-                                trendingAdapter.submitList(state.data)
-                            }
-                            is ParlourState.Error->{
-
-                                binding.layoutTrendingParloursSection.isVisible = false
-                                binding.loaderTrendingParlour.isVisible = false
-                                Toast.makeText(requireContext(),state.message, Toast.LENGTH_SHORT).show()
-                            }
-                            else -> Unit
-                        }
-                    }
+    private fun showNoInternetState(
+        retryText: String = "Retry",
+        onRetry: () -> Unit
+    ){
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.no_internet,
+                title = "No Internet Connection",
+                subtitle = "Please check your internet connection and try again.",
+                primaryButtonText = retryText,
+                onPrimaryClick = onRetry
+            )
+        )
+    }
+    private fun withInternet(
+        onConnected: () -> Unit
+    ) {
+        if (!NetworkUtils.isInternetAvailable(requireContext())) {
+            showNoInternetState {
+                if (!NetworkUtils.isInternetAvailable(requireContext())) {
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                } else {
+                    binding.stateView.hide()
+                    onConnected()
                 }
             }
+        } else {
+            onConnected()
         }
     }
-    private fun retryAllData() {
-
+    private fun showLocationError(
+        onRetry: () -> Unit,
+        onChangeLocation: () -> Unit
+    ) {
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.ic_no_loc,
+                title = "Location unavailable",
+                subtitle = "We couldn't access your location.\nPlease retry from the top location bar.",
+                primaryButtonText = "Retry",
+                onPrimaryClick = onRetry,
+                secondaryButtonText = "Change Location",
+                onSecondaryClick = onChangeLocation
+            )
+        )
+    }
+    private fun showNearbyError(
+        onRetry: () -> Unit,
+        onChangeLocation: () -> Unit
+    ) {
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.ic_oops,
+                title = "Unable to load parlours 😔",
+                subtitle = "Something went wrong while loading nearby parlours.\nPlease retry or change your location",
+                primaryButtonText = "Retry",
+                onPrimaryClick = onRetry,
+                secondaryButtonText = "Change Location",
+                onSecondaryClick = onChangeLocation
+            )
+        )
+    }
+    private fun showMainLoading() {
         binding.shimmerLayoutVerticalParlour.isVisible = true
         binding.shimmerLayoutVerticalParlour.startShimmer()
-
-        parlourViewModel.getNearbyParlours(
-            type = "MENS",
-            forceRefresh = true
+        binding.mainContent.isVisible = false
+    }
+    private fun hideMainLoading() {
+        binding.shimmerLayoutVerticalParlour.stopShimmer()
+        binding.shimmerLayoutVerticalParlour.isVisible = false
+    }
+    private fun openParlour(item: ParlourUI) {
+        startActivity(
+            Intent(requireContext(), ParlourActivity::class.java).apply {
+                putExtra("parlourId", item.id)
+                putExtra("distance", item.distance.toString())
+            }
         )
-
-        parlourViewModel.trendingParlours(type = "MENS")
-
-
+    }
+    private fun openLocationScreen() {
+        startActivity(
+            Intent(requireContext(), LocationActivity::class.java)
+        )
     }
     private fun showFullEmpty() {
         binding.mainContent.isVisible = false
-        binding.stateView.show(StateViewData(
-            image = R.drawable.ic_oops,
-            title = "No Parlour Found",
-            subtitle = "No parlours found in your area.",
-            primaryButtonText = "Retry",
-            onPrimaryClick = {
-                if(!NetworkUtils.isInternetAvailable(requireContext())){
-                    binding.stateView.hide()
-                    binding.stateView.show(StateViewData(
-                        image = R.drawable.no_internet,
-                        title = "No Internet Connection",
-                        subtitle = "Please check your internet connection and try again.",
-                        primaryButtonText = "Try Again",
-                        onPrimaryClick = {
-                            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                                Snackbar.make(
-                                    binding.root,
-                                    "No Internet Connection",
-                                    Snackbar.LENGTH_SHORT
-                                ).show()
-                            }
-                            else{
-                                binding.stateView.hide()
-                                retryAllData()
-                            }
-                        }
-                    ))
-                }else{
-                    binding.stateView.hide()
-                    retryAllData()
-
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.ic_oops,
+                title = "No Parlour Found",
+                subtitle = "No parlours found in your area.",
+                primaryButtonText = "Retry",
+                onPrimaryClick = {
+                    withInternet {
+                        binding.stateView.hide()
+                        retryAllData()
+                    }
                 }
-            }
-        ))
+            )
+        )
     }
     private fun hideFullEmpty() {
         binding.mainContent.isVisible = true

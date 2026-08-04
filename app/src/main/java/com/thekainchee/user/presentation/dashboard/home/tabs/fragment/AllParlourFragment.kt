@@ -112,10 +112,20 @@ class AllParlourFragment : Fragment() {
     }
     private fun showFullEmpty() {
         binding.mainContent.isVisible = false
-        withInternet {
-            binding.stateView.hide()
-            retryAllData()
-        }
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.ic_oops,
+                title = "No Parlour Found",
+                subtitle = "No parlours found in your area.",
+                primaryButtonText = "Retry",
+                onPrimaryClick = {
+                    withInternet {
+                        binding.stateView.hide()
+                        retryAllData()
+                    }
+                }
+            )
+        )
     }
     private fun hideFullEmpty() {
         binding.mainContent.isVisible = true
@@ -170,8 +180,6 @@ class AllParlourFragment : Fragment() {
                 locationViewModel.location.collect { state ->
                     when(state){
                         is LocationUiState.Idle -> {
-                            binding.shimmerLayout.isVisible = false
-                            binding.mainContent.isVisible = false
                         }
                         is LocationUiState.Loading -> {
                             showMainLoading()
@@ -203,7 +211,7 @@ class AllParlourFragment : Fragment() {
                                             parlourViewModel.trendingServices()
                                             parlourViewModel.upcomingBookings()
                                         } else {
-                                            binding.mainContent.visibility = View.VISIBLE
+                                            binding.mainContent.isVisible = true
                                         }
                                     }
                                 }
@@ -216,9 +224,8 @@ class AllParlourFragment : Fragment() {
                                     parlourViewModel.trendingServices()
                                     parlourViewModel.upcomingBookings()
                                 }else{
-                                    binding.shimmerLayout.stopShimmer()
-                                    binding.shimmerLayout.visibility = View.GONE
-                                    binding.mainContent.visibility = View.VISIBLE
+                                    hideMainLoading()
+                                    binding.mainContent.isVisible = true
                                 }
 
                             }
@@ -257,10 +264,8 @@ class AllParlourFragment : Fragment() {
                         }
 
                         is ParlourState.Success -> {
-                            binding.mainContent.isVisible = true
-
                             hideMainLoading()
-
+                            binding.mainContent.isVisible = true
                             binding.loaderNearby.isVisible = false
                             binding.layoutNearbySection.isVisible = state.data.isNotEmpty()
 
@@ -316,7 +321,6 @@ class AllParlourFragment : Fragment() {
                         is ParlourState.Error->{
                             binding.layoutTrendingParloursSection.isVisible = false
                             binding.loaderTrendingParlour.isVisible = false
-                            Toast.makeText(requireContext(),state.message, Toast.LENGTH_SHORT).show()
                         }
                         else -> Unit
                     }
@@ -339,13 +343,39 @@ class AllParlourFragment : Fragment() {
 
                             binding.loaderTrendingService.isVisible = false
                             binding.layoutTrendingServicesSection.isVisible = state.data.isNotEmpty()
-                            Log.d("TRENDNG SERVICE", state.data.toString())
                             trendingServiceAdapter.submitList(state.data)
                         }
                         is TrendingServiceState.Error -> {
                             binding.layoutTrendingServicesSection.isVisible = false
                             binding.loaderTrendingService.isVisible = false
-                            Toast.makeText(requireContext(),state.message, Toast.LENGTH_SHORT).show()
+
+                        }else -> Unit
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeBookings(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                parlourViewModel.bookingState.collect { state ->
+                    when(state){
+                        is BookingState.Loading -> {
+                            binding.layoutBookingsSection.isVisible = true
+                            binding.loaderUpcomingBooking.isVisible = true
+                        }
+                        is BookingState.Success -> {
+
+                            binding.loaderUpcomingBooking.isVisible = false
+                            binding.layoutBookingsSection.isVisible = state.data.isNotEmpty()
+                            upcomingBookingAdapter.submitList(state.data)
+                        }
+                        is BookingState.Error -> {
+
+                            binding.layoutBookingsSection.isVisible = false
+
+                            binding.loaderUpcomingBooking.isVisible = false
 
                         }else -> Unit
                     }
@@ -384,34 +414,6 @@ class AllParlourFragment : Fragment() {
             )
         )
     }
-    private fun observeBookings(){
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                parlourViewModel.bookingState.collect { state ->
-                    when(state){
-                        is BookingState.Loading -> {
-                            binding.layoutBookingsSection.isVisible = true
-                            binding.loaderUpcomingBooking.isVisible = true
-                        }
-                        is BookingState.Success -> {
-
-                            binding.loaderUpcomingBooking.isVisible = false
-                            binding.layoutBookingsSection.isVisible = state.data.isNotEmpty()
-                            upcomingBookingAdapter.submitList(state.data)
-                        }
-                        is BookingState.Error -> {
-
-                            binding.layoutBookingsSection.isVisible = false
-
-                            binding.loaderUpcomingBooking.isVisible = false
-                            Toast.makeText(requireContext(),state.message, Toast.LENGTH_SHORT).show()
-
-                        }else -> Unit
-                    }
-                }
-            }
-        }
-    }
     private fun withInternet(
         onConnected: () -> Unit
     ) {
@@ -440,7 +442,7 @@ class AllParlourFragment : Fragment() {
         binding.stateView.show(
             StateViewData(
                 image = R.drawable.ic_oops,
-                title = "Unable to load parlours 😔",
+                title = "Unable to load parlours",
                 subtitle = "Something went wrong while loading nearby parlours.\nPlease retry or change your location",
                 primaryButtonText = "Retry",
                 onPrimaryClick = onRetry,
@@ -453,6 +455,7 @@ class AllParlourFragment : Fragment() {
         binding.shimmerLayout.isVisible = true
         binding.shimmerLayout.startShimmer()
         binding.mainContent.isVisible = false
+        binding.stateView.root.isVisible = false
     }
     private fun hideMainLoading() {
         binding.shimmerLayout.stopShimmer()
