@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -19,6 +20,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentServiceListBinding
+import com.thekainchee.user.presentation.common.extensions.hide
+import com.thekainchee.user.presentation.common.extensions.show
+import com.thekainchee.user.presentation.common.state.StateViewData
 import com.thekainchee.user.presentation.parlour.ParlourActivity
 import com.thekainchee.user.presentation.service.adapter.ServiceAdapter
 import com.thekainchee.user.presentation.service.bottomSheet.BookingPreviewBottomSheet
@@ -55,54 +59,40 @@ class ServiceListFragment : Fragment() {
             .setToolbarTitle(navArgs.categoryName +" Services" ?: "Services")
         parlourId = navArgs.parlourId
         categoryId = navArgs.categoryId
-
         if(!NetworkUtils.isInternetAvailable(requireContext())){
             binding.contentLayout.visibility = View.GONE
-            binding.layoutNoInternet.visibility = View.VISIBLE
-        }else{
-            parlourId?.let { parlourId ->
-                categoryId?.let { categoryId ->
-                    serviceViewModel.getServicesByCategory(false,parlourId,categoryId)
-                }
-            }
-        }
-
-        binding.btnRetry.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                binding.errorLayout.visibility = View.GONE
-                binding.layoutNoInternet.visibility = View.VISIBLE
-            }else{
-                parlourId?.let { parlourId ->
-                    categoryId?.let { categoryId ->
-                        serviceViewModel.getServicesByCategory(false,parlourId,categoryId)
+            showNoInternetState(retryText = "Try Again") {
+                if (!NetworkUtils.isInternetAvailable(requireContext())) {
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                } else {
+                    binding.stateView.hide()
+                    parlourId?.let { parlourId ->
+                        categoryId?.let { categoryId ->
+                            serviceViewModel.getServicesByCategory(false,parlourId,categoryId)
+                        }
                     }
                 }
             }
         }
 
-        binding.btnTryAgain.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                Snackbar.make(binding.root, "No Internet Connection", Snackbar.LENGTH_SHORT).show()
-            }else{
-                parlourId?.let{parlourId ->
-                    serviceViewModel.getBookingPreview(parlourId,serviceViewModel.selectedServiceIds.value)
-                }
-            }
-        }
-
         binding.bottomBookingStrip.setOnClickListener {
-            Log.d("CLICK_TEST", "Clicked")
             if(!NetworkUtils.isInternetAvailable(requireContext())){
                 Snackbar.make(binding.root, "No Internet Connection", Snackbar.LENGTH_SHORT).show()
             }else{
                 parlourId?.let { parlourId ->
-                    Log.d("parlourId",parlourId)
                     serviceViewModel.getBookingPreview(parlourId,serviceViewModel.selectedServiceIds.value)
                 }
 
             }
         }
-
+        setupRecyclerView()
+        observeUiState()
+    }
+    private fun setupRecyclerView(){
         adapter = ServiceAdapter(onAddClick = {item->
             val updatedList = adapter.currentList.map {
 
@@ -136,99 +126,145 @@ class ServiceListFragment : Fragment() {
             adapter = this@ServiceListFragment.adapter
 
         }
-
-
+    }
+    private fun observeUiState(){
+        observeServices()
+        observeSelectedServices()
+        observeBookingPreview()
+    }
+    private fun observeServices() {
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                launch {
-                    serviceViewModel.serviceListState.collect{ state ->
-                        when(state){
-                            is ServiceListState.Idle -> {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                serviceViewModel.serviceListState.collect{ state ->
+                    when(state){
+                        is ServiceListState.Idle -> {
 
+                        }
+                        is ServiceListState.Loading -> {
+                            showLoading()
+                        }
+                        is ServiceListState.Success -> {
+                            hideLoading()
+                            binding.contentLayout.isVisible = true
+                            adapter.submitList(state.data)
+                            parlourId?.let { id ->
+                                serviceViewModel.loadSelectedServices(id)
                             }
-                            is ServiceListState.Loading -> {
-                                binding.shimmer.visibility = View.VISIBLE
-                                binding.contentLayout.visibility = View.GONE
-                                binding.errorLayout.visibility = View.GONE
-                                binding.layoutNoInternet.visibility = View.GONE
-                                binding.shimmer.startShimmer()
-                            }
-                            is ServiceListState.Success -> {
-                                binding.shimmer.stopShimmer()
-                                binding.shimmer.visibility = View.GONE
-                                binding.contentLayout.visibility = View.VISIBLE
-                                binding.errorLayout.visibility = View.GONE
-                                adapter.submitList(state.data)
-                                parlourId?.let { id ->
-                                    serviceViewModel.loadSelectedServices(id)
+                        }
+                        is ServiceListState.Empty -> {
+                            hideLoading()
+                            binding.contentLayout.isVisible = false
+                            showEmptyServices()
+                        }
+                        is ServiceListState.Error -> {
+                            hideLoading()
+                            binding.contentLayout.isVisible = false
+                            showServiceLoadError {
+                                withInternet {
+                                    binding.stateView.hide()
+                                    parlourId?.let { parlourId ->
+                                        categoryId?.let { categoryId ->
+                                            serviceViewModel.getServicesByCategory(false,parlourId,categoryId)
+                                        }
+                                    }
+
                                 }
-                            }
-                            is ServiceListState.Empty -> {
-                                binding.shimmer.stopShimmer()
-                                binding.shimmer.visibility = View.GONE
-                                binding.errorLayout.visibility = View.VISIBLE
-                                binding.btnRetry.visibility  =View.GONE
-                                binding.contentLayout.visibility = View.GONE
-                                binding.tvEmptyTitle.text = "No Services Found"
-                                binding.tvEmptySubtitle.text = "This category has no services yet."
-                            }
-                            is ServiceListState.Error -> {
-                                binding.shimmer.stopShimmer()
-                                binding.shimmer.visibility = View.GONE
-                                binding.errorLayout.visibility = View.VISIBLE
-                                binding.contentLayout.visibility = View.GONE
-                                binding.tvEmptyTitle.text = "Something went wrong"
-                                binding.tvEmptySubtitle.text = state.message
-                            }
-                        }
-                    }
-                }
-
-                launch{
-                    serviceViewModel.selectedServiceIds.collect { selectedIds ->
-
-                        if(selectedIds.isNotEmpty()){
-
-                            binding.tvSelectedCount.text =
-                                "${selectedIds.size} Services Added"
-
-                            showBottomStrip()
-
-                        }else{
-
-                            hideBottomStrip()
-                        }
-                    }
-                }
-
-                launch {
-                    serviceViewModel.bookingPreviewEvent.collect { event ->
-
-                        when (event) {
-
-                            is BookingPreviewEvent.OpenBottomSheet -> {
-                                BookingPreviewBottomSheet
-                                    .newInstance(event.data,
-                                        onChangesDone = {
-
-                                            refreshAfterBottomSheet()
-                                        })
-                                    .show(
-                                        parentFragmentManager,
-                                        "BookingPreviewBottomSheet"
-                                    )
-                            }
-                            is BookingPreviewEvent.ShowToast -> {
-                                Snackbar.make(binding.root, event.message, Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
                 }
             }
         }
-
     }
+    private fun observeSelectedServices() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                serviceViewModel.selectedServiceIds.collect { selectedIds ->
 
+                    if(selectedIds.isNotEmpty()){
+
+                        binding.tvSelectedCount.text =
+                            "${selectedIds.size} Services Added"
+
+                        showBottomStrip()
+
+                    }else{
+
+                        hideBottomStrip()
+                    }
+                }
+            }
+        }
+    }
+    private fun observeBookingPreview() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                serviceViewModel.bookingPreviewEvent.collect { event ->
+
+                    when (event) {
+
+                        is BookingPreviewEvent.OpenBottomSheet -> {
+                            BookingPreviewBottomSheet
+                                .newInstance(event.data,
+                                    onChangesDone = {
+
+                                        refreshAfterBottomSheet()
+                                    })
+                                .show(
+                                    parentFragmentManager,
+                                    "BookingPreviewBottomSheet"
+                                )
+                        }
+                        is BookingPreviewEvent.ShowToast -> {
+                            Snackbar.make(binding.root, event.message, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private fun showServiceLoadError(
+        onRetry: () -> Unit
+    ) {
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.ic_oops,
+                title = "Unable to Load Services",
+                subtitle = "We couldn't load the services right now. Please try again.",
+                primaryButtonText = "Retry",
+                onPrimaryClick = onRetry
+            )
+        )
+    }
+    private fun showEmptyServices() {
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.ic_oops,
+                title = "No Services Found",
+                subtitle = "This category doesn't have any services yet."
+            )
+        )
+    }
+    private fun withInternet(
+        onConnected: () -> Unit
+    ) {
+        if (!NetworkUtils.isInternetAvailable(requireContext())) {
+            showNoInternetState {
+                if (!NetworkUtils.isInternetAvailable(requireContext())) {
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                } else {
+                    binding.stateView.hide()
+                    onConnected()
+                }
+            }
+        } else {
+            onConnected()
+        }
+    }
     private fun showBottomStrip() {
 
         binding.bottomBookingStrip.apply {
@@ -274,6 +310,31 @@ class ServiceListFragment : Fragment() {
                 )
             }
         }
+    }
+    private fun showNoInternetState(
+        retryText: String = "Retry",
+        onRetry: () -> Unit
+    ){
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.no_internet,
+                title = "No Internet Connection",
+                subtitle = "Please check your internet connection and try again.",
+                primaryButtonText = retryText,
+                onPrimaryClick = onRetry
+            )
+        )
+    }
+    private fun showLoading(){
+        binding.stateView.hide()
+        binding.contentLayout.isVisible = false
+        binding.shimmer.visibility = View.VISIBLE
+        binding.shimmer.startShimmer()
+    }
+
+    private fun hideLoading(){
+        binding.shimmer.stopShimmer()
+        binding.shimmer.visibility = View.GONE
     }
     override fun onDestroyView() {
         super.onDestroyView()

@@ -81,8 +81,6 @@ class ParlourDetailFragment : Fragment() {
         setupClickListeners()
         observeParlourDetails()
         checkInternetAndLoad()
-
-
     }
 
     private fun observeParlourDetails() {
@@ -555,6 +553,11 @@ class ParlourDetailFragment : Fragment() {
                         serviceViewModel.getServiceCategories(it)
                     }
                 }
+            }
+        }else{
+            id?.let {
+                parlourDetailedViewModel.getParlourDetails(it)
+                serviceViewModel.getServiceCategories(it)
             }
         }
     }
