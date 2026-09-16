@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/bookingCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
-    android:layout_marginTop="12dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="6dp"
     android:clickable="true"
     android:focusable="true"
 
-
     app:cardBackgroundColor="@android:color/white"
-
-    app:cardCornerRadius="20dp"
-    app:cardElevation="2dp"
-    app:strokeColor="#EAEAEA"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="3dp"
+    app:strokeColor="#EEEEEE"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -22,185 +24,375 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="14dp">
+            android:padding="16dp">
 
-            <!-- Left Block -->
 
-            <LinearLayout
-                android:id="@+id/leftContainer"
-                android:layout_width="92dp"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/imageCard"
+                android:layout_width="112dp"
+                android:layout_height="112dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="0dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="92dp"
-                    android:layout_height="92dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp">
+                <ImageView
+                    android:id="@+id/ivService"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_no_data"
+                    tools:src="@drawable/ic_no_data" />
 
-                    <ImageView
-                        android:id="@+id/ivService"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_no_data"
-                        tools:src="@drawable/ic_no_data" />
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <TextView
-                    android:id="@+id/tvAmount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="₹348"
-                    android:textColor="@color/primaryColor"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    tools:text="₹348" />
-
-            </LinearLayout>
-
-            <!-- Right Content -->
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="14dp"
-                android:orientation="vertical"
-                android:padding="4dp"
-                app:layout_constraintBottom_toBottomOf="@id/leftContainer"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/leftContainer"
-                app:layout_constraintTop_toTopOf="@id/leftContainer">
-
-                <!-- Service + Status -->
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:id="@+id/serviceCountContainer"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:layout_gravity="bottom|start"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/bg_booking_service_count"
+                    android:gravity="center|center_horizontal"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="4dp"
+                    android:paddingVertical="4dp">
+
+                    <ImageView
+                        android:id="@+id/ivServiceCount"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_scissors"
+                        app:tint="@android:color/white" />
 
                     <TextView
-                        android:id="@+id/tvServiceName"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:text="Hair Cut"
-                        android:textColor="@android:color/black"
-                        android:textSize="17sp"
-                        android:textStyle="bold"
-                        tools:text="Hair Cut" />
-
-                    <TextView
-                        android:id="@+id/tvStatus"
+                        android:id="@+id/tvServiceCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="5dp"
-                        android:text="Upcoming"
-                        android:background="@drawable/bg_status_confirmed"
-                        android:textColor="@color/primaryColor"
-                        android:textSize="11sp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:text="3 Services"
+                        android:textColor="@android:color/white"
+                        android:textSize="12sp"
                         android:textStyle="bold"
-                        tools:text="Upcoming" />
+                        tools:text="3 Services" />
 
                 </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="112dp"
+                android:layout_marginStart="14dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageCard"
+                app:layout_constraintTop_toTopOf="@id/imageCard">
+
+
+
+                <TextView
+                    android:id="@+id/tvServiceName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Classic Haircut"
+                    android:textColor="#111111"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/tvStatus"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Classic Haircut" />
+
+
+
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_booking_status_upcoming"
+                    android:gravity="center"
+                    android:paddingHorizontal="11dp"
+                    android:paddingVertical="7dp"
+                    android:text="Upcoming"
+                    android:textColor="@color/primaryColor"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Upcoming" />
+
 
                 <TextView
                     android:id="@+id/tvMoreServices"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
-                    android:text="+2 More Services"
-                    android:textColor="#757575"
-                    android:textSize="12sp"
-                    tools:text="+2 More Services" />
+                    android:text="+ 2 more services"
+                    android:textColor="#737782"
+                    android:textSize="13sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvServiceName"
+                    tools:text="+ 2 more services" />
 
-                <TextView
-                    android:id="@+id/tvParlourName"
-                    android:layout_width="wrap_content"
+
+
+                <LinearLayout
+                    android:id="@+id/parlourContainer"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="The Kainchee Salon"
-                    android:textColor="@android:color/black"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    tools:text="The Kainchee Salon" />
+                    android:layout_marginTop="11dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvMoreServices">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_booking_store"
+                        app:tint="#626978" />
+
+                    <TextView
+                        android:id="@+id/tvParlourName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="9dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="Prime District Grooming Lounge"
+                        android:textColor="#17191F"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="Prime District Grooming Lounge" />
+
+                </LinearLayout>
+
+                <!-- Location -->
+
+                <LinearLayout
+                    android:id="@+id/locationContainer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/parlourContainer">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_location"
+                        app:tint="#737782" />
+
+                    <TextView
+                        android:id="@+id/tvLocation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="9dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="Ranchi, Jharkhand"
+                        android:textColor="#737782"
+                        android:textSize="13sp"
+                        tools:text="Ranchi, Jharkhand" />
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <!-- Stylist -->
+
+            <LinearLayout
+                android:id="@+id/stylistContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageCard">
+
+                <ImageView
+                    android:layout_width="19dp"
+                    android:layout_height="19dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_person"
+                    app:tint="#737782" />
 
                 <TextView
                     android:id="@+id/tvStaffName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="with Danish"
-                    android:textColor="#757575"
+                    android:layout_marginStart="9dp"
+                    android:text="with Armaan Khan"
+                    android:textColor="#555B68"
                     android:textSize="13sp"
-                    tools:text="with Danish" />
+                    tools:text="with Armaan Khan" />
+
+            </LinearLayout>
+
+
+            <!-- Vertical Divider -->
+
+            <View
+                android:id="@+id/dateDivider"
+                android:layout_width="1dp"
+                android:layout_height="22dp"
+                android:layout_marginStart="16dp"
+                android:background="#DDDDDD"
+                app:layout_constraintBottom_toBottomOf="@id/stylistContainer"
+                app:layout_constraintStart_toEndOf="@id/stylistContainer"
+                app:layout_constraintTop_toTopOf="@id/stylistContainer" />
+
+
+            <!-- Date -->
+
+            <LinearLayout
+                android:id="@+id/dateContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="@id/stylistContainer"
+                app:layout_constraintStart_toEndOf="@id/dateDivider"
+                app:layout_constraintTop_toTopOf="@id/stylistContainer">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_calendar"
+                    app:tint="#737782" />
 
                 <TextView
-                    android:id="@+id/tvDateTime"
+                    android:id="@+id/tvDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Today • 10:00 AM"
-                    android:textColor="@color/primaryColor"
+                    android:layout_marginStart="8dp"
+                    android:text="08 Aug 2026"
+                    android:textColor="#555B68"
                     android:textSize="13sp"
-                    android:textStyle="bold"
-                    tools:text="Today • 10:00 AM" />
+                    tools:text="08 Aug 2026" />
+
+            </LinearLayout>
+
+
+            <!-- Time -->
+
+            <LinearLayout
+                android:id="@+id/timeContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="@id/dateContainer"
+                app:layout_constraintTop_toBottomOf="@id/dateContainer">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_booking_clock"
+                    app:tint="#737782" />
+
+                <TextView
+                    android:id="@+id/tvTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="07:00 AM"
+                    android:textColor="#555B68"
+                    android:textSize="13sp"
+                    tools:text="07:00 AM" />
 
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Divider -->
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#EFEFEF" />
 
-        <!-- Footer -->
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_booking_summary"
             android:gravity="center_vertical"
+            android:minHeight="80dp"
             android:orientation="horizontal"
-            android:paddingHorizontal="16dp">
+            android:paddingHorizontal="18dp"
+            android:paddingVertical="12dp">
 
-            <TextView
-                android:id="@+id/tvBookingId"
+            <!-- Amount -->
+
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Booking #BK12584"
-                android:textColor="#757575"
-                android:textSize="13sp"
-                tools:text="Booking #BK12584" />
+                android:orientation="vertical">
 
-            <TextView
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total Amount"
+                    android:textColor="#147D6E"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="₹349"
+                    android:textColor="@color/primaryColor"
+                    android:textSize="23sp"
+                    android:textStyle="bold"
+                    tools:text="₹349" />
+
+            </LinearLayout>
+
+
+            <!-- View Details -->
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnViewDetails"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="52dp"
+                android:minWidth="0dp"
                 android:text="View Details"
-                android:textColor="@color/primaryColor"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_marginStart="4dp"
-                android:src="@drawable/ic_arrow_right" />
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/primaryColor"
+                app:cornerRadius="28dp"
+                app:elevation="0dp"
+                app:icon="@drawable/ic_arrow_right"
+                app:iconGravity="textEnd"
+                app:iconPadding="8dp"
+                app:iconTint="@android:color/white" />
 
         </LinearLayout>
 

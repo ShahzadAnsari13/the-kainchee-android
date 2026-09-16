@@ -6,10 +6,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <include
-        android:id="@+id/stateView"
-        android:visibility="gone"
-        layout="@layout/view_state"/>
+
 
     <FrameLayout
         android:id="@+id/mainContent"
@@ -120,7 +117,10 @@
         </com.google.android.material.card.MaterialCardView>
 
     </FrameLayout>
-
+    <include
+        android:id="@+id/stateView"
+        android:visibility="gone"
+        layout="@layout/view_state"/>
 
 
 

@@ -116,9 +116,9 @@ class BookingRepositoryImpl @Inject constructor(private val api: BookingApi) : B
         }
     }
 
-    override suspend fun getMyBookings(status: String): Result<List<MyBookingUiModel>> {
+    override suspend fun getMyBookings(): Result<List<MyBookingUiModel>> {
         return try{
-            val response  =  api.getMyBookings(status)
+            val response  =  api.getMyBookings()
             if(response.isSuccessful){
                 val body = response.body()?.bookings ?: emptyList()
                 Result.success(body.map { it.toUiModel() })

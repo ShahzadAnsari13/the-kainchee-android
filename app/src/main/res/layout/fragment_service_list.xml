@@ -32,10 +32,7 @@
             android:clipToPadding="false"/>
     </LinearLayout>
 
-    <include
-        android:id="@+id/stateView"
-        android:visibility="gone"
-        layout="@layout/view_state"/>
+
 
 
     <com.google.android.material.card.MaterialCardView
@@ -157,4 +154,8 @@
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
+    <include
+        android:id="@+id/stateView"
+        android:visibility="gone"
+        layout="@layout/view_state"/>
 </FrameLayout>

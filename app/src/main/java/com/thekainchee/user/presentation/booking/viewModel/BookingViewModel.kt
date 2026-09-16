@@ -133,15 +133,13 @@ class BookingViewModel @Inject constructor(val repository: BookingRepository) : 
                 }
         }
     }
-    fun getMyBookings(status: String){
-        Log.d("BOOKING", "Status = $status")
+    fun getMyBookings(){
         _myBookingsState.value = MyBookingsUiState.Loading
         bookingsJob?.cancel()
         bookingsJob = viewModelScope.launch {
 
-            repository.getMyBookings(status)
+            repository.getMyBookings()
                 .onSuccess { bookings ->
-                    Log.d("BOOKING", "Size = ${bookings.size}")
                     if(bookings.isEmpty()){
 
                         _myBookingsState.value =

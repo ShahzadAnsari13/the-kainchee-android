@@ -39,6 +39,5 @@ interface BookingApi {
 
     @GET("user/bookings")
     suspend fun getMyBookings(
-        @Query("status") status: String
     ): Response<MyBookingsResponseDto>
 }

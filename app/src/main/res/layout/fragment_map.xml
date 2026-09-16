@@ -6,10 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".presentation.location.fragment.MapFragment">
-    <include
-        android:id="@+id/stateView"
-        android:visibility="gone"
-        layout="@layout/view_state"/>
+
 
 
 
@@ -177,5 +174,8 @@
         </com.google.android.material.card.MaterialCardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+    <include
+        android:id="@+id/stateView"
+        android:visibility="gone"
+        layout="@layout/view_state"/>
 </FrameLayout>

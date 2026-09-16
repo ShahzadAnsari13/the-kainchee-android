@@ -16,6 +16,5 @@ interface BookingRepository {
 
     suspend fun getBookingDetails(bookingId: String): Result<BookingDetailUiModel>
     suspend fun getMyBookings(
-        status: String
     ): Result<List<MyBookingUiModel>>
 }

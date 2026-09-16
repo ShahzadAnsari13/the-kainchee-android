@@ -87,6 +87,7 @@ fun MyBookingDto.toUiModel(): MyBookingUiModel {
         staffName = staffName,
         bookingDate = bookingDate,
         slotStartTime = slotStartTime,
+        location = location,
         bookingStatus = bookingStatus,
         totalPrice = totalPrice,
         serviceName = serviceName,

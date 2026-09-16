@@ -6,6 +6,7 @@ data class MyBookingDto(
     val staffName: String,
     val bookingDate: String,
     val slotStartTime: String,
+    val location:String,
     val bookingStatus: String,
     val totalPrice: Double,
     val serviceName: String,

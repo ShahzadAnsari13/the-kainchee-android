@@ -19,6 +19,7 @@ import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentMyBookingsBinding
 import com.thekainchee.user.presentation.booking.BookingActivity
 import com.thekainchee.user.presentation.booking.adapter.MyBookingsAdapter
+import com.thekainchee.user.presentation.booking.model.MyBookingUiModel
 import com.thekainchee.user.presentation.booking.state.MyBookingsUiState
 import com.thekainchee.user.presentation.booking.viewModel.BookingViewModel
 import com.thekainchee.user.utils.NetworkUtils
@@ -30,6 +31,7 @@ class MyBookings : Fragment() {
     private var _binding : FragmentMyBookingsBinding? = null
     val binding get() = _binding!!
     private lateinit var bookingsAdapter: MyBookingsAdapter
+    private var allBookings = emptyList<MyBookingUiModel>()
     private var currentFilter = "UPCOMING"
     private val successViewModel : BookingViewModel by viewModels()
     private var isSwipeRefresh  = false
@@ -44,6 +46,11 @@ class MyBookings : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (requireActivity() as BookingActivity)
+            .showToolbar(true)
+
+        (requireActivity() as BookingActivity)
+            .setToolbarTitle("My Bookings")
         bookingsAdapter = MyBookingsAdapter { booking ->
             // Navigate Booking Detail
              val action = MyBookingsDirections.myBookingFragmentToBookingDetailFragment(booking.bookingId)
@@ -63,32 +70,30 @@ class MyBookings : Fragment() {
             if (!checkInternetOrShowLayout()) return@setOnRefreshListener
 
                 isSwipeRefresh  =  true
-                successViewModel.getMyBookings(currentFilter)
+                successViewModel.getMyBookings()
 
         }
         binding.chipUpcoming.setOnClickListener {
-            if (!checkInternetOrShowLayout()) return@setOnClickListener
+
                 if (currentFilter != "UPCOMING") {
                     currentFilter = "UPCOMING"
-                    successViewModel.getMyBookings(currentFilter)
+                    showFilteredBookings()
                 }
 
 
         }
         binding.chipCompleted.setOnClickListener {
-            if (!checkInternetOrShowLayout()) return@setOnClickListener
                 if (currentFilter != "COMPLETED") {
                     currentFilter = "COMPLETED"
-                    successViewModel.getMyBookings(currentFilter)
+                    showFilteredBookings()
                 }
 
 
         }
         binding.chipCancelled.setOnClickListener {
-            if (!checkInternetOrShowLayout()) return@setOnClickListener
                 if (currentFilter != "CANCELLED") {
                     currentFilter = "CANCELLED"
-                    successViewModel.getMyBookings(currentFilter)
+                    showFilteredBookings()
                 }
 
 
@@ -99,14 +104,14 @@ class MyBookings : Fragment() {
             binding.layoutNoInternet.visibility = View.VISIBLE
         }else{
             binding.layoutNoInternet.visibility = View.GONE
-            successViewModel.getMyBookings(currentFilter)
+            successViewModel.getMyBookings()
         }
         binding.btnTryAgain.setOnClickListener {
             if(!NetworkUtils.isInternetAvailable(requireContext())){
                 Snackbar.make(binding.root,"No Internet Connection",Snackbar.LENGTH_SHORT).show()
             }else{
                 binding.layoutNoInternet.visibility = View.GONE
-                successViewModel.getMyBookings(currentFilter)
+                successViewModel.getMyBookings()
             }
         }
         binding.btnRetry.setOnClickListener {
@@ -115,7 +120,7 @@ class MyBookings : Fragment() {
                 binding.layoutNoInternet.visibility = View.VISIBLE
             }else{
                 binding.errorLayout.visibility = View.GONE
-                successViewModel.getMyBookings(currentFilter)
+                successViewModel.getMyBookings()
             }
         }
 
@@ -145,6 +150,8 @@ class MyBookings : Fragment() {
                                 binding.swipeRefresh.isRefreshing = false
                                 isSwipeRefresh  = false
                             }
+                            allBookings = state.bookings
+                            showFilteredBookings()
                             bookingsAdapter.submitList(state.bookings)
                         }
                         is MyBookingsUiState.Error -> {
@@ -202,6 +209,40 @@ class MyBookings : Fragment() {
         }
 
         return false
+    }
+    private fun showFilteredBookings() {
+
+        val filteredBookings = when (currentFilter) {
+
+            "UPCOMING" -> {
+                allBookings.filter {
+                    it.bookingStatus in listOf(
+                        "PENDING",
+                        "CONFIRMED",
+                        "CHECKED_IN"
+                    )
+                }
+            }
+
+            "COMPLETED" -> {
+                allBookings.filter {
+                    it.bookingStatus == "COMPLETED"
+                }
+            }
+
+            "CANCELLED" -> {
+                allBookings.filter {
+                    it.bookingStatus in listOf(
+                        "CANCELLED",
+                        "NO_SHOW"
+                    )
+                }
+            }
+
+            else -> allBookings
+        }
+
+        bookingsAdapter.submitList(filteredBookings)
     }
     override fun onResume() {
         super.onResume()

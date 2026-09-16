@@ -46,17 +46,28 @@ class MyBookingsAdapter(private val onItemClicked: (MyBookingUiModel) -> Unit) :
             root.setOnClickListener {
                 onItemClicked(item)
             }
+            btnViewDetails.setOnClickListener {
+                onItemClicked(item)
+            }
 
             // Service
             tvServiceName.text = item.serviceName
-
+            tvLocation.text = item.location
             // More Services
-            if (item.serviceCount > 0) {
+            if (item.serviceCount > 1) {
                 tvMoreServices.isVisible = true
-                tvMoreServices.text = "+${item.serviceCount} More Services"
+                tvMoreServices.text = "+${item.serviceCount - 1} more services"
             } else {
                 tvMoreServices.isVisible = false
             }
+            //image overlay service
+            serviceCountContainer.isVisible = item.serviceCount > 0
+            tvServiceCount.text =
+                if (item.serviceCount == 1) {
+                    "1 Service"
+                } else {
+                    "${item.serviceCount} Services"
+                }
 
             // Parlour
             tvParlourName.text = item.parlourName
@@ -67,15 +78,12 @@ class MyBookingsAdapter(private val onItemClicked: (MyBookingUiModel) -> Unit) :
             // Amount
             tvAmount.text = "₹${item.totalPrice}"
 
-            // Date + Time
-            tvDateTime.text =
-                "${DateFormatter.formatBookingSuccessDate(item.bookingDate)} • ${item.slotStartTime}"
+            // Date
+            tvDate.text =
+                DateFormatter.formatBookingSuccessDate(item.bookingDate)
 
-            // Booking Id
-            tvBookingId.text = "Booking #${item.bookingId.takeLast(6)}"
-
-            // Status
-            tvStatus.text = item.bookingStatus
+            // Time
+            tvTime.text = item.slotStartTime
 
             // TODO : Glide
         Glide.with(ivService)
