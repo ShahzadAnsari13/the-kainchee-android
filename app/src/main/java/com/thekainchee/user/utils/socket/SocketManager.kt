@@ -2,9 +2,8 @@ package com.thekainchee.user.utils.socket
 import io.socket.client.IO
 import io.socket.client.Socket
 object SocketManager {
-    private val SOCKET_URL = "http://10.127.48.101:3000"
+    private val SOCKET_URL = "http://172.23.255.101:3000"
     private var socket: Socket? = null
-
     fun connect(){
         if (socket==null){
             socket = IO.socket(SOCKET_URL)
@@ -17,5 +16,4 @@ object SocketManager {
     fun getSocket(): Socket? {
         return socket
     }
-
 }

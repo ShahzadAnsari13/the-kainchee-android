@@ -23,6 +23,9 @@ import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentRequestOtpBinding
 import com.thekainchee.user.presentation.auth.state.AuthState
 import com.thekainchee.user.presentation.auth.viewModel.AuthViewModel
+import com.thekainchee.user.presentation.common.extensions.hide
+import com.thekainchee.user.presentation.common.extensions.show
+import com.thekainchee.user.presentation.common.state.StateViewData
 import com.thekainchee.user.presentation.common.ui.countrypicker.CountryPickerBottomSheet
 import com.thekainchee.user.utils.NetworkUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,28 +49,11 @@ class RequestOtpFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if(!NetworkUtils.isInternetAvailable(requireContext())){
-            binding.layoutNoInternet.isVisible = true
-            binding.mainContent.isVisible = false
-        }else{
+
+        if (player == null) {
             setupVideoPlayer()
         }
 
-        binding.btnTryAgain.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                Snackbar.make(
-                    binding.root,
-                    "No Internet Connection",
-                    Snackbar.LENGTH_SHORT
-                ).show()
-            }else{
-                binding.layoutNoInternet.isVisible = false
-                binding.mainContent.isVisible = true
-                if (player == null) {
-                    setupVideoPlayer()
-                }
-            }
-        }
         binding.etPhone.addTextChangedListener {
             val phone = it.toString().trim()
             binding.btnRequestOtp.isEnabled =   phoneRegex.matches(phone)
@@ -90,19 +76,16 @@ class RequestOtpFragment : Fragment() {
         }
 
         binding.btnRequestOtp.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                binding.layoutNoInternet.isVisible = true
-                binding.mainContent.isVisible = false
-                return@setOnClickListener
-            }else{
+            withInternet {
                 val phone  = binding.etPhone.text.toString()
                 if(!phoneRegex.matches(phone)){
                     showToast("Enter phone number")
-                    return@setOnClickListener
+                    return@withInternet
                 }
                 val countryCode = binding.etCountryCode.text.toString()
                 viewModel.requestOtp(countryCode,phone)
             }
+
 
         }
         observeState()
@@ -197,6 +180,40 @@ class RequestOtpFragment : Fragment() {
     }
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+    private fun showNoInternetState(
+        retryText: String = "Retry",
+        onRetry: () -> Unit
+    ){
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.no_internet,
+                title = "No Internet Connection",
+                subtitle = "Please check your internet connection and try again.",
+                primaryButtonText = retryText,
+                onPrimaryClick = onRetry
+            )
+        )
+    }
+    private fun withInternet(
+        onConnected: () -> Unit
+    ) {
+        if (!NetworkUtils.isInternetAvailable(requireContext())) {
+            showNoInternetState {
+                if (!NetworkUtils.isInternetAvailable(requireContext())) {
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                } else {
+                    binding.stateView.hide()
+                    onConnected()
+                }
+            }
+        } else {
+            onConnected()
+        }
     }
 
     override fun onDestroyView() {

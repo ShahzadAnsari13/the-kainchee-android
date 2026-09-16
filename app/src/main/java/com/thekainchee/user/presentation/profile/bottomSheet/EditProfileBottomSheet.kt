@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -55,7 +54,11 @@ class EditProfileBottomSheet : BottomSheetDialogFragment() {
             if(!NetworkUtils.isInternetAvailable(requireContext())){
                 Snackbar.make(requireView(), "No Internet Connection", Snackbar.LENGTH_SHORT).show()
             }else{
-                val name = binding.etName.text.toString()
+                val name = binding.etName.text.toString().trim()
+                if (name.isEmpty()) {
+                    binding.etName.error = "Name is required"
+                    return@setOnClickListener
+                }
                 profileViewModel.updateProfile(name)
                 binding.btnSave.isEnabled = false
                 binding.progressSave.visibility = View.VISIBLE

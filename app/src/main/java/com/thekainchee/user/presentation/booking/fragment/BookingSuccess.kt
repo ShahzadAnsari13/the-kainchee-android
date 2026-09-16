@@ -19,6 +19,9 @@ import com.thekainchee.user.databinding.FragmentBookingSuccessBinding
 import com.thekainchee.user.presentation.booking.BookingActivity
 import com.thekainchee.user.presentation.booking.state.BookingDetailUiState
 import com.thekainchee.user.presentation.booking.viewModel.BookingViewModel
+import com.thekainchee.user.presentation.common.extensions.hide
+import com.thekainchee.user.presentation.common.extensions.show
+import com.thekainchee.user.presentation.common.state.StateViewData
 import com.thekainchee.user.presentation.dashboard.DashboardActivity
 import com.thekainchee.user.utils.DateFormatter
 import com.thekainchee.user.utils.NetworkUtils
@@ -46,46 +49,27 @@ class BookingSuccess : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         if (!NetworkUtils.isInternetAvailable(requireContext())){
+
             binding.shimmerLayout.visibility = View.GONE
             binding.contentLayout.visibility = View.GONE
-            binding.errorLayout.visibility = View.GONE
-            binding.layoutNoInternet.visibility = View.VISIBLE
-        }else{
-            binding.layoutNoInternet.visibility = View.GONE
-            binding.shimmerLayout.visibility = View.VISIBLE
-            binding.shimmerLayout.startShimmer()
-            successViewModel.getBookingDetails(bookingId)
-        }
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                successViewModel.bookingDetailState.collect {state->
-                    when(state){
-                        is BookingDetailUiState.Idle -> {
-                        }
-                        is BookingDetailUiState.Loading -> {
-                            binding.shimmerLayout.visibility = View.VISIBLE
-                            binding.contentLayout.visibility = View.GONE
-                            binding.shimmerLayout.startShimmer()
-                        }
-                        is BookingDetailUiState.Success -> {
-
-                            binding.shimmerLayout.stopShimmer()
-                            binding.shimmerLayout.visibility = View.GONE
-                            binding.contentLayout.visibility = View.VISIBLE
-                            binding.tvParlourName.text = state.data.parlourName
-                            binding.tvDateTime.text =  "${DateFormatter.formatBookingSuccessDate(state.data.bookingDate)} • ⏱ ${state.data.slotStartTime}"
-                        }
-                        is BookingDetailUiState.Error -> {
-
-                            binding.shimmerLayout.stopShimmer()
-                            binding.shimmerLayout.visibility = View.GONE
-                            binding.errorLayout.visibility = View.VISIBLE
-                        }
-                    }
+            showNoInternetState(retryText = "Try Again") {
+                if (!NetworkUtils.isInternetAvailable(requireContext())) {
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                } else {
+                    binding.stateView.hide()
+                    successViewModel.getBookingDetails(bookingId)
                 }
             }
+        }else{
+            successViewModel.getBookingDetails(bookingId)
         }
+        observeBookingDetails()
         binding.btnHome.setOnClickListener {
 
             val intent = Intent(
@@ -106,28 +90,8 @@ class BookingSuccess : Fragment() {
                 BookingSuccessDirections.actionBookingSuccessFragmentToMyBookingFragment()
             )
         }
-        binding.btnTryAgain.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                Snackbar.make(binding.root,"No Internet Connection",Snackbar.LENGTH_SHORT).show()
-            }else{
-                binding.layoutNoInternet.visibility = View.GONE
-                binding.shimmerLayout.visibility = View.VISIBLE
-                binding.shimmerLayout.startShimmer()
-                successViewModel.getBookingDetails(bookingId)
-            }
-        }
-        binding.btnRetry.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                binding.errorLayout.visibility = View.GONE
-                binding.layoutNoInternet.visibility = View.VISIBLE
-                Snackbar.make(binding.root,"No Internet Connection",Snackbar.LENGTH_SHORT).show()
-            }else{
-                binding.errorLayout.visibility = View.GONE
-                binding.shimmerLayout.visibility = View.VISIBLE
-                binding.shimmerLayout.startShimmer()
-                successViewModel.getBookingDetails(bookingId)
-            }
-        }
+
+
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner
         ) {
@@ -145,6 +109,91 @@ class BookingSuccess : Fragment() {
 
             requireActivity().finish()
         }
+    }
+    private fun observeBookingDetails() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                successViewModel.bookingDetailState.collect {state->
+                    when(state){
+                        is BookingDetailUiState.Idle -> {
+                        }
+                        is BookingDetailUiState.Loading -> {
+                            binding.stateView.hide()
+                            binding.shimmerLayout.visibility = View.VISIBLE
+                            binding.contentLayout.visibility = View.GONE
+                            binding.shimmerLayout.startShimmer()
+                        }
+                        is BookingDetailUiState.Success -> {
+                            binding.stateView.hide()
+                            binding.shimmerLayout.stopShimmer()
+                            binding.shimmerLayout.visibility = View.GONE
+                            binding.contentLayout.visibility = View.VISIBLE
+                            binding.tvParlourName.text = state.data.parlourName
+                            binding.tvDateTime.text =  "${DateFormatter.formatBookingSuccessDate(state.data.bookingDate)} • ⏱ ${state.data.slotStartTime}"
+                        }
+                        is BookingDetailUiState.Error -> {
+                            binding.shimmerLayout.stopShimmer()
+                            binding.shimmerLayout.visibility = View.GONE
+                            showBookingDetailsError (
+                                onRetry = {
+                                    withInternet {
+                                        binding.stateView.hide()
+                                        successViewModel.getBookingDetails(bookingId)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private fun showBookingDetailsError(
+        onRetry: () -> Unit
+    ) {
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.error_img,
+                title = "You're All Set! ✨",
+                subtitle = "Your booking was successful. We're having trouble loading the booking information at the moment.",
+                primaryButtonText = "Retry",
+                onPrimaryClick = onRetry
+            )
+        )
+    }
+    private fun withInternet(
+        onConnected: () -> Unit
+    ) {
+        if (!NetworkUtils.isInternetAvailable(requireContext())) {
+            showNoInternetState {
+                if (!NetworkUtils.isInternetAvailable(requireContext())) {
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                } else {
+                    binding.stateView.hide()
+                    onConnected()
+                }
+            }
+        } else {
+            onConnected()
+        }
+    }
+    private fun showNoInternetState(
+        retryText: String = "Retry",
+        onRetry: () -> Unit
+    ){
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.no_internet,
+                title = "No Internet Connection",
+                subtitle = "Please check your internet connection and try again.",
+                primaryButtonText = retryText,
+                onPrimaryClick = onRetry
+            )
+        )
     }
     override fun onResume() {
         super.onResume()

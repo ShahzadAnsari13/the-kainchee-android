@@ -77,6 +77,12 @@ class ServiceListFragment : Fragment() {
                     }
                 }
             }
+        }else{
+            parlourId?.let { parlourId ->
+                categoryId?.let { categoryId ->
+                    serviceViewModel.getServicesByCategory(false,parlourId,categoryId)
+                }
+            }
         }
 
         binding.bottomBookingStrip.setOnClickListener {

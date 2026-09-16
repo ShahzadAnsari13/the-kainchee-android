@@ -25,6 +25,9 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.Places
 import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.domain.model.AddressMode
+import com.thekainchee.user.presentation.common.extensions.hide
+import com.thekainchee.user.presentation.common.extensions.show
+import com.thekainchee.user.presentation.common.state.StateViewData
 import com.thekainchee.user.presentation.location.state.MapState
 import com.thekainchee.user.presentation.location.viewmodel.AddressSharedViewModel
 import com.thekainchee.user.presentation.location.viewmodel.MapViewModel
@@ -59,89 +62,69 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initializeMap()
+        setupClickListeners()
+        observeState()
 
-        if(!NetworkUtils.isInternetAvailable(requireContext())){
-            binding.layoutNoInternet.visibility = View.VISIBLE
-            binding.mainContent.visibility = View.GONE
-        }else{
-            val mapFragment =
-                childFragmentManager.findFragmentById(R.id.mapFragment) as? SupportMapFragment
-            mapFragment?.getMapAsync(this)
-        }
+    }
+    private fun initializeMap() {
+        withInternet {
+            if (googleMap == null) {
+                val mapFragment =
+                    childFragmentManager.findFragmentById(R.id.mapFragment)
+                            as? SupportMapFragment
 
-        binding.btnTryAgain.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                Snackbar.make(binding.root,"No Internet Connection",Snackbar.LENGTH_SHORT).show()
-            }
-            else{
-                binding.layoutNoInternet.visibility = View.GONE
-                binding.mainContent.visibility = View.VISIBLE
-                if(googleMap == null){
-                    val mapFragment =
-                        childFragmentManager.findFragmentById(R.id.mapFragment) as? SupportMapFragment
-                    mapFragment?.getMapAsync(this)
-                }
+                mapFragment?.getMapAsync(this)
             }
         }
-
+    }
+    private fun setupClickListeners() {
 
         binding.etSearch.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                binding.layoutNoInternet.visibility = View.VISIBLE
-                binding.mainContent.visibility = View.GONE
-            }else{
+            withInternet {
                 findNavController().popBackStack()
             }
-
         }
 
         binding.btnChange.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                binding.layoutNoInternet.visibility = View.VISIBLE
-                binding.mainContent.visibility = View.GONE
-            }else{
+            withInternet {
                 findNavController().popBackStack()
             }
-
-
         }
 
         binding.btnCurrentLocation.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                binding.layoutNoInternet.visibility = View.VISIBLE
-                binding.mainContent.visibility = View.GONE
-            }else{
+            withInternet {
                 viewModel.fetchUserLocation()
             }
-
         }
 
         binding.btnSetLocation.setOnClickListener {
+            setLocation()
+        }
+    }
+    private fun setLocation() {
+        withInternet {
+            val currentLatLng = latLng
 
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                binding.layoutNoInternet.visibility = View.VISIBLE
-                binding.mainContent.visibility = View.GONE
-            }else{
-                binding.layoutNoInternet.visibility = View.GONE
-                binding.mainContent.visibility = View.VISIBLE
-                val currentLatLng = latLng
-                if (currentLatLng == null) {
-                    Toast.makeText(requireContext(), "Location not ready", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-
-                val action = MapFragmentDirections
-                    .actionMapFragmentToSaveAddressFragment(
-                        latitude = currentLatLng.latitude.toString(),
-                        longitude = currentLatLng.longitude.toString()
-                    )
-
-                findNavController().navigate(action)
+            if (currentLatLng == null) {
+                Toast.makeText(
+                    requireContext(),
+                    "Location not ready",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@withInternet
             }
 
-        }
+            val action = MapFragmentDirections
+                .actionMapFragmentToSaveAddressFragment(
+                    latitude = currentLatLng.latitude.toString(),
+                    longitude = currentLatLng.longitude.toString()
+                )
 
-        // STATE OBSERVE (FINAL)
+            findNavController().navigate(action)
+        }
+    }
+    private fun observeState() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.collect { state ->
@@ -278,13 +261,47 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
     }
 
+
     private fun showLocationOnMap(latLng: LatLng) {
         googleMap?.apply {
             setPadding(0, 0, 0, 300)
             moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
         }
     }
-
+    private fun showNoInternetState(
+        retryText: String = "Retry",
+        onRetry: () -> Unit
+    ){
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.no_internet,
+                title = "No Internet Connection",
+                subtitle = "Please check your internet connection and try again.",
+                primaryButtonText = retryText,
+                onPrimaryClick = onRetry
+            )
+        )
+    }
+    private fun withInternet(
+        onConnected: () -> Unit
+    ) {
+        if (!NetworkUtils.isInternetAvailable(requireContext())) {
+            showNoInternetState {
+                if (!NetworkUtils.isInternetAvailable(requireContext())) {
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                } else {
+                    binding.stateView.hide()
+                    onConnected()
+                }
+            }
+        } else {
+            onConnected()
+        }
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         cameraJob?.cancel()

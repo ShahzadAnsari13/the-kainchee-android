@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -18,6 +17,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentMyProfileBinding
 import com.thekainchee.user.presentation.booking.BookingActivity
+import com.thekainchee.user.presentation.common.extensions.hide
+import com.thekainchee.user.presentation.common.extensions.show
+import com.thekainchee.user.presentation.common.state.StateViewData
 import com.thekainchee.user.presentation.location.LocationActivity
 import com.thekainchee.user.presentation.profile.ProfileActivity
 import com.thekainchee.user.presentation.profile.bottomSheet.EditProfileBottomSheet
@@ -28,7 +30,6 @@ import com.thekainchee.user.presentation.profile.viewModel.ProfileViewModel
 import com.thekainchee.user.utils.NetworkUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlin.jvm.java
 
 @AndroidEntryPoint
 class MyProfileFragment : Fragment() {
@@ -41,182 +42,34 @@ class MyProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         _binding = FragmentMyProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupAccountSection()
         setupSupportSection()
-        binding.quickActions.actionBookings.apply {
-            ivIcon.setImageResource(R.drawable.ic_booking_3d)
-            tvTitle.text = "Bookings"
-            tvSubtitle.text = "View & Manage"
-        }
-
-        binding.quickActions.actionAddress.apply {
-            ivIcon.setImageResource(R.drawable.ic_location_3d)
-            tvTitle.text = "Addresses"
-            tvSubtitle.text = "Manage Addresses"
-        }
-
-        binding.quickActions.actionNotification.apply {
-            ivIcon.setImageResource(R.drawable.ic_notification_3d)
-            tvTitle.text = "Alerts"
-            tvSubtitle.text = "On"
-        }
-
-        binding.quickActions.actionRefer.apply {
-            ivIcon.setImageResource(R.drawable.ic_gift)
-            tvTitle.text = "Refer"
-            tvSubtitle.text = "Invite"
-        }
-        if(!NetworkUtils.isInternetAvailable(requireContext())){
-            binding.mainContent.visibility = View.GONE
-            binding.layoutNoInternet.visibility = View.VISIBLE
+        setupQuickActions()
+        setupClickListeners()
+        observeProfile()
+        observeEvents()
+        if (!NetworkUtils.isInternetAvailable(requireContext())){
+            showNoInternetState("Try Again"){
+                if(!NetworkUtils.isInternetAvailable(requireContext())){
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                }
+                else{
+                    binding.stateView.hide()
+                    profileViewModel.getProfile()
+                }
+            }
         }else{
             profileViewModel.getProfile()
-        }
-        binding.btnTryAgain.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                Snackbar.make(
-                    binding.root,
-                    "No Internet Connection",
-                    Snackbar.LENGTH_SHORT
-                ).show()
-            }else{
-                profileViewModel.getProfile()
-            }
-        }
-        binding.btnRetry.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-               binding.errorLayout.visibility = View.GONE
-                binding.layoutNoInternet.visibility = View.VISIBLE
-            }else{
-                profileViewModel.getProfile()
-            }
-        }
-        binding.swipeRefresh.setOnRefreshListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                binding.errorLayout.visibility = View.GONE
-                binding.layoutNoInternet.visibility = View.VISIBLE
-            }else{
-                isSwipeRefresh  =  true
-                profileViewModel.getProfile()
-            }
-        }
-        binding.quickActions.actionAddress.root.setOnClickListener {
-            startActivity(Intent(requireContext(), LocationActivity::class.java))
-        }
-        binding.quickActions.actionBookings.root.setOnClickListener {
-            val intent = Intent(requireContext(), BookingActivity::class.java)
-            intent.putExtra("openMyBookings", true)
-            startActivity(intent)
-        }
-        binding.profileHeaderCard.btnEditProfile.setOnClickListener {
-
-            profile?.let {
-                EditProfileBottomSheet.newInstance(
-                    it.name,
-                    it.countryCode,
-                    it.phoneNumber
-                ).show(parentFragmentManager, "EditProfile")
-            } ?: run {
-                Snackbar.make(
-                    binding.root,
-                    "Something went wrong",
-                    Snackbar.LENGTH_SHORT
-                ).show()
-            }
-        }
-        binding.walletCard.layoutTransaction.setOnClickListener {
-            findNavController().navigate(
-                MyProfileFragmentDirections
-                    .actionMyProfileFragmentToWalletTransactionFragment(
-                        profile?.walletBalance?.toFloat() ?: 0f
-                    )
-            )
-        }
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                profileViewModel.profileState.collect{state ->
-                    when(state){
-                        is ProfileState.Idle -> {
-
-                        }
-                        is ProfileState.Loading -> {
-                            if(!isSwipeRefresh ){
-                                binding.shimmerLayout.visibility = View.VISIBLE
-                                binding.mainContent.visibility = View.GONE
-                                binding.layoutNoInternet.visibility = View.GONE
-                                binding.errorLayout.visibility = View.GONE
-                                binding.shimmerLayout.startShimmer()
-                            }
-
-                        }
-
-                        is ProfileState.Success -> {
-                            if(!isSwipeRefresh ){
-
-                                binding.shimmerLayout.stopShimmer()
-                                binding.shimmerLayout.visibility = View.GONE
-                            }else{
-                                binding.swipeRefresh.isRefreshing = false
-                                isSwipeRefresh  = false
-                            }
-                            binding.layoutNoInternet.visibility = View.GONE
-                            binding.errorLayout.visibility = View.GONE
-                            binding.mainContent.visibility = View.VISIBLE
-                            profile = state.data
-                            binding.profileHeaderCard.tvName.text = state.data.name
-                            binding.profileHeaderCard.tvPhone.text = "${state.data.countryCode} ${state.data.phoneNumber}"
-                            binding.profileHeaderCard.tvMemberSince.text ="Member since ${state.data.memberSince}"
-                            binding.walletCard.tvWalletBalance.text = "${"₹%.2f".format(state.data.walletBalance)}"
-                            binding.accountSection.itemAccountStatus.tvStatus.text =
-                            if (state.data.isActive) "Active" else "Inactive"
-                            if(state.data.notificationsEnabled){
-
-                                binding.quickActions.actionNotification.tvSubtitle.text  = "\uD83D\uDFE2 On"
-                            }else{
-                                binding.quickActions.actionNotification.tvSubtitle.text  = "\uD83D\uDD34 Off"
-                            }
-                        }
-                        is ProfileState.Error -> {
-                            if(!isSwipeRefresh ){
-                                binding.shimmerLayout.stopShimmer()
-                                binding.shimmerLayout.visibility = View.GONE
-                            }else{
-                                binding.swipeRefresh.isRefreshing = false
-                                isSwipeRefresh  = false
-                            }
-                            binding.mainContent.visibility = View.GONE
-                            binding.layoutNoInternet.visibility = View.GONE
-                            binding.errorLayout.visibility = View.VISIBLE
-
-                        }
-
-                    }
-
-                }
-            }
-        }
-        viewLifecycleOwner.lifecycleScope.launch{
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                profileViewModel.event.collect{event ->
-                    when(event){
-                        is EditProfileEvent.Success -> {
-                            binding.profileHeaderCard.tvName.text = event.data
-                        }
-                        is EditProfileEvent.Error -> {
-                            Snackbar.make(requireView(), event.message, Snackbar
-                                .LENGTH_SHORT).show()
-                        }
-                    }
-                }
-            }
         }
     }
     private fun setupAccountSection() {
@@ -283,6 +136,231 @@ class MyProfileFragment : Fragment() {
             tvStatus.isGone = true
         }
     }
+    private fun  setupQuickActions(){
+        binding.quickActions.actionBookings.apply {
+            ivIcon.setImageResource(R.drawable.ic_booking_3d)
+            tvTitle.text = "Bookings"
+            tvSubtitle.text = "View & Manage"
+        }
+
+        binding.quickActions.actionAddress.apply {
+            ivIcon.setImageResource(R.drawable.ic_location_3d)
+            tvTitle.text = "Addresses"
+            tvSubtitle.text = "Manage Addresses"
+        }
+
+        binding.quickActions.actionNotification.apply {
+            ivIcon.setImageResource(R.drawable.ic_notification_3d)
+            tvTitle.text = "Alerts"
+            tvSubtitle.text = "On"
+        }
+
+        binding.quickActions.actionRefer.apply {
+            ivIcon.setImageResource(R.drawable.ic_gift)
+            tvTitle.text = "Refer"
+            tvSubtitle.text = "Invite"
+        }
+    }
+    private fun setupClickListeners(){
+        binding.swipeRefresh.setOnRefreshListener {
+            if (!NetworkUtils.isInternetAvailable(requireContext())){
+                showNoInternetState("Try Again"){
+                    if(!NetworkUtils.isInternetAvailable(requireContext())){
+                        Snackbar.make(
+                            binding.root,
+                            "No Internet Connection",
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    }
+                    else{
+                        binding.stateView.hide()
+                        isSwipeRefresh = true
+                        profileViewModel.getProfile()
+                    }
+                }
+            }else{
+                isSwipeRefresh = true
+                profileViewModel.getProfile()
+            }
+        }
+        binding.quickActions.actionAddress.root.setOnClickListener {
+            startActivity(Intent(requireContext(), LocationActivity::class.java))
+        }
+        binding.quickActions.actionBookings.root.setOnClickListener {
+            val intent = Intent(requireContext(), BookingActivity::class.java)
+            intent.putExtra("openMyBookings", true)
+            startActivity(intent)
+        }
+        binding.profileHeaderCard.btnEditProfile.setOnClickListener {
+
+            profile?.let {
+                EditProfileBottomSheet.newInstance(
+                    it.name,
+                    it.countryCode,
+                    it.phoneNumber
+                ).show(parentFragmentManager, "EditProfile")
+            } ?: run {
+                Snackbar.make(
+                    binding.root,
+                    "Something went wrong",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }
+        }
+        binding.walletCard.layoutTransaction.setOnClickListener {
+            findNavController().navigate(
+                MyProfileFragmentDirections
+                    .actionMyProfileFragmentToWalletTransactionFragment(
+                        profile?.walletBalance?.toFloat() ?: 0f
+                    )
+            )
+        }
+    }
+
+    private fun observeProfile(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                profileViewModel.profileState.collect{state ->
+                    when(state){
+                        is ProfileState.Idle -> {
+
+                        }
+                        is ProfileState.Loading -> {
+                            if(!isSwipeRefresh ){
+                                binding.stateView.hide()
+                                binding.shimmerLayout.visibility = View.VISIBLE
+                                binding.mainContent.visibility = View.GONE
+                                binding.shimmerLayout.startShimmer()
+                            }
+
+                        }
+
+                        is ProfileState.Success -> {
+                            binding.stateView.hide()
+                            if(!isSwipeRefresh ){
+                                binding.shimmerLayout.stopShimmer()
+                                binding.shimmerLayout.visibility = View.GONE
+                            }else{
+                                binding.swipeRefresh.isRefreshing = false
+                                isSwipeRefresh  = false
+                            }
+                            binding.mainContent.visibility = View.VISIBLE
+                            profile = state.data
+                            bindProfile(state.data)
+                        }
+                        is ProfileState.Error -> {
+                            if (!isSwipeRefresh) {
+                                binding.shimmerLayout.stopShimmer()
+                                binding.shimmerLayout.visibility = View.GONE
+                            } else {
+                                binding.swipeRefresh.isRefreshing = false
+                                isSwipeRefresh = false
+                            }
+                            binding.mainContent.visibility = View.GONE
+                            showProfileLoadError {
+                                withInternet {
+                                    binding.stateView.hide()
+                                    profileViewModel.getProfile()
+                                }
+                            }
+
+
+                        }
+
+                    }
+
+                }
+            }
+        }
+    }
+    private fun observeEvents(){
+        viewLifecycleOwner.lifecycleScope.launch{
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                profileViewModel.event.collect{event ->
+                    when(event){
+                        is EditProfileEvent.Success -> {
+                            binding.profileHeaderCard.tvName.text = event.data
+                        }
+                        is EditProfileEvent.Error -> {
+                            Snackbar.make(requireView(), event.message, Snackbar
+                                .LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private fun bindProfile(profile: ProfileUiModel) {
+
+        binding.profileHeaderCard.tvName.text = profile.name
+        binding.profileHeaderCard.tvPhone.text =
+            "${profile.countryCode} ${profile.phoneNumber}"
+
+        binding.profileHeaderCard.tvMemberSince.text =
+            "Member since ${profile.memberSince}"
+
+        binding.walletCard.tvWalletBalance.text =
+            "₹%.2f".format(profile.walletBalance)
+
+        binding.accountSection.itemAccountStatus.tvStatus.text =
+            if (profile.isActive) "Active" else "Inactive"
+
+        binding.quickActions.actionNotification.tvSubtitle.text =
+            if (profile.notificationsEnabled) {
+                "\uD83D\uDFE2 On"
+            } else {
+                "\uD83D\uDD34 Off"
+            }
+    }
+    private fun showNoInternetState(
+        retryText: String = "Retry",
+        onRetry: () -> Unit
+    ){
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.no_internet,
+                title = "No Internet Connection",
+                subtitle = "Please check your internet connection and try again.",
+                primaryButtonText = retryText,
+                onPrimaryClick = onRetry
+            )
+        )
+    }
+    private fun withInternet(
+        onConnected: () -> Unit
+    ) {
+        if (!NetworkUtils.isInternetAvailable(requireContext())) {
+            showNoInternetState {
+                if (!NetworkUtils.isInternetAvailable(requireContext())) {
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                } else {
+                    binding.stateView.hide()
+                    onConnected()
+                }
+            }
+        } else {
+            onConnected()
+        }
+    }
+
+    private fun showProfileLoadError(
+        onRetry: () -> Unit
+    ) {
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.ic_oops,
+                title = "Unable to Load Profile",
+                subtitle = "We couldn't load your profile right now. Please try again.",
+                primaryButtonText = "Retry",
+                onPrimaryClick = onRetry
+            )
+        )
+    }
+
     override fun onResume() {
         super.onResume()
         (requireActivity() as ProfileActivity).setToolbarTitle("My Profile")

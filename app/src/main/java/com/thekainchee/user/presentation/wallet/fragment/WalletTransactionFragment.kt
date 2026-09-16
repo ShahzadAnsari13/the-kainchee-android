@@ -14,6 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentWalletTransactionBinding
+import com.thekainchee.user.presentation.common.extensions.hide
+import com.thekainchee.user.presentation.common.extensions.show
+import com.thekainchee.user.presentation.common.state.StateViewData
 import com.thekainchee.user.presentation.profile.ProfileActivity
 import com.thekainchee.user.presentation.wallet.adapter.WalletTransactionAdapter
 import com.thekainchee.user.presentation.wallet.state.WalletTransactionUiState
@@ -31,7 +34,6 @@ class WalletTransactionFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         _binding = FragmentWalletTransactionBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -46,33 +48,26 @@ class WalletTransactionFragment : Fragment() {
             setHasFixedSize(true)
         }
         observeWalletTransactions()
-        if(!NetworkUtils.isInternetAvailable(requireContext())){
-            binding.shimmerLayout.visibility = View.GONE
-            binding.rvTransactions.visibility = View.GONE
-            binding.layoutNoInternet.visibility = View.VISIBLE
 
+        if(!NetworkUtils.isInternetAvailable(requireContext())){
+            binding.rvTransactions.visibility = View.GONE
+            showNoInternetState("Try Again"){
+                if(!NetworkUtils.isInternetAvailable(requireContext())){
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                }
+                else{
+                    binding.stateView.hide()
+                    walletViewModel.getWalletTransactions()
+                }
+            }
         }else{
             walletViewModel.getWalletTransactions()
         }
-        binding.btnTryAgain.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                Snackbar.make(
-                    binding.root,
-                    "No Internet Connection",
-                    Snackbar.LENGTH_SHORT
-                ).show()
-            }else{
-                walletViewModel.getWalletTransactions()
-            }
-        }
-        binding.btnRetry.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                binding.errorLayout.visibility = View.GONE
-                binding.layoutNoInternet.visibility = View.VISIBLE
-            }else{
-                walletViewModel.getWalletTransactions()
-            }
-        }
+
     }
     private fun observeWalletTransactions() {
 
@@ -86,14 +81,14 @@ class WalletTransactionFragment : Fragment() {
                         is WalletTransactionUiState.Idle -> Unit
 
                         is WalletTransactionUiState.Loading -> {
+                            binding.stateView.hide()
                             binding.rvTransactions.visibility = View.GONE
-                            binding.errorLayout.visibility = View.GONE
-                            binding.layoutNoInternet.visibility = View.GONE
                             binding.shimmerLayout.visibility = View.VISIBLE
                             binding.shimmerLayout.startShimmer()
                         }
 
                         is WalletTransactionUiState.Success -> {
+                            binding.stateView.hide()
                             binding.shimmerLayout.stopShimmer()
                             binding.shimmerLayout.visibility = View.GONE
                             binding.rvTransactions.visibility = View.VISIBLE
@@ -103,19 +98,16 @@ class WalletTransactionFragment : Fragment() {
                         is WalletTransactionUiState.Empty -> {
                             binding.shimmerLayout.stopShimmer()
                             binding.shimmerLayout.visibility = View.GONE
-                            binding.errorLayout.visibility = View.VISIBLE
-                            binding.tvEmptyTitle.text = "No Transactions Yet"
-                            binding.tvEmptySubtitle.text = "Your wallet transactions will appear here once you start using your wallet."
-                            binding.btnRetry.visibility = View.GONE
+                            showTransactionEmpty()
                             walletTransactionAdapter.submitList(emptyList())
                         }
 
                         is WalletTransactionUiState.Error -> {
                             binding.shimmerLayout.stopShimmer()
                             binding.shimmerLayout.visibility = View.GONE
-                            binding.errorLayout.visibility = View.VISIBLE
-                            binding.tvEmptyTitle.text = "Something Went Wrong"
-                            binding.tvEmptySubtitle.text = "We couldn't load your wallet transactions. Please try again."
+                            showTransactionError { withInternet {
+                                binding.stateView.hide()
+                                walletViewModel.getWalletTransactions() } }
 
                         }
                     }
@@ -126,6 +118,66 @@ class WalletTransactionFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (requireActivity() as ProfileActivity).setToolbarTitle("Transactions")
+    }
+    private fun showNoInternetState(
+        retryText: String = "Retry",
+        onRetry: () -> Unit
+    ){
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.no_internet,
+                title = "No Internet Connection",
+                subtitle = "Please check your internet connection and try again.",
+                primaryButtonText = retryText,
+                onPrimaryClick = onRetry
+            )
+        )
+    }
+
+    private fun withInternet(
+        onConnected: () -> Unit
+    ) {
+        if (!NetworkUtils.isInternetAvailable(requireContext())) {
+            showNoInternetState {
+                if (!NetworkUtils.isInternetAvailable(requireContext())) {
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                } else {
+                    binding.stateView.hide()
+                    onConnected()
+                }
+            }
+        } else {
+            onConnected()
+        }
+    }
+
+    private fun showTransactionError(
+        onRetry: () -> Unit
+    ) {
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.ic_oops,
+                title = "Unable to load transactions",
+                subtitle = "We couldn't load your wallet transactions right now. Please try again.",
+                primaryButtonText = "Retry",
+                onPrimaryClick = onRetry
+            )
+        )
+    }
+    private fun showTransactionEmpty(
+
+    ) {
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.ic_oops,
+                title = "No Transactions Yet",
+                subtitle = "You don't have any wallet transactions yet."
+            )
+        )
     }
 
     override fun onDestroyView() {

@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentNotificationBinding
+import com.thekainchee.user.presentation.common.extensions.hide
+import com.thekainchee.user.presentation.common.extensions.show
+import com.thekainchee.user.presentation.common.state.StateViewData
 import com.thekainchee.user.presentation.notification.adapter.NotificationAdapter
 import com.thekainchee.user.presentation.notification.state.NotificationState
 import com.thekainchee.user.presentation.notification.viewModel.NotificationViewModel
@@ -42,26 +45,20 @@ class NotificationFragment : Fragment() {
         adapter = NotificationAdapter()
         observeState()
         if(!NetworkUtils.isInternetAvailable(requireContext())){
-            binding.shimmerLayout.visibility = View.GONE
-            binding.layoutNoInternet.visibility = View.VISIBLE
+            showNoInternetState("Try Again"){
+                if(!NetworkUtils.isInternetAvailable(requireContext())){
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                }else{
+                    binding.stateView.hide()
+                    viewModel.getNotifications()
+                }
+            }
         }else{
             viewModel.getNotifications()
-        }
-
-        binding.btnTryAgain.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                Snackbar.make(requireView(), "No internet connection", Snackbar.LENGTH_SHORT).show()
-            }else{
-                viewModel.getNotifications()
-            }
-        }
-        binding.btnRetry.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                binding.errorLayout.visibility = View.GONE
-                binding.layoutNoInternet.visibility = View.VISIBLE
-            }else{
-                viewModel.getNotifications()
-            }
         }
         binding.rvNotifications.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -76,9 +73,8 @@ class NotificationFragment : Fragment() {
 
                     when (state) {
                         is NotificationState.Loading -> {
+                            binding.stateView.hide()
                             binding.rvNotifications.visibility = View.GONE
-                            binding.errorLayout.visibility = View.GONE
-                            binding.layoutNoInternet.visibility = View.GONE
                             binding.layoutEmptyNotification.root.visibility = View.GONE
                             binding.shimmerLayout.visibility = View.VISIBLE
                             binding.shimmerLayout.startShimmer()
@@ -100,7 +96,12 @@ class NotificationFragment : Fragment() {
                         is NotificationState.Error -> {
                             binding.shimmerLayout.stopShimmer()
                             binding.shimmerLayout.visibility = View.GONE
-                            binding.errorLayout.visibility = View.VISIBLE
+                            showNotificationError {
+                                withInternet {
+                                    binding.stateView.hide()
+                                    viewModel.getNotifications()
+                                }
+                            }
                         }
 
                         NotificationState.Idle -> Unit
@@ -109,13 +110,61 @@ class NotificationFragment : Fragment() {
             }
         }
     }
+    private fun withInternet(
+        onConnected: () -> Unit
+    ) {
+        if (!NetworkUtils.isInternetAvailable(requireContext())) {
+            showNoInternetState {
+                if (!NetworkUtils.isInternetAvailable(requireContext())) {
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                } else {
+                    binding.stateView.hide()
+                    onConnected()
+                }
+            }
+        } else {
+            onConnected()
+        }
+    }
+
+    private fun showNotificationError(
+        onRetry: () -> Unit
+    ) {
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.ic_oops,
+                title = "Unable to Load Notifications",
+                subtitle = "We couldn't load your notifications right now. Please try again.",
+                primaryButtonText = "Retry",
+                onPrimaryClick = onRetry
+            )
+        )
+    }
+    private fun showNoInternetState(
+        retryText: String = "Retry",
+        onRetry: () -> Unit
+    ){
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.no_internet,
+                title = "No Internet Connection",
+                subtitle = "Please check your internet connection and try again.",
+                primaryButtonText = retryText,
+                onPrimaryClick = onRetry
+            )
+        )
+    }
     override fun onResume() {
         super.onResume()
         (requireActivity() as ProfileActivity).setToolbarTitle("Notifications")
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }

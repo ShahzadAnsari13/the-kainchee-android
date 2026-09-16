@@ -2,6 +2,7 @@ package com.thekainchee.user.presentation.payment.bottomSheet
 
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.JsonObject
 import com.razorpay.Checkout
 import com.razorpay.PaymentData
@@ -29,6 +31,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import com.thekainchee.user.BuildConfig
 import com.thekainchee.user.presentation.payment.state.PaymentCallbackEvent
+import com.thekainchee.user.utils.NetworkUtils
 
 @AndroidEntryPoint
 class PaymentMethodBottomSheet : BottomSheetDialogFragment(){
@@ -76,7 +79,7 @@ class PaymentMethodBottomSheet : BottomSheetDialogFragment(){
         binding.btnConfirmPayment.isEnabled = false
         binding.btnConfirmPayment.alpha = 0.5f
         updateSelectionUI()
-        observeWalletBalance()
+        observeUiStates()
         paymentViewModel.getWalletBalance()
         binding.tvStaffName.text = paymentSummary.staffName
         binding.tvDateTime.text = paymentSummary.dateTime
@@ -90,138 +93,122 @@ class PaymentMethodBottomSheet : BottomSheetDialogFragment(){
             selectedPaymentMethod = PaymentMethod.ONLINE
             updateSelectionUI()
         }
-
         binding.cardCash.setOnClickListener {
             selectedPaymentMethod = PaymentMethod.CASH
             updateSelectionUI()
         }
         binding.btnConfirmPayment.setOnClickListener {
-            when(selectedPaymentMethod) {
-
-                PaymentMethod.WALLET -> {
-                    val bookingAmount = paymentSummary.amount.toDouble()
-                    if(walletBalance<bookingAmount){
-                        Toast.makeText(
-                            requireContext(),
-                            "Insufficient balance. Please choose another payment method.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        return@setOnClickListener
-                    }
-
-                    paymentViewModel.payWithWallet(bookingId = paymentSummary.bookingId)
-                }
-
-                PaymentMethod.ONLINE -> {
-                    paymentViewModel.createOrder(bookingId = paymentSummary.bookingId)
-                }
-
-                PaymentMethod.CASH -> {
-                   paymentViewModel.payWithCash(bookingId = paymentSummary.bookingId)
-                }
-
-                null -> {
-                    Log.d("PAYMENT", "No Method Selected")
-                }
-            }
+            handlePayment()
         }
 
 
     }
-
-    private fun observeWalletBalance() {
+    private fun observeUiStates() {
+        observeWalletBalance()
+        observePayment()
+        observeOnlinePayment()
+        observePaymentCallback()
+    }
+    private fun observeWalletBalance(){
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    paymentViewModel.walletBalanceState.collect { state ->
-                        when (state) {
-                            is WalletBalanceState.Idle -> {
+                paymentViewModel.walletBalanceState.collect { state ->
+                    when (state) {
+                        is WalletBalanceState.Idle -> {
 
+                        }
+
+                        is WalletBalanceState.Loading -> {
+                            binding.tvWalletBalance.text = "Loading..."
+                        }
+
+                        is WalletBalanceState.Success -> {
+                            walletBalance = state.balance
+                            val bookingAmount = paymentSummary.amount.toDouble()
+                            if (walletBalance < bookingAmount) {
+
+                                binding.tvWalletBalance.text =
+                                    "Available Balance ₹$walletBalance • Insufficient Balance"
+
+                            } else {
+
+                                binding.tvWalletBalance.text =
+                                    "Available Balance ₹$walletBalance"
                             }
+                        }
 
-                            is WalletBalanceState.Loading -> {
-                                binding.tvWalletBalance.text = "Loading..."
-                            }
-
-                            is WalletBalanceState.Success -> {
-                                walletBalance = state.balance
-                                val bookingAmount = paymentSummary.amount.toDouble()
-                                if (walletBalance < bookingAmount) {
-
-                                    binding.tvWalletBalance.text =
-                                        "Available Balance ₹$walletBalance • Insufficient Balance"
-
-                                } else {
-
-                                    binding.tvWalletBalance.text =
-                                        "Available Balance ₹$walletBalance"
-                                }
-                            }
-
-                            is WalletBalanceState.Error -> {
-                                binding.tvWalletBalance.text = "Unable to load balance"
-                            }
+                        is WalletBalanceState.Error -> {
+                            binding.tvWalletBalance.text = "Unable to load balance"
                         }
                     }
                 }
-                launch {
-                    paymentViewModel.paymentEvent.collect {event->
-                        when(event){
-                            is PaymentEvent.NavigateToSuccess -> {
-                                Toast.makeText(requireContext(), "Payment Successful", Toast.LENGTH_SHORT).show()
-                                dismiss()
-                                onPaymentSuccess?.invoke(paymentSummary.bookingId)
-                            }
-                            is PaymentEvent.Message -> {
-                                Toast.makeText(requireContext(), event.msg, Toast.LENGTH_SHORT).show()
-                            }
+            }
+        }
+    }
+    private fun observePayment(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                paymentViewModel.paymentEvent.collect {event->
+                    when(event){
+                        is PaymentEvent.NavigateToSuccess -> {
+                            Toast.makeText(requireContext(), "Payment Successful", Toast.LENGTH_SHORT).show()
+                            dismiss()
+                            onPaymentSuccess?.invoke(paymentSummary.bookingId)
                         }
-
+                        is PaymentEvent.Message -> {
+                            Toast.makeText(requireContext(), event.msg, Toast.LENGTH_SHORT).show()
+                        }
                     }
+
                 }
-                launch {
-                    paymentViewModel.onlinePaymentEvent.collect{event->
-                        when(event){
-                            is  OnlinePaymentEvent.OpenRazorpay -> {
-                                Toast.makeText(requireContext(), "Open razorpay", Toast.LENGTH_SHORT).show()
-                                openRazorpay(event)
-                            }
-                            is OnlinePaymentEvent.Message -> {
-                                Log.d("RAZORPAY", event.message)
+            }
+        }
+    }
 
-                                Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
-                            }
-                            is OnlinePaymentEvent.NavigateToSuccess -> {
-                                Toast.makeText(
-                                    requireContext(),
-                                    "Payment Successful",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                onPaymentSuccess?.invoke(paymentSummary.bookingId)
-
-                                dismiss()
-                            }
+    private fun observeOnlinePayment(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                paymentViewModel.onlinePaymentEvent.collect{event->
+                    when(event){
+                        is  OnlinePaymentEvent.OpenRazorpay -> {
+                            openRazorpay(event)
                         }
+                        is OnlinePaymentEvent.Message -> {
 
-                            }
+                            Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
+                        }
+                        is OnlinePaymentEvent.NavigateToSuccess -> {
+                            Toast.makeText(
+                                requireContext(),
+                                "Payment Successful",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            onPaymentSuccess?.invoke(paymentSummary.bookingId)
+
+                            dismiss()
+                        }
+                    }
+
                 }
-                launch{
-                    paymentViewModel.paymentCallbackEvent.collect{event->
-                        when(event){
-                            is PaymentCallbackEvent.Success -> {
-                                Log.d("PAYMENT", "Payment Success")
-                                val params = VerifyPaymentParams(
-                                    orderId = event.orderId,
-                                    paymentId = event.paymentId,
-                                    signature = event.signature
-                                )
+            }
+        }
+    }
+    private fun observePaymentCallback(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                paymentViewModel.paymentCallbackEvent.collect{event->
+                    when(event){
+                        is PaymentCallbackEvent.Success -> {
+                            val params = VerifyPaymentParams(
+                                orderId = event.orderId,
+                                paymentId = event.paymentId,
+                                signature = event.signature
+                            )
 
-                                paymentViewModel.verifyPayment(params)
-                            }
-                            is PaymentCallbackEvent.Error -> {
-                                Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
-                            }
+                            paymentViewModel.verifyPayment(params)
+                        }
+                        is PaymentCallbackEvent.Error -> {
+                            Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -255,14 +242,43 @@ class PaymentMethodBottomSheet : BottomSheetDialogFragment(){
 
 
     }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+
+    private fun handlePayment(){
+        if(!NetworkUtils.isInternetAvailable(requireContext())){
+            Snackbar.make(binding.root,"No Internet Connection",Snackbar.LENGTH_SHORT).show()
+        }else{
+            when(selectedPaymentMethod) {
+
+                PaymentMethod.WALLET -> {
+                    val bookingAmount = paymentSummary.amount.toDouble()
+                    if(walletBalance<bookingAmount){
+                        Toast.makeText(
+                            requireContext(),
+                            "Insufficient balance. Please choose another payment method.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        return@handlePayment
+                    }
+
+                    paymentViewModel.payWithWallet(bookingId = paymentSummary.bookingId)
+                }
+
+                PaymentMethod.ONLINE -> {
+                    paymentViewModel.createOrder(bookingId = paymentSummary.bookingId)
+                }
+
+                PaymentMethod.CASH -> {
+                    paymentViewModel.payWithCash(bookingId = paymentSummary.bookingId)
+                }
+
+                null -> {
+                }
+            }
+        }
     }
     private fun openRazorpay(event: OnlinePaymentEvent.OpenRazorpay){
         val checkout = Checkout()
-        Log.d("RAZORPAY", event.orderId)
-        Log.d("RAZORPAY", BuildConfig.RAZORPAY_KEY_ID)
         checkout.setKeyID(BuildConfig.RAZORPAY_KEY_ID)
         val options = JSONObject().apply {
 
@@ -273,7 +289,19 @@ class PaymentMethodBottomSheet : BottomSheetDialogFragment(){
             put("amount", event.amount)
         }
         checkout.open(requireActivity(),options)
+    }
+    override fun onStart() {
+        super.onStart()
 
-
+        isCancelable = false
+        dialog?.setCanceledOnTouchOutside(false)
+        requireDialog().setOnKeyListener { _, keyCode, event ->
+            keyCode == KeyEvent.KEYCODE_BACK &&
+                    event.action == KeyEvent.ACTION_UP
+        }
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

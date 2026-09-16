@@ -38,6 +38,9 @@ import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentVerifyOtpBinding
 import com.thekainchee.user.presentation.auth.state.AuthState
 import com.thekainchee.user.presentation.auth.viewModel.AuthViewModel
+import com.thekainchee.user.presentation.common.extensions.hide
+import com.thekainchee.user.presentation.common.extensions.show
+import com.thekainchee.user.presentation.common.state.StateViewData
 import com.thekainchee.user.presentation.dashboard.DashboardActivity
 import com.thekainchee.user.presentation.profile.viewModel.ProfileViewModel
 import com.thekainchee.user.utils.NetworkUtils
@@ -75,53 +78,27 @@ class VerifyOtpFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        if(!NetworkUtils.isInternetAvailable(requireContext())){
-            binding.layoutNoInternet.isVisible = true
-            binding.mainContent.isVisible = false
-        }else{
-            startResendTimer()
+        if (player == null) {
             setupVideoPlayerAndSubTitle()
         }
-        binding.btnTryAgain.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                Snackbar.make(
-                    binding.root,
-                    "No Internet Connection",
-                    Snackbar.LENGTH_SHORT
-                ).show()
-            }else{
-                binding.layoutNoInternet.isVisible = false
-                binding.mainContent.isVisible = true
-                if (player == null) {
-                    setupVideoPlayerAndSubTitle()
-                }
-                if (countDownTimer==null){
-                    startResendTimer()
-                }
-            }
+        if (countDownTimer==null){
+            startResendTimer()
         }
-
 
 
         binding.btnVerifyOtp.setOnClickListener {
-
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                binding.layoutNoInternet.isVisible = true
-                binding.mainContent.isVisible = false
-                return@setOnClickListener
-            }
-            else{
+            withInternet {
                 val otp = binding.pinViewOtp.text.toString()
                 if(otp.length != 6){
                     Toast.makeText(requireContext(),"Enter valid OTP", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
+                    return@withInternet
                 }
-                if(viewModel.authState.value is AuthState.Loading) return@setOnClickListener
-                val code = countryCode ?: return@setOnClickListener
-                val number = phone ?: return@setOnClickListener
+                if(viewModel.authState.value is AuthState.Loading) return@withInternet
+                val code = countryCode ?: return@withInternet
+                val number = phone ?: return@withInternet
                 viewModel.verifyOtp(code,number,otp)
             }
+
         }
 
         binding.pinViewOtp.doAfterTextChanged {
@@ -130,15 +107,11 @@ class VerifyOtpFragment : Fragment() {
             binding.btnVerifyOtp.isEnabled = otp.length == 6
             binding.btnVerifyOtp.alpha = if (otp.length == 6) 1f else 0.5f
             if (otp.length == 6) {
+                withInternet {
+                    if(viewModel.authState.value is AuthState.Loading) return@withInternet
 
-                if(!NetworkUtils.isInternetAvailable(requireContext())){
-                    binding.layoutNoInternet.isVisible = true
-                    binding.mainContent.isVisible = false
-                }else{
-                    if(viewModel.authState.value is AuthState.Loading) return@doAfterTextChanged
-
-                    val code = countryCode ?: return@doAfterTextChanged
-                    val number = phone ?: return@doAfterTextChanged
+                    val code = countryCode ?: return@withInternet
+                    val number = phone ?: return@withInternet
 
                     viewModel.verifyOtp(code, number, otp)
                 }
@@ -262,10 +235,13 @@ class VerifyOtpFragment : Fragment() {
                         override fun onClick(widget: View) {
 
 
-                            val code = countryCode ?: return
-                            val number = phone ?: return
 
-                            viewModel.requestOtp(code, number)
+                            withInternet {
+                                val code = countryCode ?: return@withInternet
+                                val number = phone ?: return@withInternet
+                                viewModel.requestOtp(code, number)
+                            }
+
                         }
                         override fun updateDrawState(ds: TextPaint) {
                             super.updateDrawState(ds)
@@ -330,6 +306,40 @@ class VerifyOtpFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+    private fun showNoInternetState(
+        retryText: String = "Retry",
+        onRetry: () -> Unit
+    ){
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.no_internet,
+                title = "No Internet Connection",
+                subtitle = "Please check your internet connection and try again.",
+                primaryButtonText = retryText,
+                onPrimaryClick = onRetry
+            )
+        )
+    }
+    private fun withInternet(
+        onConnected: () -> Unit
+    ) {
+        if (!NetworkUtils.isInternetAvailable(requireContext())) {
+            showNoInternetState {
+                if (!NetworkUtils.isInternetAvailable(requireContext())) {
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                } else {
+                    binding.stateView.hide()
+                    onConnected()
+                }
+            }
+        } else {
+            onConnected()
         }
     }
     override fun onResume() {

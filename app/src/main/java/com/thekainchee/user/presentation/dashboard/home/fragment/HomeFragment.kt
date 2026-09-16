@@ -32,6 +32,9 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentHomeBinding
 import com.thekainchee.user.presentation.common.bottomSheet.LocationPermissionBottomSheet
+import com.thekainchee.user.presentation.common.extensions.hide
+import com.thekainchee.user.presentation.common.extensions.show
+import com.thekainchee.user.presentation.common.state.StateViewData
 import com.thekainchee.user.presentation.dashboard.home.viewModel.LocationViewModel
 import com.thekainchee.user.presentation.dashboard.home.adapter.HomeTabsAdapter
 import com.thekainchee.user.presentation.dashboard.home.state.LocationUiState
@@ -50,8 +53,7 @@ class HomeFragment : Fragment() {
     private  val locationViewModel : LocationViewModel by activityViewModels()
     private var openedPermissionSettings = false
     private var shouldRefreshLocation = false
-    private var observeLoc = false
-    private var onBackPress = false
+
     private val locationPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
@@ -61,7 +63,9 @@ class HomeFragment : Fragment() {
             val coarse = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
 
             if (fine || coarse) {
-                locationViewModel.fetchUserLocation()
+                withInternet {
+                    locationViewModel.fetchUserLocation()
+                }
             } else {
                 LocationPermissionBottomSheet {
                     openedPermissionSettings = true
@@ -80,7 +84,9 @@ class HomeFragment : Fragment() {
                     activity = requireActivity(),
                     launcher = locationPermissionLauncher
                 ) {
-                    locationViewModel.fetchUserLocation()
+                    withInternet {
+                        locationViewModel.fetchUserLocation()
+                    }
                 }
 
             } else {
@@ -105,10 +111,7 @@ class HomeFragment : Fragment() {
             startActivity(Intent(requireContext(), ProfileActivity::class.java))
         }
 
-        if(!NetworkUtils.isInternetAvailable(requireContext())){
-            binding.layoutNoInternet.visibility = View.VISIBLE
-            binding.mainContent.visibility = View.GONE
-        }else{
+        withInternet {
             LocationUtils.checkGpsStatus(
                 requireActivity(),
                 gpsResolutionLauncher
@@ -120,45 +123,9 @@ class HomeFragment : Fragment() {
                     locationViewModel.fetchUserLocation()
                 }
             }
-            observeLocation()
-            observeLoc = true
-
-            handleOnBackPressed()
-            onBackPress = true
         }
-
-        binding.btnTryAgain.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                Snackbar.make(
-                    binding.root,
-                    "No Internet Connection",
-                    Snackbar.LENGTH_SHORT
-                ).show()
-
-            }else{
-                binding.layoutNoInternet.visibility = View.GONE
-                binding.mainContent.visibility = View.VISIBLE
-                LocationUtils.checkGpsStatus(
-                    requireActivity(),
-                    gpsResolutionLauncher
-                ) {
-                    LocationUtils.checkLocationPermission(
-                        activity = requireActivity(),
-                        launcher = locationPermissionLauncher
-                    ) {
-                        locationViewModel.fetchUserLocation()
-                    }
-                }
-                if(!observeLoc){
-                    observeLocation()
-                    observeLoc = true
-                }
-                if(!onBackPress){
-                    handleOnBackPressed()
-                    onBackPress = true
-                }
-            }
-        }
+        observeLocation()
+        handleOnBackPressed()
 
 
 
@@ -294,10 +261,7 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if(!NetworkUtils.isInternetAvailable(requireContext())){
-            binding.mainContent.visibility = View.GONE
-            binding.layoutNoInternet.visibility = View.VISIBLE
-        }else{
+        withInternet {
             if (openedPermissionSettings) {
 
                 openedPermissionSettings = false
@@ -306,14 +270,19 @@ class HomeFragment : Fragment() {
                     activity = requireActivity(),
                     launcher = locationPermissionLauncher
                 ) {
-                    locationViewModel.fetchUserLocation()
+                    withInternet {
+                        locationViewModel.fetchUserLocation()
+                    }
                 }
             }else if (shouldRefreshLocation) {
 
                 shouldRefreshLocation = false
-                locationViewModel.fetchUserLocation()
+                withInternet {
+                    locationViewModel.fetchUserLocation()
+                }
             }
         }
+
 
     }
 
@@ -356,6 +325,40 @@ class HomeFragment : Fragment() {
                 arrayOf(Manifest.permission.POST_NOTIFICATIONS),
                 100
             )
+        }
+    }
+    private fun showNoInternetState(
+        retryText: String = "Retry",
+        onRetry: () -> Unit
+    ){
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.no_internet,
+                title = "No Internet Connection",
+                subtitle = "Please check your internet connection and try again.",
+                primaryButtonText = retryText,
+                onPrimaryClick = onRetry
+            )
+        )
+    }
+    private fun withInternet(
+        onConnected: () -> Unit
+    ) {
+        if (!NetworkUtils.isInternetAvailable(requireContext())) {
+            showNoInternetState {
+                if (!NetworkUtils.isInternetAvailable(requireContext())) {
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                } else {
+                    binding.stateView.hide()
+                    onConnected()
+                }
+            }
+        } else {
+            onConnected()
         }
     }
     override fun onDestroyView() {
