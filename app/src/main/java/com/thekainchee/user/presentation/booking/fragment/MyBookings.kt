@@ -1,18 +1,15 @@
 package com.thekainchee.user.presentation.booking.fragment
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
@@ -22,6 +19,9 @@ import com.thekainchee.user.presentation.booking.adapter.MyBookingsAdapter
 import com.thekainchee.user.presentation.booking.model.MyBookingUiModel
 import com.thekainchee.user.presentation.booking.state.MyBookingsUiState
 import com.thekainchee.user.presentation.booking.viewModel.BookingViewModel
+import com.thekainchee.user.presentation.common.extensions.hide
+import com.thekainchee.user.presentation.common.extensions.show
+import com.thekainchee.user.presentation.common.state.StateViewData
 import com.thekainchee.user.utils.NetworkUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -35,7 +35,6 @@ class MyBookings : Fragment() {
     private var currentFilter = "UPCOMING"
     private val successViewModel : BookingViewModel by viewModels()
     private var isSwipeRefresh  = false
-    private var isNoInternetLayoutVisible   =  false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,84 +45,65 @@ class MyBookings : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as BookingActivity)
-            .showToolbar(true)
+        setupToolbar()
+        setupRecyclerView()
+        setupSwipeRefresh()
+        setupFilterChips()
+        observeBookings()
+        withInternet {
+            successViewModel.getMyBookings()
+        }
 
-        (requireActivity() as BookingActivity)
-            .setToolbarTitle("My Bookings")
+    }
+    private fun setupToolbar() {
+        (requireActivity() as BookingActivity).apply {
+            showToolbar(true)
+            setToolbarTitle("My Bookings")
+        }
+    }
+    private fun setupRecyclerView() {
         bookingsAdapter = MyBookingsAdapter { booking ->
-            // Navigate Booking Detail
-             val action = MyBookingsDirections.myBookingFragmentToBookingDetailFragment(booking.bookingId)
+            val action =
+                MyBookingsDirections.myBookingFragmentToBookingDetailFragment(
+                    booking.bookingId
+                )
             findNavController().navigate(action)
         }
 
         binding.rvBookings.apply {
-
             adapter = bookingsAdapter
-
             layoutManager = LinearLayoutManager(requireContext())
-
             setHasFixedSize(true)
-
         }
+    }
+    private fun setupSwipeRefresh() {
         binding.swipeRefresh.setOnRefreshListener {
-            if (!checkInternetOrShowLayout()) return@setOnRefreshListener
-
-                isSwipeRefresh  =  true
+            withInternet {
+                isSwipeRefresh = true
                 successViewModel.getMyBookings()
-
+            }
         }
+    }
+    private fun setupFilterChips() {
         binding.chipUpcoming.setOnClickListener {
-
-                if (currentFilter != "UPCOMING") {
-                    currentFilter = "UPCOMING"
-                    showFilteredBookings()
-                }
-
-
+            selectFilter("UPCOMING")
         }
+
         binding.chipCompleted.setOnClickListener {
-                if (currentFilter != "COMPLETED") {
-                    currentFilter = "COMPLETED"
-                    showFilteredBookings()
-                }
-
-
+            selectFilter("COMPLETED")
         }
+
         binding.chipCancelled.setOnClickListener {
-                if (currentFilter != "CANCELLED") {
-                    currentFilter = "CANCELLED"
-                    showFilteredBookings()
-                }
+            selectFilter("CANCELLED")
+        }
+    }
+    private fun selectFilter(filter: String) {
+        if (currentFilter == filter) return
 
-
-        }
-        if(!NetworkUtils.isInternetAvailable(requireContext())){
-            binding.swipeRefresh.visibility = View.GONE
-            binding.shimmerLayout.visibility = View.GONE
-            binding.layoutNoInternet.visibility = View.VISIBLE
-        }else{
-            binding.layoutNoInternet.visibility = View.GONE
-            successViewModel.getMyBookings()
-        }
-        binding.btnTryAgain.setOnClickListener {
-            if(!NetworkUtils.isInternetAvailable(requireContext())){
-                Snackbar.make(binding.root,"No Internet Connection",Snackbar.LENGTH_SHORT).show()
-            }else{
-                binding.layoutNoInternet.visibility = View.GONE
-                successViewModel.getMyBookings()
-            }
-        }
-        binding.btnRetry.setOnClickListener {
-            if (!NetworkUtils.isInternetAvailable(requireContext())){
-                binding.errorLayout.visibility = View.GONE
-                binding.layoutNoInternet.visibility = View.VISIBLE
-            }else{
-                binding.errorLayout.visibility = View.GONE
-                successViewModel.getMyBookings()
-            }
-        }
-
+        currentFilter = filter
+        showFilteredBookings()
+    }
+    private fun observeBookings() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 successViewModel.myBookingsState.collect { state ->
@@ -133,9 +113,6 @@ class MyBookings : Fragment() {
                         is MyBookingsUiState.Loading -> {
                             if(!isSwipeRefresh ){
                                 binding.swipeRefresh.visibility = View.GONE
-                                binding.errorLayout.visibility = View.GONE
-                                binding.layoutNoInternet.visibility = View.GONE
-                                isNoInternetLayoutVisible  = false
                                 binding.shimmerLayout.visibility = View.VISIBLE
                                 binding.shimmerLayout.startShimmer()
                             }
@@ -152,7 +129,6 @@ class MyBookings : Fragment() {
                             }
                             allBookings = state.bookings
                             showFilteredBookings()
-                            bookingsAdapter.submitList(state.bookings)
                         }
                         is MyBookingsUiState.Error -> {
 
@@ -164,10 +140,11 @@ class MyBookings : Fragment() {
                                 binding.swipeRefresh.isRefreshing = false
                                 isSwipeRefresh  = false
                             }
-                            binding.errorLayout.visibility = View.VISIBLE
-                            binding.tvEmptyTitle.text = "Unable to Load"
-                            binding.tvEmptySubtitle.text = "We couldn't load your bookings. Please try again."
-                            binding.ivEmpty.setImageResource(R.drawable.error_img)
+                            showBookingsError{
+                                withInternet {
+                                    successViewModel.getMyBookings()
+                                }
+                            }
                         }
                         is MyBookingsUiState.Empty -> {
                             if(!isSwipeRefresh ){
@@ -178,38 +155,16 @@ class MyBookings : Fragment() {
                                 binding.swipeRefresh.isRefreshing = false
 
                                 isSwipeRefresh  = false
-                                //binding.emptyLayout.visibility = View.VISIBLE
                             }
-                            binding.errorLayout.visibility = View.VISIBLE
-                            binding.tvEmptyTitle.text="No Upcoming Bookings"
-                            binding.tvEmptySubtitle.text = "Book your next appointment to see it here."
-                            binding.ivEmpty.setImageResource(R.drawable.ic_no_data)
                             bookingsAdapter.submitList(emptyList())
+                            showBookingsEmpty()
                         }
                     }
                 }
             }
         }
     }
-    private fun checkInternetOrShowLayout(): Boolean {
 
-        if (NetworkUtils.isInternetAvailable(requireContext())) {
-            return true
-        }
-
-        if (!isNoInternetLayoutVisible ) {
-            binding.layoutNoInternet.visibility = View.VISIBLE
-            isNoInternetLayoutVisible  = true
-        } else {
-            Snackbar.make(
-                binding.root,
-                "No Internet Connection",
-                Snackbar.LENGTH_SHORT
-            ).show()
-        }
-
-        return false
-    }
     private fun showFilteredBookings() {
 
         val filteredBookings = when (currentFilter) {
@@ -242,7 +197,72 @@ class MyBookings : Fragment() {
             else -> allBookings
         }
 
-        bookingsAdapter.submitList(filteredBookings)
+        if (filteredBookings.isEmpty()) {
+            bookingsAdapter.submitList(emptyList())
+            showBookingsEmpty()
+        } else {
+            binding.stateView.hide()
+            bookingsAdapter.submitList(filteredBookings)
+        }
+    }
+
+    private fun showBookingsError(
+        onRetry: ()->Unit
+    ) {
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.error_img,
+                title = "Unable to Load",
+                subtitle = "We couldn't load your bookings. Please try again.",
+                primaryButtonText = "Retry",
+                onPrimaryClick =onRetry
+            )
+        )
+    }
+    private fun showBookingsEmpty(
+    ) {
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.ic_oops,
+                title = "No Bookings",
+                subtitle = "Book your next appointment to see it here."
+            )
+        )
+    }
+
+    private fun showNoInternetState(
+        retryText: String = "Retry",
+        onRetry: () -> Unit
+    ){
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.no_internet,
+                title = "No Internet Connection",
+                subtitle = "Please check your internet connection and try again.",
+                primaryButtonText = retryText,
+                onPrimaryClick = onRetry
+            )
+        )
+    }
+    private fun withInternet(
+        onConnected: () -> Unit
+    ) {
+        if (!NetworkUtils.isInternetAvailable(requireContext())) {
+            showNoInternetState {
+                if (!NetworkUtils.isInternetAvailable(requireContext())) {
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                } else {
+                    binding.stateView.hide()
+                    onConnected()
+                }
+            }
+        } else {
+            onConnected()
+        }
     }
     override fun onResume() {
         super.onResume()

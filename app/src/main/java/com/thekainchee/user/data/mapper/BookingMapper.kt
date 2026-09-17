@@ -55,21 +55,49 @@ fun BookingResponseDto.toBookingUiModel(): BookingUiModel{
 fun BookingDetailDto.toUiModel(): BookingDetailUiModel {
     return BookingDetailUiModel(
         bookingId = _id,
+
+        // Parlour
         parlourName = parlourId.name,
         parlourPhone = parlourId.contactNumber,
+        parlourImages = parlourId.images,
+        location = parlourId.location,
+
+        // Staff
         staffName = staffId.name,
+
+        // Services
         services = services.map { it.toUiModel() },
+
+        // Appointment
         totalPrice = totalPrice,
+        totalDurationMinutes = totalDurationMinutes,
         bookingDate = bookingDate,
         slotStartTime = slotStartTime,
         slotEndTime = slotEndTime,
+
+        // Payment
         paymentMethod = paymentMethod,
         paymentStatus = paymentStatus,
+
+        // Booking
         bookingStatus = bookingStatus,
-        location = parlourId.location,
-        createdAt = createdAt
+        createdAt = createdAt,
+
+        // Cancellation
+        cancelledBy = cancelledBy,
+        cancelledAt = cancelledAt,
+        cancelReason = cancelReason,
+
+        // No Show
+        noShowAt = noShowAt,
+        noShowReason = noShowReason,
+        noShowPenalty = noShowPenalty,
+
+        // Refund
+        walletRefundAmount = walletRefundAmount
     )
 }
+
 fun BookingDetailsServiceDto.toUiModel(): BookingServiceUiModel {
     return BookingServiceUiModel(
         serviceId = serviceId,

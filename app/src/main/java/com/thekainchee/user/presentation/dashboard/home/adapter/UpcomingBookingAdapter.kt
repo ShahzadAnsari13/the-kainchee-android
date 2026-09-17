@@ -46,7 +46,7 @@ class UpcomingBookingAdapter(private val onItemClick: (BookingUI) -> Unit) : Lis
                 "$displayDate • ${item.slotStartTime} - ${item.slotEndTime}"
             binding.tvPrice.text = "₹${item.totalPrice}"
             val (textColor, bgRes) = when (item.bookingStatus) {
-                "PENDING" -> Pair("#F9A825", R.drawable.bg_status_pending)
+                "PENDING" -> Pair("#F9A825", R.drawable.bg_booking_check_status_default)
                 "CONFIRMED" -> Pair("#2E7D32", R.drawable.bg_status_confirmed)
                 else -> Pair("#757575", R.drawable.bg_status_default)
             }

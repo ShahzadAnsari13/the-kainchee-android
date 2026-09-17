@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.ItemMyBookingBinding
-import com.thekainchee.user.presentation.booking.adapter.MyBookingsAdapter.Companion.MyBookingsDiffCallback
 import com.thekainchee.user.presentation.booking.model.MyBookingUiModel
 import com.thekainchee.user.utils.DateFormatter
 
@@ -97,7 +96,7 @@ class MyBookingsAdapter(private val onItemClicked: (MyBookingUiModel) -> Unit) :
                     Triple(
                         "Pending",
                         R.color.booking_pending,
-                        R.drawable.bg_status_pending
+                        R.drawable.bg_booking_pending
                     )
 
                 "CONFIRMED" ->

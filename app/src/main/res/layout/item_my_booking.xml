@@ -379,7 +379,7 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnViewDetails"
                 android:layout_width="wrap_content"
-                android:layout_height="52dp"
+                android:layout_height="48dp"
                 android:minWidth="0dp"
                 android:text="View Details"
                 android:textAllCaps="false"
