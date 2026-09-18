@@ -16,7 +16,9 @@ class WalletRepositoryImpl @Inject constructor(private val api: WalletApi) : Wal
                 val balance = body?.balance ?: 0.0
                 Result.success(balance)
             }else {
-                val error = ErrorUtils.parseError(response.errorBody()?.string())
+
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
                 Result.failure(Exception(error.message ?: "Failed to fetch service categories"))
             }
         }catch(e: Exception){
@@ -38,7 +40,8 @@ class WalletRepositoryImpl @Inject constructor(private val api: WalletApi) : Wal
 
             } else {
 
-                val error = ErrorUtils.parseError(response.errorBody()?.string())
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
                 Result.failure(
                     Exception(error.message ?: "Failed to fetch wallet transactions")
                 )

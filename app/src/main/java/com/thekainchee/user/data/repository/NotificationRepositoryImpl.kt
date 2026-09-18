@@ -20,7 +20,9 @@ class NotificationRepositoryImpl @Inject constructor(
                     response.body()?.data?.map { it.toUiModel() } ?: emptyList()
                 )
             } else {
-                val error = ErrorUtils.parseError(response.errorBody()?.string())
+
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
                 Result.failure(
                     Exception(error.message ?: "Failed to fetch notifications")
                 )

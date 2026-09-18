@@ -21,7 +21,9 @@ class ProfileRepositoryImpl @Inject constructor(private val api: ProfileApi)  : 
                     Result.failure(Exception("Failed to fetch profile"))
                 }
             }else{
-                val error = ErrorUtils.parseError(response.errorBody()?.string())
+
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
                 Result.failure(Exception(error.message ?: "Failed to fetch profile"))
             }
         }
@@ -38,7 +40,9 @@ class ProfileRepositoryImpl @Inject constructor(private val api: ProfileApi)  : 
                 Result.success(message)
             }
             else{
-                val error = ErrorUtils.parseError(response.errorBody()?.string())
+
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
                 Result.failure(Exception(error.message ?: "Failed to update profile"))
             }
         }
@@ -55,7 +59,9 @@ class ProfileRepositoryImpl @Inject constructor(private val api: ProfileApi)  : 
                 val message = response.body()?.message ?: "Success"
                 Result.success(message)
             } else {
-                val error = ErrorUtils.parseError(response.errorBody()?.string())
+
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
                 Result.failure(Exception(error.message ?: "Failed to update FCM token"))
             }
         } catch (e: Exception) {

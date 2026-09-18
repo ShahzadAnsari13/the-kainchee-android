@@ -20,7 +20,9 @@ class PaymentRepositoryImpl @Inject constructor(private val api : PaymentApi) : 
             ) {
                 Result.success(true)
             } else {
-                val error = ErrorUtils.parseError(response.errorBody()?.string())
+
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
                 Result.failure(
                     Exception(error.message ?: "Wallet payment failed")
                 )
@@ -39,7 +41,9 @@ class PaymentRepositoryImpl @Inject constructor(private val api : PaymentApi) : 
             ) {
                 Result.success(true)
             } else {
-                val error = ErrorUtils.parseError(response.errorBody()?.string())
+
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
                 Result.failure(
                     Exception(error.message ?: "Cash payment failed")
                 )

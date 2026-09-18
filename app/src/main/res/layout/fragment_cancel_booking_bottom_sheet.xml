@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_bottom_sheet">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="12dp"
+            android:paddingBottom="16dp">
+
+            <!-- Drag Handle -->
+            <View
+                android:layout_width="56dp"
+                android:layout_height="5dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/bg_bottom_sheet_handle" />
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:gravity="center"
+                android:text="Cancel Booking"
+                android:textColor="#141625"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <!-- Subtitle -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="20dp"
+                android:gravity="center"
+                android:text="Please select a reason for cancellation."
+                android:textColor="#6F7488"
+                android:textSize="15sp" />
+
+            <!-- Reasons -->
+            <RadioGroup
+                android:id="@+id/radioGroupReasons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:orientation="vertical">
+
+                <!-- 1. Plans changed -->
+                <RadioButton
+                    android:id="@+id/rbPlansChanged"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:buttonTint="@color/cancel_radio_tint"
+                    android:gravity="center_vertical"
+                    android:paddingStart="8dp"
+                    android:text="Plans changed"
+                    android:textColor="#171827"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEF2" />
+
+                <!-- 2. Found another parlour/service -->
+                <RadioButton
+                    android:id="@+id/rbAnotherParlour"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:buttonTint="@color/cancel_radio_tint"
+                    android:gravity="center_vertical"
+                    android:paddingStart="8dp"
+                    android:text="Found another parlour/service"
+                    android:textColor="#171827"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEF2" />
+
+                <!-- 3. Price is too high -->
+                <RadioButton
+                    android:id="@+id/rbPriceHigh"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:buttonTint="@color/cancel_radio_tint"
+                    android:gravity="center_vertical"
+                    android:paddingStart="8dp"
+                    android:text="Price is too high"
+                    android:textColor="#171827"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEF2" />
+
+                <!-- 4. Parlour is too far -->
+                <RadioButton
+                    android:id="@+id/rbTooFar"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:buttonTint="@color/cancel_radio_tint"
+                    android:gravity="center_vertical"
+                    android:paddingStart="8dp"
+                    android:text="Parlour is too far"
+                    android:textColor="#171827"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEF2" />
+
+                <!-- 5. Parlour requested me to cancel -->
+                <RadioButton
+                    android:id="@+id/rbParlourRequested"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:buttonTint="@color/cancel_radio_tint"
+                    android:gravity="center_vertical"
+                    android:paddingStart="8dp"
+                    android:text="Parlour requested me to cancel"
+                    android:textColor="#171827"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEF2" />
+
+                <!-- 6. Parlour is closed / unavailable -->
+                <RadioButton
+                    android:id="@+id/rbParlourUnavailable"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:buttonTint="@color/cancel_radio_tint"
+                    android:gravity="center_vertical"
+                    android:paddingStart="8dp"
+                    android:text="Parlour is closed / unavailable"
+                    android:textColor="#171827"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEF2" />
+
+                <!-- 7. Wrong booking -->
+                <RadioButton
+                    android:id="@+id/rbWrongBooking"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:buttonTint="@color/cancel_radio_tint"
+                    android:gravity="center_vertical"
+                    android:paddingStart="8dp"
+                    android:text="Wrong booking / booked by mistake"
+                    android:textColor="#171827"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEF2" />
+
+                <!-- 8. Appointment time -->
+                <RadioButton
+                    android:id="@+id/rbTimeDoesntWork"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:buttonTint="@color/cancel_radio_tint"
+                    android:gravity="center_vertical"
+                    android:paddingStart="8dp"
+                    android:text="Appointment time doesn’t work"
+                    android:textColor="#171827"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEF2" />
+
+                <!-- 9. Service/stylist unavailable -->
+                <RadioButton
+                    android:id="@+id/rbServiceUnavailable"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:buttonTint="@color/cancel_radio_tint"
+                    android:gravity="center_vertical"
+                    android:paddingStart="8dp"
+                    android:text="Service/stylist not available"
+                    android:textColor="#171827"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEF2" />
+
+                <!-- 10. Better option -->
+                <RadioButton
+                    android:id="@+id/rbBetterOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:buttonTint="@color/cancel_radio_tint"
+                    android:gravity="center_vertical"
+                    android:paddingStart="8dp"
+                    android:text="Found a better option"
+                    android:textColor="#171827"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEF2" />
+
+                <!-- 11. Technical issue -->
+                <RadioButton
+                    android:id="@+id/rbTechnicalIssue"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:buttonTint="@color/cancel_radio_tint"
+                    android:gravity="center_vertical"
+                    android:paddingStart="8dp"
+                    android:text="Technical / booking issue"
+                    android:textColor="#171827"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEF2" />
+
+                <!-- 12. Other -->
+                <RadioButton
+                    android:id="@+id/rbOther"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:buttonTint="@color/cancel_radio_tint"
+                    android:gravity="center_vertical"
+                    android:paddingStart="8dp"
+                    android:text="Other"
+                    android:textColor="#171827"
+                    android:textSize="16sp" />
+
+                <!-- Other Reason Input -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilOtherReason"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="48dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="12dp"
+                    android:visibility="gone"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="200">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etOtherReason"
+                        android:layout_width="match_parent"
+                        android:layout_height="90dp"
+                        android:gravity="top|start"
+                        android:hint="Please enter your reason..."
+                        android:inputType="textCapSentences|textMultiLine"
+                        android:maxLength="200"
+                        android:padding="14dp"
+                        android:textColor="#171827"
+                        android:textColorHint="#858A9D"
+                        android:textSize="15sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </RadioGroup>
+
+            <!-- Refund Information -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="14dp"
+                android:background="@drawable/bg_refund_information"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <!-- Info Icon -->
+                <TextView
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:background="@drawable/bg_refund_icon"
+                    android:gravity="center"
+                    android:text="i"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Refund Information"
+                        android:textColor="#C2185B"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="The full amount for eligible paid bookings will be automatically credited to your wallet after cancellation."
+                        android:textColor="#596078"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Bottom Actions -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="horizontal">
+
+                <!-- Keep Booking -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnKeepBooking"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:text="Keep Booking"
+                    android:textAllCaps="false"
+                    android:textColor="#C2185B"
+                    android:textSize="13sp"
+                    app:backgroundTint="@android:color/white"
+                    app:cornerRadius="14dp"
+                    app:strokeColor="#C2185B"
+                    app:strokeWidth="1dp" />
+
+                <!-- Confirm Cancellation -->
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnConfirmCancellation"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Confirm Cancellation"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/white"
+                        android:textSize="13sp"
+                        app:backgroundTint="#C2185B"
+                        app:cornerRadius="14dp" />
+
+                    <ProgressBar
+                        android:id="@+id/progressCancellation"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:visibility="gone" />
+
+                </FrameLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

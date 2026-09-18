@@ -34,7 +34,8 @@ class AddressRepositoryImpl @Inject constructor(
 
         } else {
 
-            val error = ErrorUtils.parseError(response.errorBody()?.string())
+            val errorBody = response.errorBody()?.string()
+            val error = ErrorUtils.parseError(errorBody)
             throw Exception(error.message ?: "Failed to add address")
         }
     }
@@ -50,7 +51,8 @@ class AddressRepositoryImpl @Inject constructor(
         }
         else {
 
-            val error = ErrorUtils.parseError(response.errorBody()?.string())
+            val errorBody = response.errorBody()?.string()
+            val error = ErrorUtils.parseError(errorBody)
             throw Exception("Refresh failed: ${error.message}")
         }
     }
@@ -68,7 +70,8 @@ class AddressRepositoryImpl @Inject constructor(
             userAddressDao.insertAddress(entity)
         } else {
 
-            val error = ErrorUtils.parseError(response.errorBody()?.string())
+            val errorBody = response.errorBody()?.string()
+            val error = ErrorUtils.parseError(errorBody)
             throw Exception(error.message ?: "Update failed")
         }
     }
@@ -79,7 +82,8 @@ class AddressRepositoryImpl @Inject constructor(
             userAddressDao.deleteById(id)
         } else {
 
-            val error = ErrorUtils.parseError(response.errorBody()?.string())
+            val errorBody = response.errorBody()?.string()
+            val error = ErrorUtils.parseError(errorBody)
             throw Exception(error.message ?: "Failed to delete address")
         }
     }
@@ -90,7 +94,8 @@ class AddressRepositoryImpl @Inject constructor(
             userAddressDao.updateDefault(id)
         } else {
 
-            val error = ErrorUtils.parseError(response.errorBody()?.string())
+            val errorBody = response.errorBody()?.string()
+            val error = ErrorUtils.parseError(errorBody)
             throw Exception(error.message ?: "Something went wrong")
         }
     }

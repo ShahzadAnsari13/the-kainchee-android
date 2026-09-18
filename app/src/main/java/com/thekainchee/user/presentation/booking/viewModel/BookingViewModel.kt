@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thekainchee.user.domain.repository.BookingRepository
+import com.thekainchee.user.presentation.booking.event.CancelBookingEvent
 import com.thekainchee.user.presentation.booking.model.BookingUiModel
 import com.thekainchee.user.presentation.booking.model.CreateBookingParams
 import com.thekainchee.user.presentation.booking.state.BookingDetailUiState
@@ -44,6 +45,9 @@ class BookingViewModel @Inject constructor(val repository: BookingRepository) : 
     private val  _myBookingsState = MutableStateFlow<MyBookingsUiState>(MyBookingsUiState.Idle)
     val myBookingsState : StateFlow<MyBookingsUiState> = _myBookingsState
     private var bookingsJob: Job? = null
+
+    private val _cancelBookingEvent = MutableSharedFlow<CancelBookingEvent>()
+    val cancelBookingEvent = _cancelBookingEvent.asSharedFlow()
     fun getParlourStaffs(parlourId : String){
 
         _staffState.value = StaffState.Loading
@@ -164,6 +168,34 @@ class BookingViewModel @Inject constructor(val repository: BookingRepository) : 
                         )
 
                 }
+        }
+    }
+
+    fun cancelBooking(
+        bookingId: String,
+        reason: String
+    ) {
+        viewModelScope.launch {
+
+            val result = repository.cancelBooking(
+                bookingId,
+                reason
+            )
+
+            result.onSuccess { response ->
+
+                _cancelBookingEvent.emit(
+                    CancelBookingEvent.Success(response.message)
+                )
+
+            }.onFailure { error ->
+
+                _cancelBookingEvent.emit(
+                    CancelBookingEvent.Error(
+                        error.message ?: "Failed to cancel booking"
+                    )
+                )
+            }
         }
     }
 }

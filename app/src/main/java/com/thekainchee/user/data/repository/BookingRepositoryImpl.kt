@@ -1,10 +1,13 @@
 package com.thekainchee.user.data.repository
 
+import android.util.Log
 import com.thekainchee.user.data.mapper.toBookingRequestDto
 import com.thekainchee.user.data.mapper.toBookingUiModel
 import com.thekainchee.user.data.mapper.toUi
 import com.thekainchee.user.data.mapper.toUiModel
 import com.thekainchee.user.data.remote.api.BookingApi
+import com.thekainchee.user.data.remote.dto.booking.CancelBookingRequest
+import com.thekainchee.user.data.remote.dto.booking.CancelBookingResponse
 import com.thekainchee.user.domain.repository.BookingRepository
 import com.thekainchee.user.presentation.booking.model.BookingDetailUiModel
 import com.thekainchee.user.presentation.booking.model.BookingUiModel
@@ -29,7 +32,8 @@ class BookingRepositoryImpl @Inject constructor(private val api: BookingApi) : B
                 val list = body?.staff?.map { it.toUi() }.orEmpty()
                 Result.success(list)
             } else {
-                val error = ErrorUtils.parseError(response.errorBody()?.string())
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
                 Result.failure(Exception(error.message ?: "Failed to fetch staff"))
             }
         }
@@ -51,7 +55,8 @@ class BookingRepositoryImpl @Inject constructor(private val api: BookingApi) : B
                 val list = body.slots.map { SlotUiModel(time = it.start) }
                 Result.success(list)
             } else {
-                val error = ErrorUtils.parseError(response.errorBody()?.string())
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
                 Result.failure(Exception(error.message ?: "Failed to fetch staff"))
             }
         }
@@ -67,7 +72,8 @@ class BookingRepositoryImpl @Inject constructor(private val api: BookingApi) : B
                 val body = response.body()!!
                 Result.success(body.toBookingUiModel())
             } else {
-                val error = ErrorUtils.parseError(response.errorBody()?.string())
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
                 Result.failure(Exception(error.message ?: "Failed to fetch staff"))
             }
         }catch (e: Exception) {
@@ -98,9 +104,9 @@ class BookingRepositoryImpl @Inject constructor(private val api: BookingApi) : B
                 }
 
             } else {
+                val errorBody = response.errorBody()?.string()
 
-                val error = ErrorUtils.parseError(
-                    response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody
                 )
 
                 Result.failure(
@@ -124,11 +130,56 @@ class BookingRepositoryImpl @Inject constructor(private val api: BookingApi) : B
                 Result.success(body.map { it.toUiModel() })
 
             }else{
-                val error = ErrorUtils.parseError(response.errorBody()?.string())
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
                 Result.failure(Exception(error.message ?: "Failed to fetch bookings"))
             }
         }
         catch(e : Exception){
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun cancelBooking(
+        bookingId: String,
+        reason: String
+    ): Result<CancelBookingResponse> {
+
+        return try {
+
+            val response = api.cancelBooking(
+                bookingId = bookingId,
+                request = CancelBookingRequest(reason)
+            )
+
+            if (response.isSuccessful) {
+
+                val body = response.body()
+
+                if (body != null) {
+                    Result.success(body)
+                } else {
+                    Result.failure(
+                        Exception("Invalid response from server")
+                    )
+                }
+
+            } else {
+                val errorBody = response.errorBody()?.string()
+
+
+                val error = ErrorUtils.parseError(
+                    errorBody
+                )
+                Result.failure(
+                    Exception(
+                        error.message ?: "Failed to cancel booking"
+                    )
+                )
+            }
+
+        } catch (e: Exception) {
+
             Result.failure(e)
         }
     }

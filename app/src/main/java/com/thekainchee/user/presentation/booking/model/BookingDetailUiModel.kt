@@ -1,7 +1,10 @@
 package com.thekainchee.user.presentation.booking.model
 
+import android.os.Parcelable
 import com.thekainchee.user.data.remote.dto.address.LocationDto
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class BookingDetailUiModel(
 
     val bookingId: String,
@@ -45,4 +48,4 @@ data class BookingDetailUiModel(
 
     // Refund
     val walletRefundAmount: Double?
-)
+): Parcelable

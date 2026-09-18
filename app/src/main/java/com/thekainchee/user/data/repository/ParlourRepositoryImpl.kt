@@ -28,7 +28,9 @@ class ParlourRepositoryImpl @Inject constructor( private val api: ParlourApi) : 
                 val list = response.body()?.parlours?.map { it.toUI() }.orEmpty()
                 return Result.success(list)
             } else {
-                val error = ErrorUtils.parseError(response.errorBody()?.string())
+
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
                 return Result.failure(Exception(error.message ?: "Failed to fetch parlours"))
             }
         }

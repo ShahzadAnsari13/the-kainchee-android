@@ -25,7 +25,9 @@ class AuthRepositoryImpl @Inject constructor(private val authApi: AuthApi) : Aut
             if(response.isSuccessful && response.body() !=null){
                 Result.success(response.body()!!)
             }else{
-                val errorMsg = ErrorUtils.parseError(response.errorBody()?.string())
+
+                val errorBody = response.errorBody()?.string()
+                val errorMsg = ErrorUtils.parseError(errorBody)
                 Result.failure(Exception(errorMsg.message))
             }
         }
@@ -47,7 +49,9 @@ class AuthRepositoryImpl @Inject constructor(private val authApi: AuthApi) : Aut
             if(response.isSuccessful && response.body() != null){
                 Result.success(response.body()!!)
             }else{
-                val errorMsg = ErrorUtils.parseError(response.errorBody()?.string())
+
+                val errorBody = response.errorBody()?.string()
+                val errorMsg = ErrorUtils.parseError(errorBody)
                 Result.failure(Exception(errorMsg.message))
             }
         }catch (e : Exception){

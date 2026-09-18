@@ -23,7 +23,9 @@ class ServiceRepositoryImpl @Inject constructor(private val api  : ServiceApi, p
             val list = body?.data?.map { it.toUI() }.orEmpty()
             Result.success(list)
         }else{
-            val error = ErrorUtils.parseError(response.errorBody()?.string())
+
+            val errorBody = response.errorBody()?.string()
+            val error = ErrorUtils.parseError(errorBody)
             Result.failure(Exception(error.message ?: "Failed to fetch service categories"))
         }
 
@@ -43,7 +45,9 @@ class ServiceRepositoryImpl @Inject constructor(private val api  : ServiceApi, p
                 val list = body?.services?.map { it.toUI() }.orEmpty()
                 return Result.success(list)
             }else{
-                val error = ErrorUtils.parseError(response.errorBody()?.string())
+                val errorBody = response.errorBody()?.string()
+
+                val error = ErrorUtils.parseError(errorBody)
                 return Result.failure(Exception(error.message ?: "Failed to fetch services"))
             }
         }
@@ -104,9 +108,10 @@ class ServiceRepositoryImpl @Inject constructor(private val api  : ServiceApi, p
 
             } else {
 
+                val errorBody = response.errorBody()?.string()
                 val error =
                     ErrorUtils.parseError(
-                        response.errorBody()?.string()
+                        errorBody
                     )
 
                 return Result.failure(

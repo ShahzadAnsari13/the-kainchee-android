@@ -10,18 +10,22 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentBookingDetailBinding
 import com.thekainchee.user.presentation.booking.BookingActivity
+import com.thekainchee.user.presentation.booking.bottomSheet.CancelBookingBottomSheet
+import com.thekainchee.user.presentation.booking.bottomSheet.ShareBookingBottomSheet
 import com.thekainchee.user.presentation.booking.model.BookingDetailUiModel
 import com.thekainchee.user.presentation.booking.state.BookingDetailUiState
 import com.thekainchee.user.presentation.booking.viewModel.BookingViewModel
 import com.thekainchee.user.presentation.common.extensions.hide
 import com.thekainchee.user.presentation.common.extensions.show
 import com.thekainchee.user.presentation.common.state.StateViewData
+import com.thekainchee.user.presentation.parlour.fragment.ParlourDetailFragmentDirections
 import com.thekainchee.user.utils.DateFormatter
 import com.thekainchee.user.utils.NetworkUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,7 +39,9 @@ class BookingDetailFragment : Fragment() {
     private val bookingId by lazy{
         navArgs.bookingId
     }
-
+    private var latitude: String? = null
+    private var longitude: String? = null
+    private var bookingData: BookingDetailUiModel? = null
     private val successViewModel : BookingViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,8 +59,49 @@ class BookingDetailFragment : Fragment() {
             setToolbarTitle("Booking Details")
         }
         observer()
+        clickListeners()
         withInternet {
             successViewModel.getBookingDetails(bookingId)
+        }
+    }
+    private fun clickListeners(){
+        binding.btnDirections.setOnClickListener {
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                Snackbar.make(
+                    binding.root,
+                    "No Internet Connection",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }else {
+                latitude?.let { lat ->
+                    longitude?.let { lng ->
+                        val action =
+                            BookingDetailFragmentDirections.actionBookingDetailFragmentToParlourMap(
+                                latitude = lat,
+                                longitude = lng
+                            )
+                        findNavController().navigate(action)
+                    }
+                }
+            }
+        }
+        binding.btnShare.setOnClickListener {
+            bookingData?.let {
+                ShareBookingBottomSheet
+                    .newInstance(it)
+                    .show(parentFragmentManager, "ShareBookingBottomSheet")
+            }
+
+        }
+        binding.btnCancelBooking.setOnClickListener {
+
+            CancelBookingBottomSheet
+                .newInstance(bookingId)
+                .show(childFragmentManager, "CancelBookingBottomSheet")
+        }
+        binding.btnBookAgain.setOnClickListener {
+
         }
     }
     private fun observer(){
@@ -74,6 +121,9 @@ class BookingDetailFragment : Fragment() {
                             binding.shimmerLayout.visibility = View.GONE
                             binding.scrollView.visibility = View.VISIBLE
                             val data = state.data
+                            bookingData = data
+                            longitude = data.location?.coordinates[0].toString()
+                            latitude = data.location?.coordinates[1].toString()
                             // ================= HERO =================
 
                             binding.tvParlourName.text = data.parlourName

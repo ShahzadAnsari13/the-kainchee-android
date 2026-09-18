@@ -86,8 +86,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:maxLines="2"
                             android:ellipsize="end"
+                            android:maxLines="2"
                             android:textColor="@android:color/white"
                             android:textSize="13sp"
                             tools:text="Kadru Kaji House road, Pundag, Ranchi, Jharkhand 834004" />
@@ -166,7 +166,7 @@
                                 android:layout_marginStart="14dp"
                                 android:padding="11dp"
                                 android:background="@drawable/bg_circle_white"
-                                android:src="@drawable/ic_favorite_border"
+                                android:src="@drawable/ic_help_support"
                                 android:contentDescription="Save" />
 
                         </LinearLayout>
@@ -474,7 +474,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:text="🕐  Time"
+                            android:text="🕐 Time"
                             android:textSize="12sp"
                             android:textColor="#777777"
                             android:layout_width="wrap_content"
@@ -514,7 +514,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:text="Stylist"
+                            android:text="👤 Stylist"
                             android:textSize="12sp"
                             android:textColor="#777777"
                             android:layout_width="wrap_content"
