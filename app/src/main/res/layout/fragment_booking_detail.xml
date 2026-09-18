@@ -615,8 +615,10 @@
                                     android:layout_width="56dp"
                                     android:layout_height="56dp"
                                     android:scaleType="centerCrop"
-                                    android:background="@drawable/ic_oops"
+                                    android:src="@drawable/ic_oops"
                                     android:clipToOutline="true"
+
+                                    android:background="@drawable/bg_service_image"
                                     android:contentDescription="Service image" />
 
                                 <!-- Service Info -->

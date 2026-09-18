@@ -18,6 +18,7 @@ import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentBookingDetailBinding
 import com.thekainchee.user.presentation.booking.BookingActivity
 import com.thekainchee.user.presentation.booking.bottomSheet.CancelBookingBottomSheet
+import com.thekainchee.user.presentation.booking.bottomSheet.ServicesBottomSheet
 import com.thekainchee.user.presentation.booking.bottomSheet.ShareBookingBottomSheet
 import com.thekainchee.user.presentation.booking.model.BookingDetailUiModel
 import com.thekainchee.user.presentation.booking.state.BookingDetailUiState
@@ -91,6 +92,14 @@ class BookingDetailFragment : Fragment() {
                 ShareBookingBottomSheet
                     .newInstance(it)
                     .show(parentFragmentManager, "ShareBookingBottomSheet")
+            }
+
+        }
+        binding.tvViewAllServices.setOnClickListener {
+            bookingData?.let {
+                ServicesBottomSheet
+                    .newInstance(it)
+                    .show(childFragmentManager, "ServicesBottomSheet")
             }
 
         }
