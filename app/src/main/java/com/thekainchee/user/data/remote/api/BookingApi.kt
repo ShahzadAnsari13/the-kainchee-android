@@ -5,7 +5,10 @@ import com.thekainchee.user.data.remote.dto.booking.BookingRequestDto
 import com.thekainchee.user.data.remote.dto.booking.BookingResponseDto
 import com.thekainchee.user.data.remote.dto.booking.CancelBookingRequest
 import com.thekainchee.user.data.remote.dto.booking.CancelBookingResponse
+import com.thekainchee.user.data.remote.dto.booking.CreateRatingRequest
+import com.thekainchee.user.data.remote.dto.booking.CreateRatingResponse
 import com.thekainchee.user.data.remote.dto.booking.MyBookingsResponseDto
+import com.thekainchee.user.data.remote.dto.booking.RatingStatusDto
 import com.thekainchee.user.data.remote.dto.booking.SlotResponseDto
 import com.thekainchee.user.data.remote.dto.booking.StaffDto
 import com.thekainchee.user.data.remote.dto.booking.StaffResponseDto
@@ -50,4 +53,15 @@ interface BookingApi {
         @Path("bookingId") bookingId: String,
         @Body request: CancelBookingRequest
     ): Response<CancelBookingResponse>
+    @GET("user/rating/{bookingId}")
+    suspend fun getRatingStatus(
+        @Path("bookingId") bookingId: String
+    ): Response<RatingStatusDto>
+
+
+    @POST("user/rating/{bookingId}")
+    suspend fun createRating(
+        @Path("bookingId") bookingId: String,
+        @Body request: CreateRatingRequest
+    ): Response<CreateRatingResponse>
 }

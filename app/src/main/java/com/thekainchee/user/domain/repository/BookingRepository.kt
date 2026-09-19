@@ -1,6 +1,9 @@
 package com.thekainchee.user.domain.repository
 
 import com.thekainchee.user.data.remote.dto.booking.CancelBookingResponse
+import com.thekainchee.user.data.remote.dto.booking.CreateRatingRequest
+import com.thekainchee.user.data.remote.dto.booking.CreateRatingResponse
+import com.thekainchee.user.data.remote.dto.booking.RatingStatusDto
 import com.thekainchee.user.presentation.booking.model.BookingDetailUiModel
 import com.thekainchee.user.presentation.booking.model.BookingUiModel
 import com.thekainchee.user.presentation.booking.model.CreateBookingParams
@@ -23,4 +26,13 @@ interface BookingRepository {
         bookingId: String,
         reason: String
     ): Result<CancelBookingResponse>
+
+    suspend fun getRatingStatus(
+        bookingId: String
+    ): Result<RatingStatusDto>
+
+    suspend fun createRating(
+        bookingId: String,
+        request: CreateRatingRequest
+    ): Result<CreateRatingResponse>
 }

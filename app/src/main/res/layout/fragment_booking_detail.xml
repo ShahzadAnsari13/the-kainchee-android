@@ -160,7 +160,7 @@
                                 android:contentDescription="Share" />
 
                             <ImageView
-                                android:id="@+id/btnSave"
+                                android:id="@+id/btnSupport"
                                 android:layout_width="44dp"
                                 android:layout_height="44dp"
                                 android:layout_marginStart="14dp"
@@ -182,7 +182,7 @@
                         android:background="@drawable/bg_status_green"
                         android:paddingHorizontal="14dp"
                         android:paddingVertical="7dp"
-                        android:text="OPEN NOW"
+                        android:text="THE KAINCHEE PARTNER"
                         android:textColor="#087F5B"
                         android:textSize="12sp"
                         android:textStyle="bold" />
@@ -880,7 +880,7 @@
                 android:layout_marginTop="18dp"
                 android:background="@drawable/bg_cancel_booking"
                 android:gravity="center"
-                android:text="⊗  Cancel Booking"
+                android:text="Cancel Booking"
                 android:textColor="#D62828"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -888,18 +888,17 @@
             <!-- Book Again will be shown for terminal states -->
 
             <TextView
-                android:id="@+id/btnBookAgain"
+                android:id="@+id/btnRating"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/bg_outline_primary"
                 android:gravity="center"
-                android:text="ⓘ  Book Again"
+                android:text="Share Your Experience"
                 android:textColor="#087F5B"
                 android:textSize="15sp"
-                android:textStyle="bold"
-                android:visibility="gone" />
+                android:textStyle="bold" />
 
         </LinearLayout>
 

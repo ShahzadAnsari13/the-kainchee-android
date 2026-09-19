@@ -58,4 +58,6 @@
     <!-- Blue -->
     <color name="blue_light">#E3F2FD</color>
     <color name="cancel_radio_tint">#C2185B</color>
+
+    <color name="teal_primary">#00796B</color>
 </resources>

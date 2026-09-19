@@ -18,8 +18,10 @@ import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentBookingDetailBinding
 import com.thekainchee.user.presentation.booking.BookingActivity
 import com.thekainchee.user.presentation.booking.bottomSheet.CancelBookingBottomSheet
+import com.thekainchee.user.presentation.booking.bottomSheet.RatingBottomSheet
 import com.thekainchee.user.presentation.booking.bottomSheet.ServicesBottomSheet
 import com.thekainchee.user.presentation.booking.bottomSheet.ShareBookingBottomSheet
+import com.thekainchee.user.presentation.booking.bottomSheet.SupportBottomSheet
 import com.thekainchee.user.presentation.booking.model.BookingDetailUiModel
 import com.thekainchee.user.presentation.booking.state.BookingDetailUiState
 import com.thekainchee.user.presentation.booking.viewModel.BookingViewModel
@@ -66,6 +68,13 @@ class BookingDetailFragment : Fragment() {
         }
     }
     private fun clickListeners(){
+        binding.btnCall.setOnClickListener {
+            Snackbar.make(
+                binding.root,
+                "Direct parlour calls aren't available. Contact Kainchee Support for help.",
+                Snackbar.LENGTH_LONG
+            ).show()
+        }
         binding.btnDirections.setOnClickListener {
             if(!NetworkUtils.isInternetAvailable(requireContext())){
                 Snackbar.make(
@@ -103,13 +112,30 @@ class BookingDetailFragment : Fragment() {
             }
 
         }
+        binding.btnSupport.setOnClickListener {
+
+            SupportBottomSheet()
+                .show(
+                    childFragmentManager,
+                    "SupportBottomSheet"
+                )
+        }
         binding.btnCancelBooking.setOnClickListener {
 
             CancelBookingBottomSheet
                 .newInstance(bookingId)
                 .show(childFragmentManager, "CancelBookingBottomSheet")
         }
-        binding.btnBookAgain.setOnClickListener {
+
+        binding.btnRating.setOnClickListener {
+            bookingData?.let {
+                RatingBottomSheet
+                    .newInstance(it)
+                    .show(
+                        childFragmentManager,
+                        "RatingBottomSheet"
+                    )
+            }
 
         }
     }
@@ -269,7 +295,8 @@ class BookingDetailFragment : Fragment() {
                 binding.btnCancelBooking.visibility = View.VISIBLE
 
                 // Book Again hidden
-                binding.btnBookAgain.visibility = View.GONE
+
+                binding.btnRating.visibility = View.GONE
             }
 
             "CONFIRMED" -> {
@@ -303,7 +330,8 @@ class BookingDetailFragment : Fragment() {
                 binding.btnCancelBooking.visibility = View.VISIBLE
 
                 // Book Again hidden
-                binding.btnBookAgain.visibility = View.GONE
+
+                binding.btnRating.visibility = View.GONE
             }
 
             "CHECKED_IN" -> {
@@ -338,7 +366,8 @@ class BookingDetailFragment : Fragment() {
                     R.drawable.bg_booking_check_status_checked_in
                 )
                 binding.btnCancelBooking.visibility = View.GONE
-                binding.btnBookAgain.visibility = View.GONE
+
+                binding.btnRating.visibility = View.GONE
             }
 
             "COMPLETED" -> {
@@ -380,7 +409,7 @@ class BookingDetailFragment : Fragment() {
                     R.drawable.bg_booking_check_status_confirmed
                 )
                 binding.btnCancelBooking.visibility = View.GONE
-                binding.btnBookAgain.visibility = View.VISIBLE
+                binding.btnRating.visibility = View.VISIBLE
             }
 
             "CANCELLED" -> {
@@ -425,7 +454,8 @@ class BookingDetailFragment : Fragment() {
 
                 // Buttons
                 binding.btnCancelBooking.visibility = View.GONE
-                binding.btnBookAgain.visibility = View.VISIBLE
+
+                binding.btnRating.visibility = View.GONE
             }
 
             "NO_SHOW" -> {
@@ -480,7 +510,7 @@ class BookingDetailFragment : Fragment() {
 
                 // Buttons
                 binding.btnCancelBooking.visibility = View.GONE
-                binding.btnBookAgain.visibility = View.VISIBLE
+                binding.btnRating.visibility = View.GONE
             }
         }
     }

@@ -3,6 +3,7 @@ package com.thekainchee.user.presentation.booking.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.thekainchee.user.data.remote.dto.booking.CreateRatingRequest
 import com.thekainchee.user.domain.repository.BookingRepository
 import com.thekainchee.user.presentation.booking.event.CancelBookingEvent
 import com.thekainchee.user.presentation.booking.model.BookingUiModel
@@ -11,6 +12,7 @@ import com.thekainchee.user.presentation.booking.state.BookingDetailUiState
 import com.thekainchee.user.presentation.booking.state.BookingEvent
 import com.thekainchee.user.presentation.booking.state.CreateBookingState
 import com.thekainchee.user.presentation.booking.state.MyBookingsUiState
+import com.thekainchee.user.presentation.booking.state.RatingStatusState
 import com.thekainchee.user.presentation.booking.state.SlotState
 import com.thekainchee.user.presentation.booking.state.StaffState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,6 +50,13 @@ class BookingViewModel @Inject constructor(val repository: BookingRepository) : 
 
     private val _cancelBookingEvent = MutableSharedFlow<CancelBookingEvent>()
     val cancelBookingEvent = _cancelBookingEvent.asSharedFlow()
+
+    private val _ratingStatus =
+        MutableStateFlow<RatingStatusState>(RatingStatusState.Idle)
+
+    val ratingStatus: StateFlow<RatingStatusState> =
+        _ratingStatus
+
     fun getParlourStaffs(parlourId : String){
 
         _staffState.value = StaffState.Loading
@@ -196,6 +205,79 @@ class BookingViewModel @Inject constructor(val repository: BookingRepository) : 
                     )
                 )
             }
+        }
+    }
+
+    fun getRatingStatus(bookingId: String) {
+
+        viewModelScope.launch {
+
+            _ratingStatus.value = RatingStatusState.Loading
+
+            repository.getRatingStatus(bookingId)
+                .onSuccess { response ->
+
+                    when (response.status) {
+
+                        "NOT_RATED" -> {
+                            _ratingStatus.value =
+                                RatingStatusState.NotRated(response)
+                        }
+
+                        "ALREADY_RATED" -> {
+                            _ratingStatus.value =
+                                RatingStatusState.AlreadyRated(response)
+                        }
+
+                        else -> {
+                            _ratingStatus.value =
+                                RatingStatusState.Error(
+                                    "Unknown rating status"
+                                )
+                        }
+                    }
+                }
+                .onFailure { error ->
+
+                    _ratingStatus.value =
+                        RatingStatusState.Error(
+                            error.message ?: "Something went wrong"
+                        )
+                }
+        }
+    }
+
+    fun createRating(
+        bookingId: String,
+        parlourRating: Float,
+        staffRating: Float,
+        review: String
+    ) {
+
+        val request = CreateRatingRequest(
+            parlourRating = parlourRating,
+            staffRating = staffRating,
+            review = review
+        )
+
+        viewModelScope.launch {
+
+            _ratingStatus.value = RatingStatusState.Loading
+
+            repository.createRating(
+                bookingId = bookingId,
+                request = request
+            )
+                .onSuccess {
+                    _ratingStatus.value =
+                        RatingStatusState.Submitted
+                }
+                .onFailure { error ->
+                    _ratingStatus.value =
+                        RatingStatusState.Error(
+                            error.message ?: "Failed to submit rating"
+                        )
+                }
         }
     }
 }

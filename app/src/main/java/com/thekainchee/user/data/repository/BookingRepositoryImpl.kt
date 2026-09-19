@@ -8,6 +8,9 @@ import com.thekainchee.user.data.mapper.toUiModel
 import com.thekainchee.user.data.remote.api.BookingApi
 import com.thekainchee.user.data.remote.dto.booking.CancelBookingRequest
 import com.thekainchee.user.data.remote.dto.booking.CancelBookingResponse
+import com.thekainchee.user.data.remote.dto.booking.CreateRatingRequest
+import com.thekainchee.user.data.remote.dto.booking.CreateRatingResponse
+import com.thekainchee.user.data.remote.dto.booking.RatingStatusDto
 import com.thekainchee.user.domain.repository.BookingRepository
 import com.thekainchee.user.presentation.booking.model.BookingDetailUiModel
 import com.thekainchee.user.presentation.booking.model.BookingUiModel
@@ -174,6 +177,92 @@ class BookingRepositoryImpl @Inject constructor(private val api: BookingApi) : B
                 Result.failure(
                     Exception(
                         error.message ?: "Failed to cancel booking"
+                    )
+                )
+            }
+
+        } catch (e: Exception) {
+
+            Result.failure(e)
+        }
+    }
+    override suspend fun getRatingStatus(
+        bookingId: String
+    ): Result<RatingStatusDto> {
+
+        return try {
+
+            val response = api.getRatingStatus(
+                bookingId = bookingId
+            )
+
+            if (response.isSuccessful) {
+
+                val body = response.body()
+
+                if (body != null) {
+                    Result.success(body)
+                } else {
+                    Result.failure(
+                        Exception("Invalid response from server")
+                    )
+                }
+
+            } else {
+
+                val errorBody = response.errorBody()?.string()
+
+                val error = ErrorUtils.parseError(
+                    errorBody
+                )
+
+                Result.failure(
+                    Exception(
+                        error.message ?: "Failed to get rating status"
+                    )
+                )
+            }
+
+        } catch (e: Exception) {
+
+            Result.failure(e)
+        }
+    }
+    override suspend fun createRating(
+        bookingId: String,
+        request: CreateRatingRequest
+    ): Result<CreateRatingResponse> {
+
+        return try {
+
+            val response = api.createRating(
+                bookingId = bookingId,
+                request = request
+            )
+
+            if (response.isSuccessful) {
+
+                val body = response.body()
+
+                if (body != null) {
+                    Result.success(body)
+                } else {
+                    Result.failure(
+                        Exception("Invalid response from server")
+                    )
+                }
+
+            } else {
+
+                val errorBody = response.errorBody()?.string()
+
+                val error = ErrorUtils.parseError(
+                    errorBody
+                )
+
+                Result.failure(
+                    Exception(
+                        error.message ?: "Failed to submit rating"
                     )
                 )
             }

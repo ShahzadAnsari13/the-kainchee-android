@@ -1,0 +1,68 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="78dp"
+    android:height="78dp"
+    android:viewportWidth="78"
+    android:viewportHeight="78">
+
+    <!-- Soft green circle -->
+    <path
+        android:fillColor="#E6F5F0"
+        android:pathData="M39,4
+            A35,35 0,1 0,39 74
+            A35,35 0,1 0,39 4" />
+
+    <!-- Document -->
+    <path
+        android:fillColor="#C7E2DA"
+        android:pathData="M25,19
+            C25,16.8 26.8,15 29,15
+            H48
+            C50.2,15 52,16.8 52,19
+            V49
+            C52,51.2 50.2,53 48,53
+            H29
+            C26.8,53 25,51.2 25,49 Z" />
+
+    <!-- Back document -->
+    <path
+        android:fillColor="#DDEDE8"
+        android:pathData="M19,23
+            C19,20.8 20.8,19 23,19
+            H42
+            C44.2,19 46,20.8 46,23
+            V52
+            C46,54.2 44.2,56 42,56
+            H23
+            C20.8,56 19,54.2 19,52 Z" />
+
+    <!-- Lines -->
+    <path
+        android:fillColor="#6E9F91"
+        android:pathData="M30,28h12v3H30z" />
+
+    <path
+        android:fillColor="#6E9F91"
+        android:pathData="M30,36h15v3H30z" />
+
+    <path
+        android:fillColor="#6E9F91"
+        android:pathData="M30,44h10v3H30z" />
+
+    <!-- Green check circle -->
+    <path
+        android:fillColor="#15946F"
+        android:pathData="M52,39
+            A13,13 0,1 0,52 65
+            A13,13 0,1 0,52 39" />
+
+    <!-- Check -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M46,51
+            L50,55
+            L58,46
+            L60,48
+            L50,59
+            L44,53 Z" />
+
+</vector>

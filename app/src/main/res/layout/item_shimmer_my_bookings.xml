@@ -1,139 +1,287 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
-    android:layout_marginTop="12dp"
-    app:cardCornerRadius="20dp"
-    app:cardElevation="2dp"
-    app:strokeColor="#EAEAEA"
-    app:strokeWidth="1dp"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="6dp"
+
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="3dp"
+    app:strokeColor="#EEEEEE"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- ================= TOP CONTENT ================= -->
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="14dp">
+            android:padding="16dp">
 
-            <!-- Image -->
+            <!-- Service Image -->
 
             <View
-                android:id="@+id/viewImage"
-                android:layout_width="92dp"
-                android:layout_height="92dp"
+                android:id="@+id/shimmerImage"
+                android:layout_width="112dp"
+                android:layout_height="112dp"
                 android:background="@drawable/bg_shimmer_placeholder"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Amount -->
+            <!-- Image Service Count -->
 
             <View
-                android:layout_width="60dp"
-                android:layout_height="18dp"
-                android:layout_marginTop="10dp"
+                android:id="@+id/shimmerServiceCount"
+                android:layout_width="72dp"
+                android:layout_height="28dp"
+                android:layout_margin="8dp"
                 android:background="@drawable/bg_shimmer_placeholder"
-                app:layout_constraintTop_toBottomOf="@id/viewImage"
-                app:layout_constraintStart_toStartOf="@id/viewImage"
-                app:layout_constraintEnd_toEndOf="@id/viewImage"/>
+                app:layout_constraintBottom_toBottomOf="@id/shimmerImage"
+                app:layout_constraintStart_toStartOf="@id/shimmerImage" />
 
-            <!-- Status -->
+            <!-- Right Content -->
 
-            <View
-                android:id="@+id/viewStatus"
-                android:layout_width="70dp"
-                android:layout_height="22dp"
-                android:background="@drawable/bg_shimmer_placeholder"
-                app:layout_constraintTop_toTopOf="@id/viewImage"
-                app:layout_constraintEnd_toEndOf="parent"/>
-
-            <!-- Service -->
-
-            <View
-                android:id="@+id/viewService"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
-                android:layout_height="18dp"
+                android:layout_height="112dp"
                 android:layout_marginStart="14dp"
-                android:layout_marginEnd="90dp"
-                android:background="@drawable/bg_shimmer_placeholder"
-                app:layout_constraintStart_toEndOf="@id/viewImage"
-                app:layout_constraintTop_toTopOf="@id/viewImage"
-                app:layout_constraintEnd_toStartOf="@id/viewStatus"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/shimmerImage"
+                app:layout_constraintTop_toTopOf="@id/shimmerImage">
 
-            <!-- More Services -->
+                <!-- Service Name -->
+
+                <View
+                    android:id="@+id/shimmerServiceName"
+                    android:layout_width="0dp"
+                    android:layout_height="18dp"
+                    android:background="@drawable/bg_shimmer_placeholder"
+                    app:layout_constraintEnd_toStartOf="@id/shimmerStatus"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- Status -->
+
+                <View
+                    android:id="@+id/shimmerStatus"
+                    android:layout_width="72dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/bg_shimmer_placeholder"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- More Services -->
+
+                <View
+                    android:id="@+id/shimmerMoreServices"
+                    android:layout_width="105dp"
+                    android:layout_height="14dp"
+                    android:layout_marginTop="7dp"
+                    android:background="@drawable/bg_shimmer_placeholder"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/shimmerServiceName" />
+
+                <!-- Parlour -->
+
+                <LinearLayout
+                    android:id="@+id/shimmerParlourContainer"
+                    android:layout_width="0dp"
+                    android:layout_height="18dp"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/shimmerMoreServices">
+
+                    <View
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:background="@drawable/bg_shimmer_placeholder" />
+
+                    <View
+                        android:layout_width="155dp"
+                        android:layout_height="14dp"
+                        android:layout_marginStart="9dp"
+                        android:background="@drawable/bg_shimmer_placeholder" />
+
+                </LinearLayout>
+
+                <!-- Location -->
+
+                <LinearLayout
+                    android:id="@+id/shimmerLocationContainer"
+                    android:layout_width="0dp"
+                    android:layout_height="18dp"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/shimmerParlourContainer">
+
+                    <View
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:background="@drawable/bg_shimmer_placeholder" />
+
+                    <View
+                        android:layout_width="125dp"
+                        android:layout_height="13dp"
+                        android:layout_marginStart="9dp"
+                        android:background="@drawable/bg_shimmer_placeholder" />
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <!-- ================= STYLIST ================= -->
+
+            <LinearLayout
+                android:id="@+id/shimmerStylistContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="19dp"
+                android:layout_marginTop="14dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/shimmerImage">
+
+                <View
+                    android:layout_width="19dp"
+                    android:layout_height="19dp"
+                    android:background="@drawable/bg_shimmer_placeholder" />
+
+                <View
+                    android:layout_width="95dp"
+                    android:layout_height="13dp"
+                    android:layout_marginStart="9dp"
+                    android:background="@drawable/bg_shimmer_placeholder" />
+
+            </LinearLayout>
+
+
+            <!-- Vertical Divider -->
 
             <View
-                android:layout_width="100dp"
-                android:layout_height="14dp"
-                android:layout_marginTop="8dp"
+                android:id="@+id/shimmerDateDivider"
+                android:layout_width="1dp"
+                android:layout_height="22dp"
+                android:layout_marginStart="16dp"
                 android:background="@drawable/bg_shimmer_placeholder"
-                app:layout_constraintTop_toBottomOf="@id/viewService"
-                app:layout_constraintStart_toStartOf="@id/viewService"/>
+                app:layout_constraintBottom_toBottomOf="@id/shimmerStylistContainer"
+                app:layout_constraintStart_toEndOf="@id/shimmerStylistContainer"
+                app:layout_constraintTop_toTopOf="@id/shimmerStylistContainer" />
 
-            <!-- Parlour -->
-
-            <View
-                android:layout_width="170dp"
-                android:layout_height="16dp"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_shimmer_placeholder"
-                app:layout_constraintTop_toBottomOf="@id/viewStatus"
-                app:layout_constraintStart_toStartOf="@id/viewService"/>
-
-            <!-- Staff -->
-
-            <View
-                android:layout_width="120dp"
-                android:layout_height="14dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/bg_shimmer_placeholder"
-                app:layout_constraintTop_toBottomOf="@id/viewService"
-                app:layout_constraintStart_toStartOf="@id/viewService"/>
 
             <!-- Date -->
 
-            <View
-                android:layout_width="130dp"
-                android:layout_height="14dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/bg_shimmer_placeholder"
-                app:layout_constraintTop_toBottomOf="@id/viewStatus"
-                app:layout_constraintStart_toStartOf="@id/viewService"/>
+            <LinearLayout
+                android:id="@+id/shimmerDateContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="19dp"
+                android:layout_marginStart="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="@id/shimmerStylistContainer"
+                app:layout_constraintStart_toEndOf="@id/shimmerDateDivider"
+                app:layout_constraintTop_toTopOf="@id/shimmerStylistContainer">
+
+                <View
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:background="@drawable/bg_shimmer_placeholder" />
+
+                <View
+                    android:layout_width="82dp"
+                    android:layout_height="13dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_shimmer_placeholder" />
+
+            </LinearLayout>
+
+
+            <!-- Time -->
+
+            <LinearLayout
+                android:id="@+id/shimmerTimeContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="19dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="@id/shimmerDateContainer"
+                app:layout_constraintTop_toBottomOf="@id/shimmerDateContainer">
+
+                <View
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:background="@drawable/bg_shimmer_placeholder" />
+
+                <View
+                    android:layout_width="70dp"
+                    android:layout_height="13dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_shimmer_placeholder" />
+
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#EEEEEE"/>
 
-        <!-- Footer -->
+        <!-- ================= SUMMARY ================= -->
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_booking_summary"
             android:gravity="center_vertical"
+            android:minHeight="80dp"
             android:orientation="horizontal"
-            android:paddingHorizontal="16dp">
+            android:paddingHorizontal="18dp"
+            android:paddingVertical="12dp">
 
-            <View
-                android:layout_width="120dp"
-                android:layout_height="14dp"
-                android:background="@drawable/bg_shimmer_placeholder"/>
+            <!-- Amount -->
 
-            <Space
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"/>
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="75dp"
+                    android:layout_height="12dp"
+                    android:background="@drawable/bg_shimmer_placeholder" />
+
+                <View
+                    android:layout_width="65dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/bg_shimmer_placeholder" />
+
+            </LinearLayout>
+
+
+            <!-- View Details Button -->
 
             <View
-                android:layout_width="80dp"
-                android:layout_height="14dp"
-                android:background="@drawable/bg_shimmer_placeholder"/>
+                android:layout_width="125dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_shimmer_placeholder" />
 
         </LinearLayout>
 

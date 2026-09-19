@@ -367,7 +367,7 @@
                     android:layout_marginTop="2dp"
                     android:text="₹349"
                     android:textColor="@color/primaryColor"
-                    android:textSize="23sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     tools:text="₹349" />
 

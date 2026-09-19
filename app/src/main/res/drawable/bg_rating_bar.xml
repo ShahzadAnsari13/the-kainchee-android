@@ -1,0 +1,25 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Empty stars -->
+    <item android:id="@android:id/background">
+        <bitmap
+            android:src="@drawable/ic_star_rating_empty"
+            android:tileModeX="repeat"
+            android:gravity="left|center_vertical" />
+    </item>
+
+    <!-- Filled stars -->
+    <item android:id="@android:id/progress">
+        <clip
+            android:clipOrientation="horizontal"
+            android:gravity="left">
+
+            <bitmap
+                android:src="@drawable/ic_star_rating_filled"
+                android:tileModeX="repeat"
+                android:gravity="left|center_vertical" />
+
+        </clip>
+    </item>
+
+</layer-list>
