@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -17,12 +18,15 @@ import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentMyProfileBinding
 import com.thekainchee.user.presentation.booking.BookingActivity
+import com.thekainchee.user.presentation.booking.bottomSheet.SupportBottomSheet
 import com.thekainchee.user.presentation.common.extensions.hide
 import com.thekainchee.user.presentation.common.extensions.show
 import com.thekainchee.user.presentation.common.state.StateViewData
 import com.thekainchee.user.presentation.location.LocationActivity
 import com.thekainchee.user.presentation.profile.ProfileActivity
+import com.thekainchee.user.presentation.profile.bottomSheet.AccountSecurityBottomSheet
 import com.thekainchee.user.presentation.profile.bottomSheet.EditProfileBottomSheet
+import com.thekainchee.user.presentation.profile.bottomSheet.NotificationSettingsBottomSheet
 import com.thekainchee.user.presentation.profile.model.ProfileUiModel
 import com.thekainchee.user.presentation.profile.state.EditProfileEvent
 import com.thekainchee.user.presentation.profile.state.ProfileState
@@ -71,6 +75,13 @@ class MyProfileFragment : Fragment() {
         }else{
             profileViewModel.getProfile()
         }
+
+        binding.quickActions.actionNotification.tvSubtitle.text =
+            if (areNotificationsEnabled()) {
+                "\uD83D\uDFE2 On"
+            } else {
+                "\uD83D\uDD34 Off"
+            }
     }
     private fun setupAccountSection() {
 
@@ -104,6 +115,7 @@ class MyProfileFragment : Fragment() {
                 isGone = false
                 text = "Active"
             }
+            ivArrow.isGone = true
         }
     }
     private fun setupSupportSection() {
@@ -162,6 +174,7 @@ class MyProfileFragment : Fragment() {
         }
     }
     private fun setupClickListeners(){
+        //Header Section
         binding.swipeRefresh.setOnRefreshListener {
             if (!NetworkUtils.isInternetAvailable(requireContext())){
                 showNoInternetState("Try Again"){
@@ -182,14 +195,6 @@ class MyProfileFragment : Fragment() {
                 isSwipeRefresh = true
                 profileViewModel.getProfile()
             }
-        }
-        binding.quickActions.actionAddress.root.setOnClickListener {
-            startActivity(Intent(requireContext(), LocationActivity::class.java))
-        }
-        binding.quickActions.actionBookings.root.setOnClickListener {
-            val intent = Intent(requireContext(), BookingActivity::class.java)
-            intent.putExtra("openMyBookings", true)
-            startActivity(intent)
         }
         binding.profileHeaderCard.btnEditProfile.setOnClickListener {
 
@@ -214,6 +219,64 @@ class MyProfileFragment : Fragment() {
                         profile?.walletBalance?.toFloat() ?: 0f
                     )
             )
+        }
+        //Quick Action Section
+        binding.quickActions.actionBookings.root.setOnClickListener {
+            val intent = Intent(requireContext(), BookingActivity::class.java)
+            intent.putExtra("openMyBookings", true)
+            startActivity(intent)
+        }
+        binding.quickActions.actionAddress.root.setOnClickListener {
+            startActivity(Intent(requireContext(), LocationActivity::class.java))
+        }
+        binding.quickActions.actionNotification.root.setOnClickListener {
+            if(areNotificationsEnabled()){
+
+            }else{
+                NotificationSettingsBottomSheet()
+                    .show(
+                        parentFragmentManager,
+                        "NotificationSettingsBottomSheet"
+                    )
+            }
+        }
+        //Account Section
+        binding.accountSection.itemPersonalInfo.root.setOnClickListener {
+            profile?.let {
+                EditProfileBottomSheet.newInstance(
+                    it.name,
+                    it.countryCode,
+                    it.phoneNumber
+                ).show(parentFragmentManager, "EditProfile")
+            } ?: run {
+                Snackbar.make(
+                    binding.root,
+                    "Something went wrong",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }
+        }
+        binding.accountSection.itemPhoneNumber.root.setOnClickListener {
+            Snackbar.make(
+                binding.root,
+                "We're working on phone number updates",
+                Snackbar.LENGTH_SHORT
+            ).show()
+        }
+        binding.accountSection.itemAccountSecurity.root.setOnClickListener {
+            AccountSecurityBottomSheet()
+                .show(
+                    parentFragmentManager,
+                    "AccountSecurityBottomSheet"
+                )
+        }
+        //Support Section
+        binding.supportSection.itemHelpSupport.root.setOnClickListener {
+            SupportBottomSheet()
+                .show(
+                    childFragmentManager,
+                    "SupportBottomSheet"
+                )
         }
     }
 
@@ -304,13 +367,6 @@ class MyProfileFragment : Fragment() {
 
         binding.accountSection.itemAccountStatus.tvStatus.text =
             if (profile.isActive) "Active" else "Inactive"
-
-        binding.quickActions.actionNotification.tvSubtitle.text =
-            if (profile.notificationsEnabled) {
-                "\uD83D\uDFE2 On"
-            } else {
-                "\uD83D\uDD34 Off"
-            }
     }
     private fun showNoInternetState(
         retryText: String = "Retry",
@@ -361,8 +417,20 @@ class MyProfileFragment : Fragment() {
         )
     }
 
+    private fun areNotificationsEnabled(): Boolean {
+        return NotificationManagerCompat
+            .from(requireContext())
+            .areNotificationsEnabled()
+    }
+
     override fun onResume() {
         super.onResume()
+        binding.quickActions.actionNotification.tvSubtitle.text =
+            if (areNotificationsEnabled()) {
+                "\uD83D\uDFE2 On"
+            } else {
+                "\uD83D\uDD34 Off"
+            }
         (requireActivity() as ProfileActivity).setToolbarTitle("My Profile")
     }
     override fun onDestroyView() {
