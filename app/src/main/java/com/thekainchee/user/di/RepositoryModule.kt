@@ -9,6 +9,7 @@ import com.thekainchee.user.data.repository.ParlourRepositoryImpl
 import com.thekainchee.user.data.repository.PaymentRepositoryImpl
 import com.thekainchee.user.data.repository.PlaceSearchRepositoryImpl
 import com.thekainchee.user.data.repository.ProfileRepositoryImpl
+import com.thekainchee.user.data.repository.ReferralRepositoryImpl
 import com.thekainchee.user.data.repository.ServiceRepositoryImpl
 import com.thekainchee.user.data.repository.WalletRepositoryImpl
 import com.thekainchee.user.domain.repository.AddressRepository
@@ -20,6 +21,7 @@ import com.thekainchee.user.domain.repository.ParlourRepository
 import com.thekainchee.user.domain.repository.PaymentRepository
 import com.thekainchee.user.domain.repository.PlaceSearchRepository
 import com.thekainchee.user.domain.repository.ProfileRepository
+import com.thekainchee.user.domain.repository.ReferralRepository
 import com.thekainchee.user.domain.repository.ServiceRepository
 import com.thekainchee.user.domain.repository.WalletRepository
 import dagger.Binds
@@ -92,4 +94,10 @@ abstract class RepositoryModule {
     abstract fun bindNotificationRepository(
         impl: NotificationRepositoryImpl
     ): NotificationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindReferralRepository(
+        impl: ReferralRepositoryImpl
+    ): ReferralRepository
 }

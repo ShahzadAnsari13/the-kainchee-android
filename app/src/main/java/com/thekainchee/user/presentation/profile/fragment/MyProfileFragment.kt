@@ -220,6 +220,7 @@ class MyProfileFragment : Fragment() {
                     )
             )
         }
+
         //Quick Action Section
         binding.quickActions.actionBookings.root.setOnClickListener {
             val intent = Intent(requireContext(), BookingActivity::class.java)
@@ -239,6 +240,12 @@ class MyProfileFragment : Fragment() {
                         "NotificationSettingsBottomSheet"
                     )
             }
+        }
+        binding.quickActions.actionRefer.root.setOnClickListener {
+            findNavController().navigate(
+                MyProfileFragmentDirections
+                    .actionMyProfileFragmentToReferralFragment()
+            )
         }
         //Account Section
         binding.accountSection.itemPersonalInfo.root.setOnClickListener {
@@ -354,7 +361,6 @@ class MyProfileFragment : Fragment() {
         }
     }
     private fun bindProfile(profile: ProfileUiModel) {
-
         binding.profileHeaderCard.tvName.text = profile.name
         binding.profileHeaderCard.tvPhone.text =
             "${profile.countryCode} ${profile.phoneNumber}"

@@ -7,6 +7,7 @@ import com.thekainchee.user.data.remote.api.NotificationApi
 import com.thekainchee.user.data.remote.api.ParlourApi
 import com.thekainchee.user.data.remote.api.PaymentApi
 import com.thekainchee.user.data.remote.api.ProfileApi
+import com.thekainchee.user.data.remote.api.ReferralApi
 import com.thekainchee.user.data.remote.api.ServiceApi
 import com.thekainchee.user.data.remote.api.WalletApi
 import com.thekainchee.user.data.remote.interceptor.AuthInterceptor
@@ -114,4 +115,11 @@ object NetworkModule {
         return retrofit.create(NotificationApi::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideReferralApi(
+        retrofit: Retrofit
+    ): ReferralApi {
+        return retrofit.create(ReferralApi::class.java)
+    }
 }

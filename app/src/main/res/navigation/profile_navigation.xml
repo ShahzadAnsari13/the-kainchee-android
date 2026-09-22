@@ -11,6 +11,9 @@
         <action
             android:id="@+id/action_myProfileFragment_to_walletTransactionFragment"
             app:destination="@id/walletTransactionFragment" />
+        <action
+            android:id="@+id/action_myProfileFragment_to_referralFragment"
+            app:destination="@id/referralFragment" />
     </fragment>
     <fragment
         android:id="@+id/walletTransactionFragment"
@@ -24,4 +27,8 @@
         android:id="@+id/notificationFragment"
         android:name="com.thekainchee.user.presentation.notification.fragment.NotificationFragment"
         android:label="Notifications" />
+
+    <fragment android:id="@+id/referralFragment"
+        android:name="com.thekainchee.user.presentation.referral.fragment.ReferralFragment"
+        android:label="Referral" />
 </navigation>

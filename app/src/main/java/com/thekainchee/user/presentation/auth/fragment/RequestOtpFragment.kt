@@ -1,12 +1,19 @@
 package com.thekainchee.user.presentation.auth.fragment
 
 
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -21,6 +28,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentRequestOtpBinding
+import com.thekainchee.user.presentation.auth.bottomSheet.ReferralCodeBottomSheet
 import com.thekainchee.user.presentation.auth.state.AuthState
 import com.thekainchee.user.presentation.auth.viewModel.AuthViewModel
 import com.thekainchee.user.presentation.common.extensions.hide
@@ -79,7 +87,7 @@ class RequestOtpFragment : Fragment() {
             withInternet {
                 val phone  = binding.etPhone.text.toString()
                 if(!phoneRegex.matches(phone)){
-                    showToast("Enter phone number")
+                    showSnackbar("Enter phone number")
                     return@withInternet
                 }
                 val countryCode = binding.etCountryCode.text.toString()
@@ -88,9 +96,87 @@ class RequestOtpFragment : Fragment() {
 
 
         }
+        binding.cardReferral.setOnClickListener {
+
+            val phone = binding.etPhone.text
+                .toString()
+                .trim()
+
+            if (!phoneRegex.matches(phone)) {
+                showSnackbar("Please enter a valid phone number")
+                binding.etPhone.requestFocus()
+                return@setOnClickListener
+            }
+
+            ReferralCodeBottomSheet
+                .newInstance(phone)
+                .show(
+                    childFragmentManager,
+                    "ReferralCodeBottomSheet"
+                )
+        }
+        setupTermsAndPrivacy()
+
         observeState()
     }
+    private fun setupTermsAndPrivacy() {
 
+        val text = "By continuing, you agree to our Terms of Service and Privacy Policy"
+
+        val spannable = SpannableString(text)
+
+        val green = ContextCompat.getColor(requireContext(), R.color.primaryColor)
+
+        val termsText = "Terms of Service"
+        val privacyText = "Privacy Policy"
+
+        val termsStart = text.indexOf(termsText)
+        val privacyStart = text.indexOf(privacyText)
+
+        spannable.setSpan(
+            object : ClickableSpan() {
+                override fun onClick(widget: View) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Terms of Service clicked",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                override fun updateDrawState(ds: TextPaint) {
+                    ds.color = green
+                    ds.isUnderlineText = false
+                }
+            },
+            termsStart,
+            termsStart + termsText.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        spannable.setSpan(
+            object : ClickableSpan() {
+                override fun onClick(widget: View) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Privacy Policy clicked",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                override fun updateDrawState(ds: TextPaint) {
+                    ds.color = green
+                    ds.isUnderlineText = false
+                }
+            },
+            privacyStart,
+            privacyStart + privacyText.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        binding.tvTerms.text = spannable
+        binding.tvTerms.movementMethod = LinkMovementMethod.getInstance()
+        binding.tvTerms.highlightColor = Color.TRANSPARENT
+    }
     private fun setupVideoPlayer(){
         player = ExoPlayer.Builder(requireContext()).build()
 
@@ -126,7 +212,7 @@ class RequestOtpFragment : Fragment() {
                             binding.btnRequestOtp.alpha = 0.5f
 
                             binding.etCountryCode.isEnabled = true
-                            showToast(state.message)
+                            showSnackbar(state.message)
                             openVerifyOtpFragment()
                             viewModel.resetState()
                         }
@@ -141,7 +227,7 @@ class RequestOtpFragment : Fragment() {
                             binding.etPhone.isEnabled = true
                             binding.etCountryCode.isEnabled = true
 
-                            showToast(state.message?: "Something went Wrong")
+                            showSnackbar(state.message?: "Something went Wrong")
 
                         }
                         else ->{
@@ -178,8 +264,12 @@ class RequestOtpFragment : Fragment() {
         super.onPause()
         player?.pause()
     }
-    private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    private fun showSnackbar(message: String) {
+        Snackbar.make(
+            binding.root,
+            message,
+            Snackbar.LENGTH_SHORT
+        ).show()
     }
     private fun showNoInternetState(
         retryText: String = "Retry",

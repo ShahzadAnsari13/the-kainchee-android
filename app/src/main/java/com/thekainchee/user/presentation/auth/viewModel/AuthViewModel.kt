@@ -4,17 +4,56 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thekainchee.user.data.local.datastore.UserPreferencesManager
 import com.thekainchee.user.domain.repository.AuthRepository
+import com.thekainchee.user.domain.repository.ReferralRepository
 import com.thekainchee.user.presentation.auth.state.AuthState
+import com.thekainchee.user.presentation.auth.state.ReferralState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(private val  authRepository: AuthRepository, private val tokenManager: UserPreferencesManager) : ViewModel(){
+class AuthViewModel @Inject constructor(private val  authRepository: AuthRepository, private val referralRepository: ReferralRepository, private val tokenManager: UserPreferencesManager) : ViewModel(){
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState
+
+    private val _referralState = MutableStateFlow<ReferralState>(
+        ReferralState.Idle
+    )
+
+    val referralState: StateFlow<ReferralState> =
+        _referralState.asStateFlow()
+
+    fun applyReferral(
+        referralCode: String,
+        phoneNumber: String
+    ) {
+        viewModelScope.launch {
+
+            _referralState.value = ReferralState.Loading
+
+            referralRepository
+                .applyReferral(
+                    referralCode = referralCode,
+                    phoneNumber = phoneNumber
+                )
+                .onSuccess { result ->
+
+                    _referralState.value = ReferralState.Success(
+                        message = result.message
+                    )
+                }
+                .onFailure { error ->
+
+                    _referralState.value = ReferralState.Error(
+                        message = error.message
+                            ?: "Failed to apply referral code"
+                    )
+                }
+        }
+    }
 
     fun requestOtp(countryCode: String, phone: String){
 

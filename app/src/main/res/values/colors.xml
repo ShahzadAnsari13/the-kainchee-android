@@ -60,4 +60,6 @@
     <color name="cancel_radio_tint">#C2185B</color>
 
     <color name="teal_primary">#00796B</color>
+
+    <color name="background_light">#F7FAF9</color>
 </resources>
