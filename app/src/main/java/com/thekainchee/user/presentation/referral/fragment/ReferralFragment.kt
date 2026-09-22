@@ -32,7 +32,9 @@ import com.thekainchee.user.presentation.referral.state.WithdrawReferralState
 import com.thekainchee.user.presentation.referral.viewModel.ReferralViewModel
 import com.thekainchee.user.utils.NetworkUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 
@@ -40,7 +42,7 @@ import java.io.FileOutputStream
 class ReferralFragment : Fragment() {
     private var _binding: FragmentReferralBinding? = null
     private val binding get() = _binding!!
-
+    private var referralImageUri: Uri? = null
     private val viewModel: ReferralViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,7 +66,11 @@ class ReferralFragment : Fragment() {
         setupClickListeners()
         observeReferralState()
         observeWithdrawState()
-
+        lifecycleScope.launch {
+            referralImageUri = withContext(Dispatchers.IO) {
+                getReferralImageUri()
+            }
+        }
         withInternet {
             viewModel.getReferralHistory()
         }
@@ -112,7 +118,7 @@ class ReferralFragment : Fragment() {
         https://play.google.com/store/apps/details?id=com.thekainchee.user
     """.trimIndent()
 
-        val imageUri = getReferralImageUri()
+        val imageUri = referralImageUri
 
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "image/png"
