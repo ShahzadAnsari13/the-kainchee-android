@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
@@ -233,6 +234,26 @@ class CancelBookingBottomSheet : BottomSheetDialogFragment() {
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        val bottomSheet =
+            dialog?.findViewById<View>(
+                com.google.android.material.R.id.design_bottom_sheet
+            ) ?: return
+
+        val behavior = BottomSheetBehavior.from(bottomSheet)
+
+        val displayMetrics = resources.displayMetrics
+        val screenHeight = displayMetrics.heightPixels
+
+        bottomSheet.layoutParams.height = (screenHeight * 0.94).toInt()
+        bottomSheet.requestLayout()
+
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        behavior.isDraggable = true
     }
     override fun onDestroyView() {
         super.onDestroyView()

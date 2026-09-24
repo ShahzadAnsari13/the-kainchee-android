@@ -13,9 +13,8 @@
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/white"
+        android:background="@color/primaryColor"
         app:navigationIcon="@drawable/ic_back"
-        app:navigationIconTint="@color/black"
         app:contentInsetStartWithNavigation="0dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,7 +29,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="Parlour Details"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"/>
 

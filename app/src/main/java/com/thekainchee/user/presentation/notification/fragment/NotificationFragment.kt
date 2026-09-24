@@ -44,22 +44,10 @@ class NotificationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         adapter = NotificationAdapter()
         observeState()
-        if(!NetworkUtils.isInternetAvailable(requireContext())){
-            showNoInternetState("Try Again"){
-                if(!NetworkUtils.isInternetAvailable(requireContext())){
-                    Snackbar.make(
-                        binding.root,
-                        "No Internet Connection",
-                        Snackbar.LENGTH_SHORT
-                    ).show()
-                }else{
-                    binding.stateView.hide()
-                    viewModel.getNotifications()
-                }
-            }
-        }else{
+        withInternet {
             viewModel.getNotifications()
         }
+
         binding.rvNotifications.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@NotificationFragment.adapter

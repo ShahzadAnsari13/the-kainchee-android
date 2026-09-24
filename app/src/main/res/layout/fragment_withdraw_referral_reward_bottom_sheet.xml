@@ -1,0 +1,914 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:background="@drawable/bg_support_bottom_sheet">
+
+    <!-- Confirmation State -->
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/layoutConfirmation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingStart="22dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="22dp"
+            android:paddingBottom="24dp">
+
+            <!-- Bottom Sheet Header -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="28dp">
+
+                <View
+                    android:layout_width="38dp"
+                    android:layout_height="4dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/bg_bottom_sheet_handle" />
+
+            </FrameLayout>
+
+
+            <!-- Premium Wallet Illustration -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:layout_marginTop="12dp"
+                app:cardBackgroundColor="@color/lightPrimaryColor"
+                app:cardCornerRadius="64dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
+
+                <ImageView
+                    android:layout_width="88dp"
+                    android:layout_height="88dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_withdraw_wallet" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/tvConfirmationTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="Withdraw Referral Reward"
+                android:textColor="@color/primaryColor"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+
+            <!-- Message -->
+            <TextView
+                android:id="@+id/tvConfirmationMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:gravity="center"
+                android:lineSpacingExtra="2dp"
+                android:text="Your current reward will be transferred\nto your wallet."
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
+
+
+            <!-- Amount Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                app:cardBackgroundColor="@color/lightPrimaryColor"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#E8E8FF"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <!-- Wallet Icon -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="54dp"
+                        android:layout_height="54dp"
+                        app:cardBackgroundColor="#ffffff"
+                        app:cardCornerRadius="27dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_withdrawal_wallet"
+                            app:tint="@color/primaryColor" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+
+                    <!-- Amount -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Amount to withdraw"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tvWithdrawAmount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="₹35"
+                            android:textColor="@color/primaryColor"
+                            android:textSize="27sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+
+                    <!-- Subtle Reward Badge -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        app:cardBackgroundColor="@android:color/white"
+                        app:cardCornerRadius="21dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_check"
+                            app:tint="@color/primaryColor" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- Instant Transfer -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
+                    app:cardBackgroundColor="#E7F8EF"
+                    app:cardCornerRadius="23dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_check"
+                        app:tint="@color/primaryColor" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Instant Transfer"
+                        android:textColor="@color/primaryColor"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Amount will be credited to your wallet"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <!-- Secure & Safe -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
+                    app:cardBackgroundColor="#E9F1FF"
+                    app:cardCornerRadius="23dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_wallet_security"
+
+                        app:tint="@color/primaryColor"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Secure &amp; Safe"
+                        android:textColor="@color/primaryColor"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Your transactions are 100% secure"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <!-- No Extra Charges -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
+                    app:cardBackgroundColor="#F0EAFF"
+                    app:cardCornerRadius="23dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_flash"
+                        app:tint="@color/primaryColor" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No Extra Charges"
+                        android:textColor="@color/primaryColor"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="You will receive the full amount"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <!-- Confirm Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnConfirmWithdraw"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="24dp"
+                android:text="Confirm &amp; Withdraw"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/primaryColor"
+                app:cornerRadius="16dp"
+                app:elevation="2dp" />
+
+
+            <!-- Secure Footer -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_lock"
+                    app:tint="@color/text_secondary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:text="Powered by a secure payment partner"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+    <!-- Processing State -->
+    <!-- Processing State -->
+    <LinearLayout
+        android:id="@+id/layoutProcessing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="22dp"
+        android:visibility="gone"
+        android:paddingTop="12dp"
+        android:paddingEnd="22dp"
+        android:paddingBottom="28dp">
+
+        <!-- Bottom Sheet Handle -->
+        <View
+            android:layout_width="38dp"
+            android:layout_height="4dp"
+            android:background="@drawable/bg_bottom_sheet_handle" />
+
+
+        <!-- Processing Illustration -->
+        <FrameLayout
+            android:layout_width="145dp"
+            android:layout_height="145dp"
+            android:layout_marginTop="6dp">
+
+            <!-- Soft Outer Circle -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="126dp"
+                android:layout_height="126dp"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="#EFFAF8"
+                app:cardCornerRadius="63dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp" />
+
+            <!-- Inner Circle -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="108dp"
+                android:layout_height="108dp"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="#E5F7F4"
+                app:cardCornerRadius="54dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp" />
+
+            <!-- Circular Progress Ring -->
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/processingProgress"
+                android:layout_width="145dp"
+                android:layout_height="145dp"
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                app:indicatorColor="@color/primaryColor"
+                app:indicatorInset="0dp"
+                app:indicatorSize="137dp"
+                app:trackColor="#DCEFEB"
+                app:trackThickness="6dp" />
+
+            <!-- Wallet Illustration -->
+            <ImageView
+                android:id="@+id/ivProcessingWallet"
+                android:layout_width="68dp"
+                android:layout_height="68dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_withdraw_wallet" />
+
+        </FrameLayout>
+
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvProcessingTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Processing Your Reward"
+            android:textColor="@color/primaryColor"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+
+        <!-- Message -->
+        <TextView
+            android:id="@+id/tvProcessingMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:lineSpacingExtra="3dp"
+            android:text="Please wait while we transfer your referral&#10;reward to your wallet."
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
+
+
+        <!-- Amount Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardBackgroundColor="#EFFAF8"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#CDEDE8"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <!-- Wallet Icon Background -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    app:cardBackgroundColor="#E2F6F2"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:layout_width="58dp"
+                        android:layout_height="58dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_withdraw_wallet"
+                   />
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <!-- Amount Details -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Amount being transferred"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tvProcessingAmount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="₹35"
+                        android:textColor="@color/primaryColor"
+                        android:textSize="30sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+    <!-- Success State -->
+    <LinearLayout
+        android:id="@+id/layoutSuccess"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="16dp"
+        android:visibility="gone"
+        android:paddingEnd="24dp"
+        android:paddingBottom="28dp">
+
+        <!-- Handle -->
+        <View
+            android:layout_width="38dp"
+            android:layout_height="4dp"
+            android:background="@drawable/bg_bottom_sheet_handle" />
+
+        <!-- Success Illustration -->
+        <FrameLayout
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="16dp">
+
+            <!-- Soft background -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="132dp"
+                android:layout_height="132dp"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="@color/lightPrimaryColor"
+                app:cardCornerRadius="66dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp" />
+
+            <!-- Inner background -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="112dp"
+                android:layout_height="112dp"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="#E5F7F4"
+                app:cardCornerRadius="56dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp" />
+
+            <!-- Existing Lottie -->
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottieSuccess"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="false"
+                app:lottie_rawRes="@raw/booking_success" />
+
+        </FrameLayout>
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvSuccessTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Reward Added Successfully"
+            android:textColor="@color/primaryColor"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <!-- Message -->
+        <TextView
+            android:id="@+id/tvSuccessMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:text="Your referral reward has been added to your wallet."
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
+
+        <!-- Amount Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:cardBackgroundColor="@color/lightPrimaryColor"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="82dp"
+                android:orientation="horizontal"
+                android:paddingStart="18dp"
+                android:paddingTop="14dp"
+                android:paddingEnd="18dp"
+                android:paddingBottom="14dp">
+
+                <!-- Wallet Icon -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:cardBackgroundColor="@android:color/white"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_withdraw_wallet"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Amount Details -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Added to wallet"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvSuccessAmount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="₹35"
+                        android:textColor="@color/primaryColor"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <!-- Success Check -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    app:cardBackgroundColor="@color/primaryColor"
+                    app:cardCornerRadius="19dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="✓"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Done Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDone"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="18dp"
+            android:text="Done"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/primaryColor"
+            app:cornerRadius="16dp"
+            app:elevation="0dp" />
+
+    </LinearLayout>
+    <!-- Error State -->
+    <LinearLayout
+        android:id="@+id/layoutError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="22dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="22dp"
+        android:visibility="gone"
+        android:paddingBottom="28dp">
+
+        <!-- Header -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="32dp">
+
+            <!-- Handle -->
+            <View
+                android:layout_width="38dp"
+                android:layout_height="4dp"
+                android:layout_gravity="center_horizontal|top"
+                android:background="@drawable/bg_bottom_sheet_handle" />
+
+            <!-- Close -->
+            <ImageView
+                android:id="@+id/ivCloseError"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="end|top"
+                android:padding="5dp"
+                android:contentDescription="@null"
+
+                android:background="@drawable/bg_share_close"
+                android:src="@drawable/ic_close"
+                app:tint="@color/primaryColor" />
+
+        </FrameLayout>
+
+
+        <!-- Error Icon -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+            android:layout_marginTop="18dp"
+            app:cardBackgroundColor="#FFF0F0"
+            app:cardCornerRadius="38dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="@color/booking_cancelled"
+                app:cardCornerRadius="23dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_close"
+                    app:tint="@android:color/white" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvErrorTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Something Went Wrong"
+            android:textColor="@color/primaryColor"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+
+        <!-- Message -->
+        <TextView
+            android:id="@+id/tvErrorMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="We couldn't transfer your reward.\nPlease try again."
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            android:lineSpacingExtra="2dp" />
+
+
+        <!-- Support Info -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            app:cardBackgroundColor="#FFF0F0"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_info"
+                    app:tint="@color/booking_cancelled" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:text="If the problem persists,\nplease contact our support team."
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp"
+                    android:lineSpacingExtra="2dp" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <!-- Retry -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRetryWithdraw"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="16dp"
+            android:text="Try Again"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/booking_cancelled"
+            app:cornerRadius="14dp" />
+
+
+        <!-- Contact Support -->
+        <TextView
+            android:id="@+id/tvContactSupport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Contact Support"
+            android:textColor="@color/primaryColor"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <include
+        android:id="@+id/stateView"
+        android:visibility="gone"
+        layout="@layout/view_state"/>
+</FrameLayout>

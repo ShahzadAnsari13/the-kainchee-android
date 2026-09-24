@@ -27,6 +27,8 @@ import com.thekainchee.user.presentation.profile.ProfileActivity
 import com.thekainchee.user.presentation.profile.bottomSheet.AccountSecurityBottomSheet
 import com.thekainchee.user.presentation.profile.bottomSheet.EditProfileBottomSheet
 import com.thekainchee.user.presentation.profile.bottomSheet.NotificationSettingsBottomSheet
+import com.thekainchee.user.presentation.profile.bottomSheet.PrivacyPolicyDetailBottomSheet
+import com.thekainchee.user.presentation.profile.bottomSheet.TermsAndConditionsBottomSheet
 import com.thekainchee.user.presentation.profile.model.ProfileUiModel
 import com.thekainchee.user.presentation.profile.state.EditProfileEvent
 import com.thekainchee.user.presentation.profile.state.ProfileState
@@ -146,6 +148,7 @@ class MyProfileFragment : Fragment() {
             tvTitle.text = "About App"
             tvSubtitle.text = "Version 1.0.0"
             tvStatus.isGone = true
+            ivArrow.isGone = true
         }
     }
     private fun  setupQuickActions(){
@@ -284,6 +287,14 @@ class MyProfileFragment : Fragment() {
                     childFragmentManager,
                     "SupportBottomSheet"
                 )
+        }
+        binding.supportSection.itemPrivacyPolicy.root.setOnClickListener {
+            PrivacyPolicyDetailBottomSheet()
+                .show(parentFragmentManager, "PrivacyPolicyDetailBottomSheet")
+        }
+        binding.supportSection.itemTermsConditions.root.setOnClickListener {
+            TermsAndConditionsBottomSheet()
+                .show(parentFragmentManager,"TermsAndConditionsBottomSheet")
         }
     }
 

@@ -30,5 +30,18 @@
 
     <fragment android:id="@+id/referralFragment"
         android:name="com.thekainchee.user.presentation.referral.fragment.ReferralFragment"
-        android:label="Referral" />
+        android:label="Referral" >
+        <action
+            android:id="@+id/action_referralFragment_to_referralHistoryFragment"
+            app:destination="@id/referralHistoryFragment" />
+    </fragment>
+
+    <fragment android:id="@+id/referralHistoryFragment"
+        android:name="com.thekainchee.user.presentation.referral.fragment.ReferralHistoryFragment"
+        android:label="Referral History" >
+
+        <argument
+            android:name="referral_history"
+            app:argType="com.thekainchee.user.presentation.referral.model.ReferralHistory" />
+    </fragment>
 </navigation>

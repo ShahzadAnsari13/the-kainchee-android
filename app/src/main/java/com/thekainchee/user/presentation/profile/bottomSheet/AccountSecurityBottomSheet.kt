@@ -39,4 +39,8 @@ class AccountSecurityBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 }

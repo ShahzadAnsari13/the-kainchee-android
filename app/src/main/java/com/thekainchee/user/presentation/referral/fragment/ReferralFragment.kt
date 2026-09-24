@@ -19,12 +19,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentReferralBinding
 import com.thekainchee.user.presentation.common.extensions.hide
 import com.thekainchee.user.presentation.common.extensions.show
 import com.thekainchee.user.presentation.common.state.StateViewData
+import com.thekainchee.user.presentation.profile.ProfileActivity
+import com.thekainchee.user.presentation.referral.bottomSheet.WithdrawReferralRewardBottomSheet
 import com.thekainchee.user.presentation.referral.model.ReferralHistory
 import com.thekainchee.user.presentation.referral.model.ReferralItem
 import com.thekainchee.user.presentation.referral.state.ReferralHistoryState
@@ -44,6 +47,7 @@ class ReferralFragment : Fragment() {
     private val binding get() = _binding!!
     private var referralImageUri: Uri? = null
     private val viewModel: ReferralViewModel by viewModels()
+    private lateinit var currentReferralHistory: ReferralHistory
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -65,7 +69,6 @@ class ReferralFragment : Fragment() {
 
         setupClickListeners()
         observeReferralState()
-        observeWithdrawState()
         lifecycleScope.launch {
             referralImageUri = withContext(Dispatchers.IO) {
                 getReferralImageUri()
@@ -80,11 +83,26 @@ class ReferralFragment : Fragment() {
     private fun setupClickListeners() {
 
         binding.btnWithdrawReward.setOnClickListener {
-            viewModel.withdrawReferralReward()
+            val reward = currentReferralHistory?.currentReferralRewards ?: 0
+
+            if (reward > 0) {
+                WithdrawReferralRewardBottomSheet
+                    .newInstance(reward)
+                    .show(
+                        parentFragmentManager,
+                        "WithdrawReferralRewardBottomSheet"
+                    )
+            }
         }
 
         binding.tvViewAll.setOnClickListener {
-            // ReferralHistoryFragment navigation
+            val action =
+                ReferralFragmentDirections
+                    .actionReferralFragmentToReferralHistoryFragment(
+                        currentReferralHistory
+                    )
+
+            findNavController().navigate(action)
         }
 
         binding.ivCopyReferralCode.setOnClickListener {
@@ -197,6 +215,7 @@ class ReferralFragment : Fragment() {
                             binding.referralShimmer.visibility = View.GONE
                             binding.stateView.hide()
                             binding.referralContent.visibility = View.VISIBLE
+                            currentReferralHistory = state.data
                             bindReferralData(state.data)
                         }
 
@@ -263,33 +282,7 @@ class ReferralFragment : Fragment() {
         )
     }
 
-    private fun observeWithdrawState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(
-                Lifecycle.State.STARTED
-            ) {
-                viewModel.withdrawReferralState.collect { state ->
 
-                    when (state) {
-
-                        WithdrawReferralState.Idle -> Unit
-
-                        WithdrawReferralState.Loading -> {
-                            binding.btnWithdrawReward.isEnabled = false
-                        }
-
-                        is WithdrawReferralState.Success -> {
-                            binding.btnWithdrawReward.isEnabled = true
-                        }
-
-                        is WithdrawReferralState.Error -> {
-                            binding.btnWithdrawReward.isEnabled = true
-                        }
-                    }
-                }
-            }
-        }
-    }
     private fun bindReferralData(data: ReferralHistory) {
 
         binding.tvReferralCode.text = data.referralCode
@@ -320,7 +313,6 @@ class ReferralFragment : Fragment() {
                 }
         }
         binding.tvViewAll.isVisible = data.referrals.size > 1
-
         val latestReferral = data.referrals.firstOrNull()
 
         if (latestReferral != null) {
@@ -329,7 +321,8 @@ class ReferralFragment : Fragment() {
             binding.cardReferralItem1.isVisible = false
         }
 
-        binding.btnWithdrawReward.isEnabled =
+
+        binding.btnWithdrawReward.isVisible =
             data.currentReferralRewards > 0
     }
 
@@ -430,6 +423,10 @@ class ReferralFragment : Fragment() {
             number % 10 == 3 -> "rd"
             else -> "th"
         }
+    }
+    override fun onResume() {
+        super.onResume()
+        (requireActivity() as ProfileActivity).setToolbarTitle("Refer & Earn")
     }
 
     override fun onDestroyView() {

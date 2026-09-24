@@ -1,7 +1,5 @@
-package com.thekainchee.user.presentation.booking.bottomSheet
+package com.thekainchee.user.presentation.profile.bottomSheet
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,21 +9,18 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.FragmentSupportBottomSheetBinding
+import com.thekainchee.user.databinding.FragmentTermsAndConditionsBottomSheetBinding
 
-
-class SupportBottomSheet : BottomSheetDialogFragment() {
-    private var _binding: FragmentSupportBottomSheetBinding? = null
+class TermsAndConditionsBottomSheet : BottomSheetDialogFragment() {
+    private var _binding: FragmentTermsAndConditionsBottomSheetBinding? = null
     private val binding get() = _binding!!
-
-    companion object {
-        private const val SUPPORT_NUMBER = "+919876543210"
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentSupportBottomSheetBinding.inflate(
+        // Inflate the layout for this fragment
+        _binding = FragmentTermsAndConditionsBottomSheetBinding.inflate(
             inflater,
             container,
             false
@@ -33,31 +28,14 @@ class SupportBottomSheet : BottomSheetDialogFragment() {
 
         return binding.root
     }
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?
-    ) {
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        setupClickListeners()
-    }
-
-    private fun setupClickListeners() {
-
-        binding.btnCallSupport.setOnClickListener {
-
-            val intent = Intent(
-                Intent.ACTION_DIAL,
-                Uri.parse("tel:$SUPPORT_NUMBER")
-            )
-
-            startActivity(intent)
-        }
-
-        binding.tvCancel.setOnClickListener {
+        binding.btnClose.setOnClickListener {
             dismiss()
         }
     }
+
     override fun onStart() {
         super.onStart()
 
@@ -77,11 +55,9 @@ class SupportBottomSheet : BottomSheetDialogFragment() {
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
         behavior.isDraggable = true
     }
-
-    override fun onDestroyView() {
-
+    override fun onDestroy() {
+        super.onDestroy()
         _binding = null
-
-        super.onDestroyView()
     }
+
 }

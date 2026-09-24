@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:shimmer_auto_start="true"
+        android:visibility="gone"
         app:shimmer_duration="1000">
 
         <include layout="@layout/layout_referral_shimmer"/>
@@ -21,7 +22,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        android:visibility="gone"
         android:overScrollMode="never">
 
         <LinearLayout

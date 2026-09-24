@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_bottom_sheet_white">
+
+    <!-- Bottom Sheet Handle -->
+    <View
+        android:layout_width="42dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_bottom_sheet_handle" />
+
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="12dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:gravity="center"
+                android:background="@drawable/bg_privacy_icon">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_document"
+                    android:contentDescription="@null" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Terms &amp; Conditions"
+                    android:textColor="#17181C"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Please read before using THE KAINCHEE"
+                    android:textColor="#777A82"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnClose"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="11dp"
+            android:background="@drawable/bg_share_close"
+            android:src="@drawable/ic_close"
+            app:tint="@color/black"
+            android:contentDescription="Close" />
+
+    </LinearLayout>
+
+
+    <!-- Last Updated -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="14dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="13dp"
+        android:background="@drawable/bg_privacy_last_updated">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_document"
+            android:contentDescription="@null" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last Updated"
+                android:textColor="#777A82"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/tvLastUpdated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="September 2026"
+                android:textColor="#17181C"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <!-- Main Scrollable Content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="28dp">
+
+
+            <!-- INTRO -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="18dp"
+                android:background="@drawable/bg_privacy_intro">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Before you get started"
+                    android:textColor="#17181C"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:text="These Terms &amp; Conditions explain the rules that apply when you use THE KAINCHEE mobile applications, website, and related services. By using our services, you agree to these Terms."
+                    android:textColor="#64676E"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="3dp" />
+
+            </LinearLayout>
+
+
+            <!-- Introduction -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="Introduction"
+                android:textColor="#17181C"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/bg_privacy_card">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Welcome to THE KAINCHEE. These Terms &amp; Conditions govern your use of THE KAINCHEE mobile applications, website, and related services. By creating an account or using THE KAINCHEE services, you agree to these Terms &amp; Conditions. If you do not agree with these Terms, please do not use our services."
+                    android:textColor="#686B72"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="3dp" />
+
+            </LinearLayout>
+
+
+            <!-- Account & Access -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="Account &amp; Access"
+                android:textColor="#17181C"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/bg_privacy_card">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="• You create and access your account using your mobile number and OTP verification.&#10;&#10;• You are responsible for keeping your account and OTP secure and should not share your account access with another person.&#10;&#10;• You should provide accurate information when using our services.&#10;&#10;• One mobile number should be used for one user account.&#10;&#10;• You are responsible for activities carried out through your account.&#10;&#10;• THE KAINCHEE may restrict or suspend account access in cases of misuse, fraud, unauthorized activity, or violation of these Terms.&#10;&#10;• Repeated qualifying cancellations and No-Shows may result in temporary account restrictions as described below.&#10;&#10;• The account deletion feature may not currently be available directly within the app."
+                    android:textColor="#686B72"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="3dp" />
+
+            </LinearLayout>
+
+
+            <!-- Booking & Appointments -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="Booking &amp; Appointments"
+                android:textColor="#17181C"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/bg_privacy_card">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="• THE KAINCHEE allows users to discover available parlours, services, stylists, and appointment slots and make bookings through the platform.&#10;&#10;• When making a booking, you select the parlour, service, stylist, date, and available time slot.&#10;&#10;• For online payments, you have 10 minutes to complete the payment after initiating the payment process. If payment is successfully completed within this period, the booking is confirmed. If payment is not completed within the permitted period, the booking is cancelled.&#10;&#10;• Bookings made using Wallet or Pay at Parlour are confirmed immediately once the booking is successfully created.&#10;&#10;• Relevant booking information may be provided to the selected parlour and assigned stylist where necessary to prepare for and provide the booked service.&#10;&#10;• You are expected to attend your appointment at the selected date and time."
+                    android:textColor="#686B72"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="3dp" />
+
+            </LinearLayout>
+
+
+            <!-- Cancellation & Refunds -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="Cancellation &amp; Refunds"
+                android:textColor="#17181C"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/bg_privacy_card">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="• You may cancel a booking subject to the applicable cancellation rules.&#10;&#10;• A cancellation made 24 hours or more before the appointment does not count toward the repeated cancellation restriction described below.&#10;&#10;• A cancellation made within 24 hours of the appointment currently remains eligible for a 100% refund, where a refund is applicable, but it may count toward the user's cancellation record.&#10;&#10;• For eligible paid cancellations, the current refund amount is 100%, and the refund may be credited to your THE KAINCHEE Wallet.&#10;&#10;• No-Show: If you do not attend your appointment, the booking may be marked as a No-Show. Currently, no refund is provided for a No-Show.&#10;&#10;• Pay at Parlour bookings do not involve an advance payment through THE KAINCHEE and therefore do not have an advance payment to refund."
+                    android:textColor="#686B72"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="3dp" />
+
+            </LinearLayout>
+
+
+            <!-- Repeated Cancellations & No-Shows -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="Repeated Cancellations &amp; No-Shows"
+                android:textColor="#17181C"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/bg_privacy_card">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="To help maintain reliable appointment availability:&#10;&#10;• Cancellations made within 24 hours and No-Shows may be counted together for restriction purposes.&#10;&#10;• If you have 3 qualifying cancellations and/or No-Shows within a 30-day period, THE KAINCHEE may temporarily restrict your account for up to 30 days and/or temporarily disable the Pay at Parlour payment option.&#10;&#10;• Cancellations made 24 hours or more before the appointment are not included in this 3-event restriction count.&#10;&#10;• After the applicable restriction, Pay at Parlour may become available again after you successfully attend 3 subsequently booked services."
+                    android:textColor="#686B72"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="3dp" />
+
+            </LinearLayout>
+
+
+            <!-- Wallet -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="Wallet"
+                android:textColor="#17181C"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/bg_privacy_card">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="• You may use your THE KAINCHEE Wallet to pay for eligible bookings.&#10;&#10;• Wallet payments are processed immediately, and the booking is confirmed after successful payment.&#10;&#10;• Eligible refunds may be credited to your THE KAINCHEE Wallet.&#10;&#10;• Eligible referral or reward benefits may also be credited to your Wallet.&#10;&#10;• Your Wallet balance may be used for eligible future bookings and other supported uses within THE KAINCHEE.&#10;&#10;• Wallet benefits are subject to the applicable rules of the service."
+                    android:textColor="#686B72"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="3dp" />
+
+            </LinearLayout>
+
+
+            <!-- Referral & Rewards -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="Referral &amp; Rewards"
+                android:textColor="#17181C"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/bg_privacy_card">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="• THE KAINCHEE may provide users with a unique referral code.&#10;&#10;• You may share your referral code with other users.&#10;&#10;• A referred user may use the referral code during the applicable referral process.&#10;&#10;• Referral rewards are provided when the applicable qualifying referral requirements are completed.&#10;&#10;• Eligible referral rewards are credited to the THE KAINCHEE Wallet.&#10;&#10;• Referral benefits are not intended to be earned repeatedly through the same qualifying referral and are subject to the applicable referral rules.&#10;&#10;• Referral rewards are not cash withdrawals and are intended for eligible use through THE KAINCHEE."
+                    android:textColor="#686B72"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="3dp" />
+
+            </LinearLayout>
+
+
+            <!-- Ratings & Reviews -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="Ratings &amp; Reviews"
+                android:textColor="#17181C"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/bg_privacy_card">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="• After completing a booking, you may provide a rating for the parlour and the staff/stylist.&#10;&#10;• Parlour and staff ratings use a 1–5 star scale.&#10;&#10;• You may optionally provide a written review.&#10;&#10;• Ratings and reviews are associated with the relevant booking and may be displayed as part of THE KAINCHEE's rating system.&#10;&#10;• A booking may be rated only once.&#10;&#10;• Ratings and reviews should reflect your genuine experience and should not contain abusive, misleading, or fraudulent content.&#10;&#10;• THE KAINCHEE may use ratings and reviews to display service feedback and help understand and improve service quality.&#10;&#10;• Editing or deleting a submitted rating or review may not currently be available."
+                    android:textColor="#686B72"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="3dp" />
+
+            </LinearLayout>
+
+
+            <!-- Service Availability & Our Role -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="Service Availability &amp; Our Role"
+                android:textColor="#17181C"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/bg_privacy_card">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="• THE KAINCHEE is a platform that helps users discover parlours, services, stylists, and available appointment slots and facilitates bookings.&#10;&#10;• The actual salon/parlour service is provided by the selected parlour and stylist.&#10;&#10;• Service availability, pricing, operating hours, and appointment slots may change and may be updated from time to time.&#10;&#10;• A booking or service may be affected by parlour-side issues, availability, technical issues, maintenance, network problems, or other circumstances beyond reasonable control.&#10;&#10;• THE KAINCHEE will make reasonable efforts to maintain accurate and useful information, but cannot guarantee that all service information will always be available or error-free.&#10;&#10;• For issues related to a booking or service, users may contact THE KAINCHEE through the Contact Support section in the app."
+                    android:textColor="#686B72"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="3dp" />
+
+            </LinearLayout>
+
+
+            <!-- User Responsibilities & Prohibited Use -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="User Responsibilities &amp; Prohibited Use"
+                android:textColor="#17181C"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/bg_privacy_card">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="You agree to:&#10;&#10;• Provide accurate information when using THE KAINCHEE.&#10;&#10;• Keep your account and OTP secure.&#10;&#10;• Make bookings with a genuine intention to attend.&#10;&#10;• Cancel bookings in a timely manner when you cannot attend.&#10;&#10;• Avoid creating fake or multiple accounts to misuse referral or reward benefits.&#10;&#10;• Submit genuine ratings and reviews based on your actual experience.&#10;&#10;• Use THE KAINCHEE only for lawful and authorized purposes.&#10;&#10;You must not use THE KAINCHEE for fraudulent, abusive, illegal, or unauthorized activities."
+                    android:textColor="#686B72"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="3dp" />
+
+            </LinearLayout>
+
+
+            <!-- Intellectual Property -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="Intellectual Property"
+                android:textColor="#17181C"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/bg_privacy_card">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="THE KAINCHEE's name, logo, branding, app design, user interface, text, graphics, software, and related content are owned by or used by THE KAINCHEE and are protected by applicable laws.&#10;&#10;You are granted a limited, personal, and non-transferable right to use THE KAINCHEE services for their intended purpose.&#10;&#10;You may not copy, modify, distribute, reproduce, commercially reuse, or otherwise exploit THE KAINCHEE's software, branding, or content without appropriate permission.&#10;&#10;Content submitted by users, such as ratings and reviews, may be used by THE KAINCHEE to operate, display, and improve its services."
+                    android:textColor="#686B72"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="3dp" />
+
+            </LinearLayout>
+
+
+            <!-- Disclaimer & Limitation of Liability -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="Disclaimer &amp; Limitation of Liability"
+                android:textColor="#17181C"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/bg_privacy_card">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="• THE KAINCHEE facilitates bookings between users and selected parlours/stylists. The actual salon service is provided by the selected parlour and stylist.&#10;&#10;• The selected parlour is primarily responsible for the actual service, service quality, staff conduct, hygiene, treatment, and service results.&#10;&#10;• THE KAINCHEE does not guarantee that every parlour, service, price, availability, timing, or other information will always be accurate, complete, or continuously available.&#10;&#10;• Services may temporarily become unavailable because of technical issues, maintenance, network problems, or circumstances beyond reasonable control.&#10;&#10;• THE KAINCHEE may take appropriate action against fraudulent, abusive, unauthorized, or prohibited activity, including restricting bookings or account access.&#10;&#10;• If you experience an issue with a booking or service, you may contact us through the Contact Support section in the app."
+                    android:textColor="#686B72"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="3dp" />
+
+            </LinearLayout>
+
+
+            <!-- Changes to These Terms -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="Changes to These Terms"
+                android:textColor="#17181C"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/bg_privacy_card">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="THE KAINCHEE may update these Terms &amp; Conditions from time to time to reflect changes in our services, features, policies, or applicable requirements. Updated Terms will be made available through our user-facing services, and the Last Updated date will be revised accordingly."
+                    android:textColor="#686B72"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="3dp" />
+
+            </LinearLayout>
+
+
+            <!-- Contact Us -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="Contact Us"
+                android:textColor="#17181C"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <!-- Contact Support CTA -->
+            <LinearLayout
+                android:id="@+id/layoutContactSupport"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:background="@drawable/bg_privacy_support">
+
+                <LinearLayout
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:gravity="center"
+                    android:background="@drawable/bg_privacy_support_icon">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/ic_support"
+                        android:contentDescription="@null" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Need help?"
+                        android:textColor="#17181C"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="Contact us through the Contact Support section in the app."
+                        android:textColor="#686B72"
+                        android:textSize="12sp"
+                        android:lineSpacingExtra="2dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <!-- Bottom Note -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:gravity="center"
+                android:text="Thank you for choosing THE KAINCHEE."
+                android:textColor="#92959C"
+                android:textSize="12sp"
+                android:paddingBottom="12dp" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>
