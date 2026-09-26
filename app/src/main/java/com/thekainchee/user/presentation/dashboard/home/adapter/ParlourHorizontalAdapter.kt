@@ -33,7 +33,7 @@ class ParlourHorizontalAdapter(
 
             binding.tvName.text = item.name
             binding.tvType.text = item.type
-            binding.tvRating.text = "⭐ ${item.rating}"
+            binding.tvRating.text = "${item.rating}"
             binding.tvDistance.text = "${item.distance} km"
 
             // Image load

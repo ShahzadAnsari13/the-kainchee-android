@@ -17,12 +17,9 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_margin="24dp"
-        android:visibility="gone"
         android:background="@drawable/bg_bottom_nav"
-        android:elevation="8dp"
 
         app:itemActiveIndicatorStyle="@style/BottomNavIndicator"
         app:itemIconSize="24dp"
@@ -34,20 +31,42 @@
         app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
         app:menu="@menu/bottom_nav_menu" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabBooking"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="30dp"
-
-        android:visibility="gone"
-        android:backgroundTint="@color/white"
-        android:src="@drawable/ic_cart"
-        android:translationY="-60dp"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/quickBookingButton"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:elevation="10dp"
+        app:cardBackgroundColor="#D4AF37"
+        app:cardCornerRadius="32dp"
+        app:cardElevation="8dp"
         app:layout_anchor="@id/bottomNavigation"
-        app:layout_anchorGravity="top|end"
+        app:layout_anchorGravity="top|center"
+        app:strokeWidth="0dp">
 
-        app:tint="@color/primaryColor" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="12dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_quick_booking"
+                app:tint="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quick"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

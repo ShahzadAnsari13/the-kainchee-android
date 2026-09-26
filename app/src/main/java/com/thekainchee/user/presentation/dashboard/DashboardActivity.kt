@@ -2,13 +2,18 @@ package com.thekainchee.user.presentation.dashboard
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.ActivityDashboardBinding
 import com.thekainchee.user.presentation.base.SessionAwareActivity
+import com.thekainchee.user.presentation.booking.fragment.MyBookings
 import com.thekainchee.user.presentation.dashboard.home.fragment.HomeFragment
+import com.thekainchee.user.presentation.profile.fragment.MyProfileFragment
+import com.thekainchee.user.presentation.wallet.fragment.WalletTransactionFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,51 +30,53 @@ class DashboardActivity :  SessionAwareActivity() {
 
         binding.bottomNavigation.setOnItemSelectedListener { item ->
 
-            when(item.itemId){
+            when (item.itemId) {
 
                 R.id.menu_home -> {
-                    Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show()
+                    loadFragment(HomeFragment())
                     true
                 }
 
                 R.id.menu_booking -> {
-                    Toast.makeText(this, "Bookings", Toast.LENGTH_SHORT).show()
+                    loadFragment(MyBookings())
                     true
                 }
 
-                R.id.menu_categorie -> {
-                    Toast.makeText(this, "Categories", Toast.LENGTH_SHORT).show()
+                R.id.menu_wallet -> {
+                    loadFragment(WalletTransactionFragment())
+                    true
+                }
+
+                R.id.menu_profile -> {
+                    loadFragment(MyProfileFragment())
                     true
                 }
 
                 else -> false
             }
-
         }
-        supportFragmentManager.addOnBackStackChangedListener {
+        binding.quickBookingButton?.setOnClickListener {
+            Snackbar.make(binding.root, "Coming Soon", Snackbar.LENGTH_SHORT).show()
+        }
 
-            val fragment = supportFragmentManager.findFragmentById(R.id.container)
+        onBackPressedDispatcher.addCallback(this) {
 
-            when (fragment?.tag) {
+            if (binding.bottomNavigation.selectedItemId != R.id.menu_home) {
 
-                "HOME" -> binding.bottomNavigation.selectedItemId = R.id.menu_home
+                binding.bottomNavigation.selectedItemId = R.id.menu_home
+                loadFragment(HomeFragment())
 
-                "BOOKING" -> binding.bottomNavigation.selectedItemId = R.id.menu_booking
-
-                "CATEGORY" -> binding.bottomNavigation.selectedItemId = R.id.menu_categorie
+            } else {
+                finish()
             }
         }
     }
 
+
+
     private fun loadFragment(fragment: Fragment) {
-
-        supportFragmentManager.popBackStack(
-            null,
-            FragmentManager.POP_BACK_STACK_INCLUSIVE
-        )
-
         supportFragmentManager.beginTransaction()
-            .replace(R.id.container,fragment)
+            .replace(R.id.container, fragment)
             .commit()
     }
 

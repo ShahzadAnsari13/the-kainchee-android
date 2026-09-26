@@ -37,8 +37,6 @@ class TrendingServiceAdapter(private val onItemClick : (ServiceUI) -> Unit)
     inner class ViewHolder(private val binding: ItemTrendingServiceBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(item : ServiceUI){
             binding.tvServiceName.text = item.serviceName
-            binding.tvPrice.text = "₹${item.avgPrice}"
-            binding.tvDuration.text = "${item.avgDuration}min"
             Glide.with(binding.root)
                 .load(item.image)
                 .placeholder(R.drawable.ic_no_data)
