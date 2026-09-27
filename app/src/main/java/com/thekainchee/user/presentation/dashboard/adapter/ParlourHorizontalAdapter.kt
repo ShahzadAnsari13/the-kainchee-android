@@ -1,4 +1,4 @@
-package com.thekainchee.user.presentation.dashboard.home.adapter
+package com.thekainchee.user.presentation.dashboard.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.thekainchee.user.databinding.ItemParlourHorizontalBinding
-import com.thekainchee.user.presentation.dashboard.home.model.ParlourUI
+import com.thekainchee.user.presentation.dashboard.model.ParlourUI
 
 class ParlourHorizontalAdapter(
     private val onItemClick: (ParlourUI) -> Unit
@@ -33,8 +33,8 @@ class ParlourHorizontalAdapter(
 
             binding.tvName.text = item.name
             binding.tvType.text = item.type
-            binding.tvRating.text = "${item.rating}"
-            binding.tvDistance.text = "${item.distance} km"
+            binding.tvRating.text = "★ ${item.rating}"
+            binding.tvDistance.text = "⚑ ${item.distance} km"
 
             // Image load
             Glide.with(binding.root.context)

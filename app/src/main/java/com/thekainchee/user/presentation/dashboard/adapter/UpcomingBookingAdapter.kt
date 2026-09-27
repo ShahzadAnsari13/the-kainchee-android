@@ -1,5 +1,6 @@
-package com.thekainchee.user.presentation.dashboard.home.adapter
+package com.thekainchee.user.presentation.dashboard.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -7,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.BookingItemBinding
-import com.thekainchee.user.presentation.dashboard.home.model.BookingUI
+import com.thekainchee.user.presentation.dashboard.model.BookingUI
 import com.thekainchee.user.utils.DateFormatter
 
 class UpcomingBookingAdapter(private val onItemClick: (BookingUI) -> Unit) : ListAdapter<BookingUI, UpcomingBookingAdapter.ViewHolder>(DIFF_CALLBACK){
@@ -53,7 +54,7 @@ class UpcomingBookingAdapter(private val onItemClick: (BookingUI) -> Unit) : Lis
 
             binding.tvStatus.text = item.bookingStatus
 
-            binding.tvStatus.setTextColor(android.graphics.Color.parseColor(textColor))
+            binding.tvStatus.setTextColor(Color.parseColor(textColor))
             binding.tvStatus.setBackgroundResource(bgRes)
             binding.root.setOnClickListener {
                 onItemClick(item)

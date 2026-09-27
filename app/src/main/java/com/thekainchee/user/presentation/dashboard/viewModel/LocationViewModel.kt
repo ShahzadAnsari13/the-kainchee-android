@@ -1,10 +1,9 @@
-package com.thekainchee.user.presentation.dashboard.home.viewModel
+package com.thekainchee.user.presentation.dashboard.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thekainchee.user.domain.model.UserAddress
 import com.thekainchee.user.domain.repository.DeviceLocationRepository
-import com.thekainchee.user.presentation.dashboard.home.state.LocationUiState
+import com.thekainchee.user.presentation.dashboard.state.LocationUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

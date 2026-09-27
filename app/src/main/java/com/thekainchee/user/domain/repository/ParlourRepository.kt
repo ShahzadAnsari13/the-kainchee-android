@@ -1,11 +1,9 @@
 package com.thekainchee.user.domain.repository
 
-import com.thekainchee.user.data.remote.dto.parlour.BookingDto
-import com.thekainchee.user.presentation.dashboard.home.model.BookingUI
-import com.thekainchee.user.presentation.dashboard.home.model.ParlourUI
-import com.thekainchee.user.presentation.dashboard.home.model.ServiceUI
+import com.thekainchee.user.presentation.dashboard.model.BookingUI
+import com.thekainchee.user.presentation.dashboard.model.ParlourUI
+import com.thekainchee.user.presentation.dashboard.model.ServiceUI
 import com.thekainchee.user.presentation.parlour.model.ParlourDetailedUI
-import com.thekainchee.user.presentation.service.model.ServiceCategory
 
 interface ParlourRepository {
     suspend fun getNearbyParlours(

@@ -1,4 +1,4 @@
-package com.thekainchee.user.presentation.dashboard.home.adapter
+package com.thekainchee.user.presentation.dashboard.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

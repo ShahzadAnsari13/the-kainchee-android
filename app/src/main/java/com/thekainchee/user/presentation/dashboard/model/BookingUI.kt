@@ -1,4 +1,4 @@
-package com.thekainchee.user.presentation.dashboard.home.model
+package com.thekainchee.user.presentation.dashboard.model
 
 import com.thekainchee.user.data.remote.dto.parlour.BookingServiceDto
 

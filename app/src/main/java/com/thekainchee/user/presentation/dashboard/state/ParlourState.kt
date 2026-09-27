@@ -1,6 +1,6 @@
-package com.thekainchee.user.presentation.dashboard.home.state
+package com.thekainchee.user.presentation.dashboard.state
 
-import com.thekainchee.user.presentation.dashboard.home.model.ParlourUI
+import com.thekainchee.user.presentation.dashboard.model.ParlourUI
 
 sealed class ParlourState {
 

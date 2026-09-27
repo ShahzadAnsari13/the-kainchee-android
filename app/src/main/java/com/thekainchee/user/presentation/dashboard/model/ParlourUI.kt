@@ -1,4 +1,4 @@
-package com.thekainchee.user.presentation.dashboard.home.model
+package com.thekainchee.user.presentation.dashboard.model
 
 data class ParlourUI(
     val id: String,

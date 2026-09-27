@@ -1,17 +1,14 @@
 package com.thekainchee.user.data.mapper
 
 import com.thekainchee.user.data.remote.dto.parlour.BookingDto
-import com.thekainchee.user.data.remote.dto.service.CategoryDto
 import com.thekainchee.user.data.remote.dto.parlour.ParlourDetailsResponseDto
 import com.thekainchee.user.data.remote.dto.parlour.ParlourDto
-import com.thekainchee.user.data.remote.dto.service.ServiceCategoryDto
 import com.thekainchee.user.data.remote.dto.parlour.ServiceDto
-import com.thekainchee.user.presentation.dashboard.home.model.BookingUI
-import com.thekainchee.user.presentation.dashboard.home.model.ParlourUI
-import com.thekainchee.user.presentation.dashboard.home.model.ServiceUI
+import com.thekainchee.user.presentation.dashboard.model.BookingUI
+import com.thekainchee.user.presentation.dashboard.model.ParlourUI
+import com.thekainchee.user.presentation.dashboard.model.ServiceUI
 import com.thekainchee.user.presentation.parlour.model.LocationUiModel
 import com.thekainchee.user.presentation.parlour.model.ParlourDetailedUI
-import com.thekainchee.user.presentation.service.model.ServiceCategory
 
 fun ParlourDto.toUI() : ParlourUI {
     return ParlourUI(

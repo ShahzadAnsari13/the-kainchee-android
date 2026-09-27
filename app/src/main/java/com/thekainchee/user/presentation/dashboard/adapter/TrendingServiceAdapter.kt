@@ -1,4 +1,4 @@
-package com.thekainchee.user.presentation.dashboard.home.adapter
+package com.thekainchee.user.presentation.dashboard.adapter
 
 
 import android.view.LayoutInflater
@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.ItemTrendingServiceBinding
-import com.thekainchee.user.presentation.dashboard.home.model.ServiceUI
+import com.thekainchee.user.presentation.dashboard.model.ServiceUI
 
 class TrendingServiceAdapter(private val onItemClick : (ServiceUI) -> Unit)
     : ListAdapter<ServiceUI, TrendingServiceAdapter.ViewHolder>(DIFF_CALLBACK) {
@@ -55,13 +55,13 @@ class TrendingServiceAdapter(private val onItemClick : (ServiceUI) -> Unit)
     }
 
 
-    override fun onBindViewHolder(holder: TrendingServiceAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): TrendingServiceAdapter.ViewHolder {
+    ): ViewHolder {
         val binding = ItemTrendingServiceBinding.inflate(LayoutInflater.from(parent.context),parent,false)
         return ViewHolder(binding)
     }

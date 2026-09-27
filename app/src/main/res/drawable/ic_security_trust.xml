@@ -20,28 +20,38 @@
             V6
             Z" />
 
-    <!-- Lock -->
-    <rect
-        android:width="7"
-        android:height="5.5"
-        android:x="8.5"
-        android:y="10.5"
-        android:rx="1"
-        android:fillColor="@android:color/transparent"
-        android:strokeColor="@color/primaryColor"
-        android:strokeWidth="1.6" />
-
+    <!-- Lock Body -->
     <path
         android:fillColor="@android:color/transparent"
         android:strokeColor="@color/primaryColor"
         android:strokeWidth="1.6"
         android:strokeLineCap="round"
-        android:pathData="M10,10.5 V8.8
+        android:strokeLineJoin="round"
+        android:pathData="M9.5,10.5
+            H14.5
+            C15.05,10.5 15.5,10.95 15.5,11.5
+            V15
+            C15.5,15.55 15.05,16 14.5,16
+            H9.5
+            C8.95,16 8.5,15.55 8.5,15
+            V11.5
+            C8.5,10.95 8.95,10.5 9.5,10.5
+            Z" />
+
+    <!-- Lock Shackle -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/primaryColor"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M10,10.5
+            V8.8
             C10,7.7 10.9,6.8 12,6.8
             C13.1,6.8 14,7.7 14,8.8
             V10.5" />
 
-    <!-- Lock dot -->
+    <!-- Lock Dot -->
     <path
         android:fillColor="@color/primaryColor"
         android:pathData="M12,12.6

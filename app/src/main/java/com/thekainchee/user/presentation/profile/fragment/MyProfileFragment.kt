@@ -448,7 +448,7 @@ class MyProfileFragment : Fragment() {
             } else {
                 "\uD83D\uDD34 Off"
             }
-        (requireActivity() as ProfileActivity).setToolbarTitle("My Profile")
+        (activity as ProfileActivity).setToolbarTitle("My Profile")
     }
     override fun onDestroyView() {
         super.onDestroyView()

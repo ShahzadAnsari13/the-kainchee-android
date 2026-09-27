@@ -1,8 +1,7 @@
-package com.thekainchee.user.presentation.dashboard.home.fragment
+package com.thekainchee.user.presentation.dashboard.fragment
 
 import android.Manifest
 import android.app.Activity
-import android.app.Notification
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.icu.util.Calendar
@@ -13,13 +12,11 @@ import android.text.Spanned
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
-import android.text.style.ImageSpan
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.ui.unit.Velocity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -36,23 +33,26 @@ import com.thekainchee.user.presentation.common.bottomSheet.LocationPermissionBo
 import com.thekainchee.user.presentation.common.extensions.hide
 import com.thekainchee.user.presentation.common.extensions.show
 import com.thekainchee.user.presentation.common.state.StateViewData
-import com.thekainchee.user.presentation.dashboard.home.adapter.ParlourHorizontalAdapter
-import com.thekainchee.user.presentation.dashboard.home.adapter.PromotionAdapter
-import com.thekainchee.user.presentation.dashboard.home.adapter.SalonCategoryAdapter
-import com.thekainchee.user.presentation.dashboard.home.adapter.TrendingServiceAdapter
-import com.thekainchee.user.presentation.dashboard.home.model.ParlourUI
-import com.thekainchee.user.presentation.dashboard.home.model.SalonCategory
-import com.thekainchee.user.presentation.dashboard.home.viewModel.LocationViewModel
-import com.thekainchee.user.presentation.dashboard.home.state.LocationUiState
-import com.thekainchee.user.presentation.dashboard.home.state.ParlourState
-import com.thekainchee.user.presentation.dashboard.home.state.TrendingServiceState
-import com.thekainchee.user.presentation.dashboard.home.viewModel.ParlourViewModel
+import com.thekainchee.user.presentation.dashboard.adapter.ParlourHorizontalAdapter
+import com.thekainchee.user.presentation.dashboard.adapter.PromotionAdapter
+import com.thekainchee.user.presentation.dashboard.adapter.SalonCategoryAdapter
+import com.thekainchee.user.presentation.dashboard.adapter.TrendingServiceAdapter
+import com.thekainchee.user.presentation.dashboard.model.ParlourUI
+import com.thekainchee.user.presentation.dashboard.model.SalonCategory
+import com.thekainchee.user.presentation.dashboard.viewModel.LocationViewModel
+import com.thekainchee.user.presentation.dashboard.state.LocationUiState
+import com.thekainchee.user.presentation.dashboard.state.ParlourState
+import com.thekainchee.user.presentation.dashboard.state.TrendingServiceState
+import com.thekainchee.user.presentation.dashboard.viewModel.ParlourViewModel
 import com.thekainchee.user.presentation.location.LocationActivity
 import com.thekainchee.user.presentation.parlour.ParlourActivity
 import com.thekainchee.user.presentation.profile.ProfileActivity
 import com.thekainchee.user.utils.LocationUtils
 import com.thekainchee.user.utils.NetworkUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -67,6 +67,7 @@ class HomeFragment : Fragment() {
     private lateinit var trendingAdapter: ParlourHorizontalAdapter
     private lateinit var trendingServiceAdapter: TrendingServiceAdapter
     private lateinit var salonCategoryAdapter: SalonCategoryAdapter
+    private var autoScrollJob: Job? = null
     private var lastLat: Double? = null
     private var lastLng: Double? = null
     private val promotionImages = listOf(
@@ -79,19 +80,25 @@ class HomeFragment : Fragment() {
         SalonCategory(
             "Men Salon",
             R.drawable.ic_men_salon,
-            "MENS"
+            SalonCategoryType.MENS
         ),
         SalonCategory(
             "Women Salon",
             R.drawable.ic_women_salon,
-            "BEAUTY"
+            SalonCategoryType.BEAUTY
         ),
         SalonCategory(
             "Unisex Salon",
             R.drawable.ic_unisex_salon,
-            "UNISEX"
+            SalonCategoryType.UNISEX
         )
     )
+    enum class SalonCategoryType {
+        MENS,
+        BEAUTY,
+        UNISEX
+    }
+    private lateinit var selectedCategory: SalonCategoryType
     private val locationPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
@@ -146,10 +153,12 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.tvGreeting.text = getGreeting()
         setupRecyclerViews()
-        binding.imgProfile.setOnClickListener {
+        binding.ivProfile.setOnClickListener {
             startActivity(Intent(requireContext(), ProfileActivity::class.java))
         }
-
+        binding.locationCard.setOnClickListener {
+            startActivity(Intent(requireContext(), LocationActivity::class.java))
+        }
         withInternet {
             LocationUtils.checkGpsStatus(
                 requireActivity(),
@@ -159,7 +168,10 @@ class HomeFragment : Fragment() {
                     activity = requireActivity(),
                     launcher = locationPermissionLauncher
                 ) {
-                    locationViewModel.fetchUserLocation()
+                    withInternet {
+                        locationViewModel.fetchUserLocation()
+                    }
+
                 }
             }
         }
@@ -184,6 +196,7 @@ class HomeFragment : Fragment() {
         binding.dotsIndicator.setViewPager2(
             binding.promotionViewPager
         )
+        startAutoScroll()
     }
     private fun setupSalonCategories() {
 
@@ -191,9 +204,14 @@ class HomeFragment : Fragment() {
             categories = salonCategories
         ) { category ->
 
-            parlourViewModel.getNearbyParlours(category.type)
-            parlourViewModel.trendingParlours(category.type)
-            parlourViewModel.trendingServices()
+            withInternet {
+                selectedCategory = category.type
+                val type = selectedCategory.name
+                parlourViewModel.getNearbyParlours(type)
+                parlourViewModel.trendingParlours(type)
+                parlourViewModel.trendingServices()
+            }
+
         }
 
         binding.rvSalonCategories.apply {
@@ -212,15 +230,14 @@ class HomeFragment : Fragment() {
         observeTrendingServices()
     }
     private fun retryAllData() {
+        val type = selectedCategory.name
         parlourViewModel.getNearbyParlours(
-            type = null,
+            type,
             forceRefresh = true
         )
-        parlourViewModel.trendingParlours(type = null)
+        parlourViewModel.trendingParlours(type)
 
         parlourViewModel.trendingServices()
-
-        parlourViewModel.upcomingBookings()
     }
 
     private fun setupRecyclerViews() {
@@ -281,7 +298,7 @@ class HomeFragment : Fragment() {
                         is LocationUiState.Idle ->{
                         }
                         is LocationUiState.Loading -> {
-                            binding.tvLocation.text = "\uD83D\uDCCD Fetching location..."
+                            binding.tvLocation.text = "Fetching location..."
                             showMainLoading()
                         }
 
@@ -289,17 +306,18 @@ class HomeFragment : Fragment() {
                             binding.tvLocation.text = state.address.city
                             val currentLat = state.address.latitude
                             val currentLng = state.address.longitude
-                            hideMainLoading()
                             parlourViewModel.setLocation(currentLat, currentLng)
 
                             withInternet {
                                 if (lastLat != currentLat || lastLng != currentLng) {
                                     lastLat = currentLat
                                     lastLng = currentLng
-
-                                    parlourViewModel.getNearbyParlours(type = null)
-                                    parlourViewModel.trendingParlours(type = null)
+                                    selectedCategory = SalonCategoryType.MENS
+                                    val type = selectedCategory.name
+                                    parlourViewModel.getNearbyParlours(type)
+                                    parlourViewModel.trendingParlours(type)
                                     parlourViewModel.trendingServices()
+
                                 }else{
                                     binding.stateView.hide()
                                 }
@@ -361,6 +379,23 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun showFullEmpty() {
+        binding.mainContent.isVisible = false
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.ic_oops,
+                title = "No Parlour Found",
+                subtitle = "No parlours found in your area.",
+                primaryButtonText = "Retry",
+                onPrimaryClick = {
+                    withInternet {
+                        binding.stateView.hide()
+                        retryAllData()
+                    }
+                }
+            )
+        )
+    }
     private fun observeNearby() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -376,16 +411,26 @@ class HomeFragment : Fragment() {
                         is ParlourState.Success -> {
                             hideMainLoading()
                             binding.mainContent.isVisible = true
-                            binding.nearbyParloursSection.isVisible = false
                             binding.nearbyParloursSection.isVisible = state.data.isNotEmpty()
-                            nearbyAdapter.submitList(state.data)
-
-                            binding.nearbyParloursSection.isVisible =
-                                state.data.isNotEmpty()
+                            if (state.data.isEmpty()) {
+                                showFullEmpty()
+                            }else{
+                                nearbyAdapter.submitList(state.data)
+                            }
                         }
 
                         is ParlourState.Error -> {
-                            binding.nearbyParloursSection.isVisible = false
+                            showNearbyError(
+                                onRetry = {
+                                    withInternet {
+                                        binding.stateView.hide()
+                                        retryAllData()
+                                    }
+                                },
+                                onChangeLocation = {
+                                    openLocationScreen()
+                                }
+                            )
                         }
 
                         else -> Unit
@@ -407,10 +452,9 @@ class HomeFragment : Fragment() {
                         }
 
                         is ParlourState.Success -> {
-                            trendingAdapter.submitList(state.data)
-
                             binding.trendingParloursSection.isVisible =
                                 state.data.isNotEmpty()
+                            trendingAdapter.submitList(state.data)
                         }
 
                         is ParlourState.Error -> {
@@ -437,10 +481,9 @@ class HomeFragment : Fragment() {
                         }
 
                         is TrendingServiceState.Success -> {
-                            trendingServiceAdapter.submitList(state.data)
-
                             binding.trendingServicesSection.isVisible =
                                 state.data.isNotEmpty()
+                            trendingServiceAdapter.submitList(state.data)
                         }
 
                         is TrendingServiceState.Error -> {
@@ -462,7 +505,8 @@ class HomeFragment : Fragment() {
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
                 if (dx >0 && lastVisibleItem >= totalItemCount - 2) {
-                    parlourViewModel.nearbyLoadNextPage(type = null)
+                    val type = selectedCategory.name
+                    parlourViewModel.nearbyLoadNextPage(type)
                 }
             }
         })
@@ -534,22 +578,7 @@ class HomeFragment : Fragment() {
             )
         }
     }
-    private fun showLocationError(
-        onRetry: () -> Unit,
-        onChangeLocation: () -> Unit
-    ) {
-        binding.stateView.show(
-            StateViewData(
-                image = R.drawable.ic_no_loc,
-                title = "Location unavailable",
-                subtitle = "We couldn't access your location.\nPlease retry from the top location bar.",
-                primaryButtonText = "Retry",
-                onPrimaryClick = onRetry,
-                secondaryButtonText = "Change Location",
-                onSecondaryClick = onChangeLocation
-            )
-        )
-    }
+
     private fun showNoInternetState(
         retryText: String = "Try Again",
         onRetry: () -> Unit
@@ -584,6 +613,56 @@ class HomeFragment : Fragment() {
             onConnected()
         }
     }
+    private fun startAutoScroll() {
+        autoScrollJob?.cancel()
+
+        autoScrollJob = viewLifecycleOwner.lifecycleScope.launch {
+            while (isActive) {
+                delay(3000)
+
+                val nextItem = binding.promotionViewPager.currentItem + 1
+
+                if (nextItem < binding.promotionViewPager.adapter?.itemCount ?: 0) {
+                    binding.promotionViewPager.setCurrentItem(nextItem, true)
+                } else {
+                    binding.promotionViewPager.setCurrentItem(0, true)
+                }
+            }
+        }
+    }
+    private fun showLocationError(
+        onRetry: () -> Unit,
+        onChangeLocation: () -> Unit
+    ) {
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.ic_no_loc,
+                title = "Location unavailable",
+                subtitle = "We couldn't access your location.\nPlease retry from the top location bar.",
+                primaryButtonText = "Retry",
+                onPrimaryClick = onRetry,
+                secondaryButtonText = "Change Location",
+                onSecondaryClick = onChangeLocation
+            )
+        )
+    }
+
+    private fun showNearbyError(
+        onRetry: () -> Unit,
+        onChangeLocation: () -> Unit
+    ) {
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.ic_oops,
+                title = "Unable to load parlours",
+                subtitle = "Something went wrong while loading nearby parlours.\nPlease retry or change your location",
+                primaryButtonText = "Retry",
+                onPrimaryClick = onRetry,
+                secondaryButtonText = "Change Location",
+                onSecondaryClick = onChangeLocation
+            )
+        )
+    }
     private fun openLocationScreen() {
         startActivity(
             Intent(requireContext(), LocationActivity::class.java)
@@ -591,6 +670,8 @@ class HomeFragment : Fragment() {
     }
     override fun onDestroyView() {
         super.onDestroyView()
+        autoScrollJob?.cancel()
+        autoScrollJob = null
         _binding = null
     }
 

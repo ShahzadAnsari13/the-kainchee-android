@@ -1,83 +1,47 @@
 package com.thekainchee.user.presentation.dashboard
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.addCallback
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.ActivityDashboardBinding
 import com.thekainchee.user.presentation.base.SessionAwareActivity
-import com.thekainchee.user.presentation.booking.fragment.MyBookings
-import com.thekainchee.user.presentation.dashboard.home.fragment.HomeFragment
-import com.thekainchee.user.presentation.profile.fragment.MyProfileFragment
-import com.thekainchee.user.presentation.wallet.fragment.WalletTransactionFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class DashboardActivity :  SessionAwareActivity() {
     private lateinit var binding: ActivityDashboardBinding
-    var isBottomNavVisible = true
+    private lateinit var navController: NavController
+    private var backPressedTime = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        if(savedInstanceState == null){
-            loadFragment(HomeFragment())
-        }
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.dashboardNavHost)
+                    as NavHostFragment
 
-        binding.bottomNavigation.setOnItemSelectedListener { item ->
-
-            when (item.itemId) {
-
-                R.id.menu_home -> {
-                    loadFragment(HomeFragment())
-                    true
-                }
-
-                R.id.menu_booking -> {
-                    loadFragment(MyBookings())
-                    true
-                }
-
-                R.id.menu_wallet -> {
-                    loadFragment(WalletTransactionFragment())
-                    true
-                }
-
-                R.id.menu_profile -> {
-                    loadFragment(MyProfileFragment())
-                    true
-                }
-
-                else -> false
-            }
-        }
+        navController = navHostFragment.navController
         binding.quickBookingButton?.setOnClickListener {
             Snackbar.make(binding.root, "Coming Soon", Snackbar.LENGTH_SHORT).show()
         }
 
         onBackPressedDispatcher.addCallback(this) {
+            val currentTime = System.currentTimeMillis()
 
-            if (binding.bottomNavigation.selectedItemId != R.id.menu_home) {
-
-                binding.bottomNavigation.selectedItemId = R.id.menu_home
-                loadFragment(HomeFragment())
-
-            } else {
+            if (currentTime - backPressedTime < 2000) {
                 finish()
+            } else {
+                backPressedTime = currentTime
+
+                Snackbar.make(
+                    binding.root,
+                    "Press back again to exit",
+                    Snackbar.LENGTH_SHORT
+                ).show()
             }
         }
     }
-
-
-
-    private fun loadFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.container, fragment)
-            .commit()
-    }
-
 }

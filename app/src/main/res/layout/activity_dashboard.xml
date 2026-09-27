@@ -9,37 +9,27 @@
     android:layout_height="match_parent"
     tools:context=".presentation.dashboard.DashboardActivity">
 
-    <FrameLayout
-        android:id="@+id/container"
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/dashboardNavHost"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/dashboard_nav_graph"/>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@drawable/bg_bottom_nav"
-
-        app:itemActiveIndicatorStyle="@style/BottomNavIndicator"
-        app:itemIconSize="24dp"
-        app:itemIconTint="@color/bottom_nav_selector"
-        app:itemTextColor="@color/bottom_nav_selector"
-        app:itemRippleColor="@android:color/transparent"
-
-        app:labelVisibilityMode="labeled"
-        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
-        app:menu="@menu/bottom_nav_menu" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/quickBookingButton"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:elevation="10dp"
-        app:cardBackgroundColor="#D4AF37"
+        app:cardBackgroundColor="@color/primaryColor"
         app:cardCornerRadius="32dp"
         app:cardElevation="8dp"
-        app:layout_anchor="@id/bottomNavigation"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="60dp"
+        android:layout_marginEnd="30dp"
         app:layout_anchorGravity="top|center"
         app:strokeWidth="0dp">
 
@@ -53,8 +43,7 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_quick_booking"
-                app:tint="@color/white" />
+                android:src="@drawable/ic_quick_booking" />
 
             <TextView
                 android:layout_width="wrap_content"

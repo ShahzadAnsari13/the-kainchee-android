@@ -1,15 +1,15 @@
-package com.thekainchee.user.presentation.dashboard.home.viewModel
+package com.thekainchee.user.presentation.dashboard.viewModel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thekainchee.user.domain.repository.ParlourRepository
-import com.thekainchee.user.presentation.dashboard.home.model.BookingUI
-import com.thekainchee.user.presentation.dashboard.home.model.ParlourUI
-import com.thekainchee.user.presentation.dashboard.home.model.ServiceUI
-import com.thekainchee.user.presentation.dashboard.home.state.BookingState
-import com.thekainchee.user.presentation.dashboard.home.state.ParlourState
-import com.thekainchee.user.presentation.dashboard.home.state.TrendingServiceState
+import com.thekainchee.user.presentation.dashboard.model.BookingUI
+import com.thekainchee.user.presentation.dashboard.model.ParlourUI
+import com.thekainchee.user.presentation.dashboard.model.ServiceUI
+import com.thekainchee.user.presentation.dashboard.state.BookingState
+import com.thekainchee.user.presentation.dashboard.state.ParlourState
+import com.thekainchee.user.presentation.dashboard.state.TrendingServiceState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

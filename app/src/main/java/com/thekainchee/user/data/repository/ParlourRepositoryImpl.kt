@@ -4,16 +4,14 @@ import com.thekainchee.user.data.mapper.toUI
 import com.thekainchee.user.data.mapper.toUi
 import com.thekainchee.user.data.remote.api.ParlourApi
 import com.thekainchee.user.domain.repository.ParlourRepository
-import com.thekainchee.user.presentation.dashboard.home.model.BookingUI
-import com.thekainchee.user.presentation.dashboard.home.model.ParlourUI
-import com.thekainchee.user.presentation.dashboard.home.model.ServiceUI
+import com.thekainchee.user.presentation.dashboard.model.BookingUI
+import com.thekainchee.user.presentation.dashboard.model.ParlourUI
+import com.thekainchee.user.presentation.dashboard.model.ServiceUI
 import com.thekainchee.user.presentation.parlour.model.ParlourDetailedUI
-import com.thekainchee.user.presentation.service.model.ServiceCategory
 import com.thekainchee.user.utils.ErrorUtils
 import java.io.IOException
 import javax.inject.Inject
 import kotlin.collections.orEmpty
-import kotlin.math.ln
 
 class ParlourRepositoryImpl @Inject constructor( private val api: ParlourApi) : ParlourRepository {
     override suspend fun getNearbyParlours(

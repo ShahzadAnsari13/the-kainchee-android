@@ -1,4 +1,4 @@
-package com.thekainchee.user.presentation.dashboard.home.adapter
+package com.thekainchee.user.presentation.dashboard.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.ItemParlourVerticalBinding
-import com.thekainchee.user.presentation.dashboard.home.model.ParlourUI
+import com.thekainchee.user.presentation.dashboard.model.ParlourUI
 
 class ParlourVerticalAdapter(
     private val onItemClick: (ParlourUI) -> Unit
@@ -53,7 +53,7 @@ class ParlourVerticalAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): ParlourVerticalAdapter.ViewHolder {
+    ): ViewHolder {
         val binding = ItemParlourVerticalBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
@@ -62,7 +62,7 @@ class ParlourVerticalAdapter(
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ParlourVerticalAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 }

@@ -1,4 +1,4 @@
-package com.thekainchee.user.presentation.dashboard.home.adapter
+package com.thekainchee.user.presentation.dashboard.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,7 +6,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.LayoutParlourCategoryBinding
-import com.thekainchee.user.presentation.dashboard.home.model.SalonCategory
+import com.thekainchee.user.presentation.dashboard.model.SalonCategory
 
 
 class SalonCategoryAdapter(
