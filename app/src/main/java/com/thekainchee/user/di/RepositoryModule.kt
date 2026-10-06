@@ -11,6 +11,7 @@ import com.thekainchee.user.data.repository.PlaceSearchRepositoryImpl
 import com.thekainchee.user.data.repository.ProfileRepositoryImpl
 import com.thekainchee.user.data.repository.ReferralRepositoryImpl
 import com.thekainchee.user.data.repository.ServiceRepositoryImpl
+import com.thekainchee.user.data.repository.UserRepositoryImpl
 import com.thekainchee.user.data.repository.WalletRepositoryImpl
 import com.thekainchee.user.domain.repository.AddressRepository
 import com.thekainchee.user.domain.repository.AuthRepository
@@ -23,6 +24,7 @@ import com.thekainchee.user.domain.repository.PlaceSearchRepository
 import com.thekainchee.user.domain.repository.ProfileRepository
 import com.thekainchee.user.domain.repository.ReferralRepository
 import com.thekainchee.user.domain.repository.ServiceRepository
+import com.thekainchee.user.domain.repository.UserRepository
 import com.thekainchee.user.domain.repository.WalletRepository
 import dagger.Binds
 import dagger.Module
@@ -100,4 +102,10 @@ abstract class RepositoryModule {
     abstract fun bindReferralRepository(
         impl: ReferralRepositoryImpl
     ): ReferralRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserRepository(
+        impl: UserRepositoryImpl
+    ): UserRepository
 }

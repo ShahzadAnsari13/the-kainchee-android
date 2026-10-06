@@ -17,8 +17,15 @@
             app:argType="string"/>
         <argument android:name="phone"
             app:argType="string"/>
+        <action
+            android:id="@+id/action_verifyOtpFragment_to_nameSetupFragment"
+            app:destination="@id/nameSetupFragment" />
 
 
     </fragment>
+
+    <fragment android:id="@+id/nameSetupFragment"
+        android:name="com.thekainchee.user.presentation.auth.fragment.NameSetupFragment"
+        />
 
 </navigation>

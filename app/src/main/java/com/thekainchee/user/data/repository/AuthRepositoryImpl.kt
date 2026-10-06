@@ -1,5 +1,8 @@
 package com.thekainchee.user.data.repository
 
+import com.thekainchee.user.data.local.datastore.UserPreferencesManager
+import com.thekainchee.user.data.local.room.dao.UserDao
+import com.thekainchee.user.data.local.room.entity.UserEntity
 import com.thekainchee.user.data.remote.api.AuthApi
 import com.thekainchee.user.data.remote.dto.auth.CommonMessageDto
 import com.thekainchee.user.data.remote.dto.auth.RequestOtpDto
@@ -10,7 +13,7 @@ import com.thekainchee.user.utils.ErrorUtils
 import org.json.JSONObject
 import javax.inject.Inject
 
-class AuthRepositoryImpl @Inject constructor(private val authApi: AuthApi) : AuthRepository{
+class AuthRepositoryImpl @Inject constructor(private val authApi: AuthApi, private val tokenManager: UserPreferencesManager, private val userDao: UserDao) : AuthRepository{
     override suspend fun requestOtp(
         countryCode: String,
         phone: String
@@ -40,14 +43,36 @@ class AuthRepositoryImpl @Inject constructor(private val authApi: AuthApi) : Aut
         countryCode: String,
         phone: String,
         otp: String
-    ): Result<VerifyOtpResponseDto> {
+    ): Result< Boolean>{
         return try{
             val response = authApi.verifyOtp(
                 VerifyOtpDto(countryCode,phone,otp)
             )
 
             if(response.isSuccessful && response.body() != null){
-                Result.success(response.body()!!)
+                val body = response.body()!!
+
+                // Token → DataStore
+                tokenManager.saveTokens(
+                    body.accessToken,
+                    body.refreshToken
+                )
+
+                // Name validation
+                val isNameSet =
+                    body.name.isNotBlank() && body.name != "XYZ"
+
+                // Valid name → Room
+                if (isNameSet) {
+                    userDao.insertOrReplace(
+                        UserEntity(
+                            id = 1,
+                            name = body.name
+                        )
+                    )
+                }
+
+                Result.success(isNameSet)
             }else{
 
                 val errorBody = response.errorBody()?.string()

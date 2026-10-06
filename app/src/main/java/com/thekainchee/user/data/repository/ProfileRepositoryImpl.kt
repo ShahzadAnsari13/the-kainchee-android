@@ -1,5 +1,7 @@
 package com.thekainchee.user.data.repository
 
+import com.thekainchee.user.data.local.room.dao.UserDao
+import com.thekainchee.user.data.local.room.entity.UserEntity
 import com.thekainchee.user.data.mapper.toUI
 import com.thekainchee.user.data.remote.api.ProfileApi
 import com.thekainchee.user.data.remote.dto.profile.FcmTokenRequest
@@ -9,7 +11,7 @@ import com.thekainchee.user.presentation.profile.model.ProfileUiModel
 import com.thekainchee.user.utils.ErrorUtils
 import javax.inject.Inject
 
-class ProfileRepositoryImpl @Inject constructor(private val api: ProfileApi)  : ProfileRepository {
+class ProfileRepositoryImpl @Inject constructor(private val api: ProfileApi,private val userDao: UserDao)  : ProfileRepository {
     override suspend fun getProfile(): Result<ProfileUiModel> {
         return try{
             val response =  api.getProfile()
@@ -37,6 +39,12 @@ class ProfileRepositoryImpl @Inject constructor(private val api: ProfileApi)  : 
             val response = api.updateProfile(UpdateProfileRequest(name))
             if(response.isSuccessful && response.body() != null) {
                 val message = response.body()!!.message
+                userDao.insertOrReplace(
+                    UserEntity(
+                        id = 1,
+                        name = name
+                    )
+                )
                 Result.success(message)
             }
             else{

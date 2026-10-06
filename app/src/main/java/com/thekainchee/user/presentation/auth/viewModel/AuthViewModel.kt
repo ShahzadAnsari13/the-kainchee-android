@@ -83,28 +83,27 @@ class AuthViewModel @Inject constructor(private val  authRepository: AuthReposit
 
             val result = authRepository.verifyOtp(countryCode,phone,otp)
 
-            if(result.isSuccess){
+            if (result.isSuccess) {
 
-                val data = result.getOrNull()
+                val isNameSet = result.getOrNull()
 
-                if (data != null) {
-
-                    tokenManager.saveTokens(data.accessToken, data.refreshToken)
+                if (isNameSet != null) {
 
                     _authState.value = AuthState.OtpVerified(
-                        message = data.message,
-                        accessToken = data.accessToken,
-                        refreshToken = data.refreshToken
+                        isNameSet = isNameSet
                     )
 
                 } else {
-                    _authState.value = AuthState.Error("Invalid response")
+                    _authState.value = AuthState.Error(
+                        "Invalid response"
+                    )
                 }
 
-            }else{
+            } else {
 
-                _authState.value = AuthState.Error(   //  ye missing tha
-                    message = result.exceptionOrNull()?.message ?: "Invalid OTP"
+                _authState.value = AuthState.Error(
+                    message = result.exceptionOrNull()?.message
+                        ?: "Invalid OTP"
                 )
             }
         }

@@ -228,6 +228,13 @@ class HomeFragment : Fragment() {
         observeNearby()
         observeTrending()
         observeTrendingServices()
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                parlourViewModel.getUserName().collect { name ->
+                    binding.tvUserName.text = "${name ?: "User"} 👋"
+                }
+            }
+        }
     }
     private fun retryAllData() {
         val type = selectedCategory.name
@@ -515,7 +522,7 @@ class HomeFragment : Fragment() {
         val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         return when (hour) {
             in 0..11 -> "Good Morning ☕"
-            in 12..16 -> "Good Afternoon 🌤"
+            in 12..16 -> "Good Afternoon \uD83C\uDF24"
             else -> "Good Evening ✨"
         }
     }

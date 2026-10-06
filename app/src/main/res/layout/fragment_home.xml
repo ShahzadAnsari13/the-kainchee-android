@@ -41,11 +41,16 @@
 
                     <TextView
                         android:id="@+id/tvUserName"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/tvGreeting"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@id/locationCard"
                         android:layout_marginTop="1dp"
-                        android:text="Shahzad 👋"
+                        android:layout_marginEnd="8dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:text="User 👋"
                         android:textColor="@color/black"
                         android:textSize="21sp"
                         android:textStyle="bold" />
@@ -121,7 +126,7 @@
                         android:padding="5dp"
                         android:background="@drawable/bg_profile_green_circle"
                         android:src="@drawable/ic_profile"
-                        android:tint="@color/black"/>
+                        app:tint="@color/black"/>
 
                 </RelativeLayout>
                 <com.google.android.material.card.MaterialCardView

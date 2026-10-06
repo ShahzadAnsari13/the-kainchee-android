@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.thekainchee.user.data.local.room.dao.SelectedServiceDao
 import com.thekainchee.user.data.local.room.dao.UserAddressDao
+import com.thekainchee.user.data.local.room.dao.UserDao
 import com.thekainchee.user.data.local.room.database.AppDatabase
 import dagger.Module
 import dagger.Provides
@@ -45,6 +46,14 @@ object DatabaseModule {
     ): SelectedServiceDao {
 
         return db.selectedServiceDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserDao(
+        database: AppDatabase
+    ): UserDao {
+        return database.userDao()
     }
 
 }

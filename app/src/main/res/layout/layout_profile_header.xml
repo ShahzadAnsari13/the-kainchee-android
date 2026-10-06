@@ -19,7 +19,7 @@
             android:layout_width="120dp"
             android:layout_height="80dp"
             android:src="@drawable/dot_pattern"
-            android:alpha="0.25"
+            android:alpha="1"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -94,6 +94,7 @@
             app:cornerRadius="18dp"
             app:strokeColor="@color/primaryColor"
             app:strokeWidth="1dp"
+            android:layout_marginBottom="16dp"
             app:icon="@drawable/ic_edit"
             app:iconTint="@color/primaryColor"
             app:iconPadding="8dp"

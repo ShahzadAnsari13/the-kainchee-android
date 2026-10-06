@@ -31,6 +31,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.messaging.FirebaseMessaging
@@ -289,8 +290,25 @@ class VerifyOtpFragment : Fragment() {
                                     if (task.isSuccessful) {
                                         profileViewModel.updateFcmToken(task.result)
                                     }
-                                    startActivity(Intent(requireContext(), DashboardActivity::class.java))
-                                    requireActivity().finish()
+                                    if (state.isNameSet) {
+
+                                        // Name already set → Home
+                                        startActivity(
+                                            Intent(
+                                                requireContext(),
+                                                DashboardActivity::class.java
+                                            )
+                                        )
+
+                                        requireActivity().finish()
+
+                                    } else {
+
+                                        // Name not set → Name Setup
+                                        findNavController().navigate(
+                                            R.id.action_verifyOtpFragment_to_nameSetupFragment
+                                        )
+                                    }
                                 }
                         }
                         is AuthState.Error->{

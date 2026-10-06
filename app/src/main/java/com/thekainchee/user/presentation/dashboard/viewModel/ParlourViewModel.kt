@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thekainchee.user.domain.repository.ParlourRepository
+import com.thekainchee.user.domain.repository.UserRepository
 import com.thekainchee.user.presentation.dashboard.model.BookingUI
 import com.thekainchee.user.presentation.dashboard.model.ParlourUI
 import com.thekainchee.user.presentation.dashboard.model.ServiceUI
@@ -11,6 +12,7 @@ import com.thekainchee.user.presentation.dashboard.state.BookingState
 import com.thekainchee.user.presentation.dashboard.state.ParlourState
 import com.thekainchee.user.presentation.dashboard.state.TrendingServiceState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -18,7 +20,9 @@ import javax.inject.Inject
 import kotlin.collections.emptyList
 
 @HiltViewModel
-class ParlourViewModel @Inject constructor(private val parlourRepository: ParlourRepository) : ViewModel(){
+class ParlourViewModel @Inject constructor(private val parlourRepository: ParlourRepository,
+                                           private val userRepository: UserRepository
+) : ViewModel(){
     private val _nearbyParlourState = MutableStateFlow<ParlourState>(ParlourState.Idle)
     val nearbyParlourState: StateFlow<ParlourState> = _nearbyParlourState
     private val _trendingParlourState = MutableStateFlow<ParlourState>(ParlourState.Idle)
@@ -248,6 +252,10 @@ class ParlourViewModel @Inject constructor(private val parlourRepository: Parlou
                 )
             }
         }
+    }
+
+    fun getUserName(): Flow<String?> {
+        return userRepository.getUserName()
     }
 
 }
