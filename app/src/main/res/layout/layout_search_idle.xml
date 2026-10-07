@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutIdleState"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingStart="32dp"
+    android:paddingEnd="32dp"
+    android:paddingBottom="40dp">
+
+    <ImageView
+        android:id="@+id/ivIdleSearch"
+        android:layout_width="240dp"
+        android:layout_height="160dp"
+        android:contentDescription="Search"
+        android:src="@drawable/ic_search_idle" />
+
+    <TextView
+        android:id="@+id/tvIdleTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="Find the best parlours"
+        android:textColor="#111111"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvIdleMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:lineSpacingExtra="2dp"
+        android:text="Search by name or location&#10;to explore top parlours near you."
+        android:textColor="#66747D"
+        android:textSize="15sp" />
+
+</LinearLayout>

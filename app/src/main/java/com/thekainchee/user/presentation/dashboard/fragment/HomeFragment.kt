@@ -24,6 +24,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
@@ -158,6 +159,11 @@ class HomeFragment : Fragment() {
         }
         binding.locationCard.setOnClickListener {
             startActivity(Intent(requireContext(), LocationActivity::class.java))
+        }
+        binding.searchCard.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_homeFragment_to_searchFragment
+            )
         }
         withInternet {
             LocationUtils.checkGpsStatus(

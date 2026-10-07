@@ -63,7 +63,7 @@ class AuthRepositoryImpl @Inject constructor(private val authApi: AuthApi, priva
                     body.name.isNotBlank() && body.name != "XYZ"
 
                 // Valid name → Room
-                if (isNameSet) {
+                if(isNameSet) {
                     userDao.insertOrReplace(
                         UserEntity(
                             id = 1,
@@ -71,10 +71,8 @@ class AuthRepositoryImpl @Inject constructor(private val authApi: AuthApi, priva
                         )
                     )
                 }
-
                 Result.success(isNameSet)
             }else{
-
                 val errorBody = response.errorBody()?.string()
                 val errorMsg = ErrorUtils.parseError(errorBody)
                 Result.failure(Exception(errorMsg.message))
