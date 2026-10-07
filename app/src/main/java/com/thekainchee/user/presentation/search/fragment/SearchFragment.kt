@@ -166,8 +166,15 @@ class SearchFragment : Fragment() {
                     when (state) {
 
                         is LocationUiState.Success -> {
-                            currentLat = state.address.latitude
-                            currentLng = state.address.longitude
+
+                            if(currentLat != state.address.latitude || currentLng != state.address.longitude){
+                                viewModel.setLatLng(
+                                    state.address.latitude,
+                                    state.address.longitude
+                                )
+                                currentLat = state.address.latitude
+                                currentLng = state.address.longitude
+                            }
                         }
 
                         else -> Unit
@@ -219,25 +226,10 @@ class SearchFragment : Fragment() {
         }
     }
     private fun openParlour(item: SearchParlourUiModel) {
-
-        val userLat = currentLat
-        val userLng = currentLng
-
-        val distance = if (userLat != null && userLng != null) {
-            calculateDistanceInKm(
-                userLat = userLat,
-                userLng = userLng,
-                parlourLat = item.latitude,
-                parlourLng = item.longitude
-            )
-        } else {
-            0.0
-        }
-
         startActivity(
             Intent(requireContext(), ParlourActivity::class.java).apply {
                 putExtra("parlourId", item.id)
-                putExtra("distance", distance.toString())
+                putExtra("distance", item.distance.toString())
             }
         )
     }
@@ -275,32 +267,7 @@ class SearchFragment : Fragment() {
             }
         )
     }
-    fun calculateDistanceInKm(
-        userLat: Double,
-        userLng: Double,
-        parlourLat: Double,
-        parlourLng: Double
-    ): Double {
 
-        val earthRadius = 6371.0
-
-        val dLat = Math.toRadians(parlourLat - userLat)
-        val dLng = Math.toRadians(parlourLng - userLng)
-
-        val a =
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                    Math.cos(Math.toRadians(userLat)) *
-                    Math.cos(Math.toRadians(parlourLat)) *
-                    Math.sin(dLng / 2) *
-                    Math.sin(dLng / 2)
-
-        val c = 2 * Math.atan2(
-            Math.sqrt(a),
-            Math.sqrt(1 - a)
-        )
-
-        return String.format("%.1f", earthRadius * c).toDouble()
-    }
     private fun setupSearch() {
 
         binding.etSearch.addTextChangedListener(

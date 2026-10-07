@@ -8,6 +8,8 @@ import retrofit2.http.Query
 interface SearchApi {
     @GET("user/search/parlours")
     suspend fun searchParlours(
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
         @Query("q") query: String,
         @Query("type") type: String? = null,
         @Query("minRating") minRating: Double? = null,

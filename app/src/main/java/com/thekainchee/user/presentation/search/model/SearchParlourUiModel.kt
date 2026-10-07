@@ -8,6 +8,5 @@ data class SearchParlourUiModel(
     val ratingCount: Int,
     val image: String?,
     val location: String,
-    val latitude: Double,
-    val longitude: Double
+    val distance: Double
 )

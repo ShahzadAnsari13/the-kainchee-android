@@ -12,6 +12,8 @@ class SearchRepositoryImpl @Inject constructor(
 ) : SearchRepository {
 
     override suspend fun searchParlours(
+        latitude: Double,
+        longitude: Double,
         query: String,
         type: String?,
         minRating: Double?,
@@ -22,6 +24,8 @@ class SearchRepositoryImpl @Inject constructor(
         return try {
 
             val response = api.searchParlours(
+                latitude = latitude,
+                longitude = longitude,
                 query = query,
                 type = type,
                 minRating = minRating,

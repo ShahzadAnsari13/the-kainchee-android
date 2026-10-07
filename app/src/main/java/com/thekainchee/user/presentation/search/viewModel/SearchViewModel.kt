@@ -31,12 +31,16 @@ class SearchViewModel @Inject constructor(
 
     private var isLoadingMore = false
     private var hasMore = true
+    private var latitude: Double? = null
+    private var longitude: Double? = null
 
     fun searchParlours(
         query: String,
         type: String? = null,
         minRating: Double? = null
     ) {
+        val lat = latitude ?: return
+        val lng = longitude ?: return
 
         currentQuery = query
         currentType = type
@@ -53,6 +57,8 @@ class SearchViewModel @Inject constructor(
         searchJob = viewModelScope.launch {
 
             val result = repository.searchParlours(
+                latitude = lat,
+                longitude = lng,
                 query = currentQuery,
                 type = currentType,
                 minRating = currentMinRating,
@@ -87,11 +93,14 @@ class SearchViewModel @Inject constructor(
     }
     fun loadNextPage() {
 
+        val lat = latitude ?: return
+        val lng = longitude ?: return
         if (isLoadingMore || !hasMore) return
 
         val currentState = _searchState.value
 
         if (currentState !is SearchState.Success) return
+
 
         isLoadingMore = true
 
@@ -100,6 +109,8 @@ class SearchViewModel @Inject constructor(
         viewModelScope.launch {
 
             val result = repository.searchParlours(
+                latitude = lat,
+                longitude = lng,
                 query = currentQuery,
                 type = currentType,
                 minRating = currentMinRating,
@@ -131,6 +142,11 @@ class SearchViewModel @Inject constructor(
                 isLoadingMore = false
             }
         }
+    }
+
+    fun setLatLng(lat: Double, lng: Double):Unit {
+        latitude = lat
+        longitude = lng
     }
     fun getCurrentType(): String? = currentType
 

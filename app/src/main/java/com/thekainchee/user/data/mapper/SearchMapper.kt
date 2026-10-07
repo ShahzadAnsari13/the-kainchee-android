@@ -22,7 +22,6 @@ fun SearchParlourDto.toUI() : SearchParlourUiModel{
         ratingCount = rating.count,
         image = images.firstOrNull(),
         location = locationText,
-        latitude = location.coordinates[1],
-        longitude = location.coordinates[0]
+        distance = distance
     )
 }

@@ -15,7 +15,8 @@ data class SearchParlourDto(
     val type: String,
     val rating: RatingDto,
     val images: List<String>,
-    val location: SearchLocationDto
+    val location: SearchLocationDto,
+    val distance : Double
 )
 data class SearchLocationDto(
     val type: String,

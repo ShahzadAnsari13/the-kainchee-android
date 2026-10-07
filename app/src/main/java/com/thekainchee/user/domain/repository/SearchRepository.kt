@@ -4,6 +4,8 @@ import com.thekainchee.user.presentation.search.model.SearchParlourUiModel
 
 interface SearchRepository {
     suspend fun searchParlours(
+        latitude: Double,
+        longitude: Double,
         query: String,
         type: String? = null,
         minRating: Double? = null,

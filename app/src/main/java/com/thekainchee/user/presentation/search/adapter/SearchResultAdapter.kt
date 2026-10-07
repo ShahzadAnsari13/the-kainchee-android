@@ -26,7 +26,8 @@ class SearchResultAdapter(
 
             binding.tvParlourType.text = parlour.type
 
-            binding.tvLocation.text = "⚑ ${parlour.location}"
+            binding.tvLocation.text = "⚑ ${parlour.distance} km | ${parlour.location}"
+           // binding.tvLocation.text = "⚑ ${parlour.distance} km • ${parlour.location}"
 
             Glide.with(binding.ivParlourImage.context)
                 .load(parlour.image)
