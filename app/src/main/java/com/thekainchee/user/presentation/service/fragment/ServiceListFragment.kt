@@ -95,6 +95,16 @@ class ServiceListFragment : Fragment() {
 
             }
         }
+        binding.btnBook.setOnClickListener {
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                Snackbar.make(binding.root, "No Internet Connection", Snackbar.LENGTH_SHORT).show()
+            }else{
+                parlourId?.let { parlourId ->
+                    serviceViewModel.getBookingPreview(parlourId,serviceViewModel.selectedServiceIds.value)
+                }
+
+            }
+        }
         setupRecyclerView()
         observeUiState()
     }

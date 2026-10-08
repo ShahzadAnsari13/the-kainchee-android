@@ -9,10 +9,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.NavHostFragment
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.ActivityParlourBinding
+import com.thekainchee.user.presentation.base.SessionAwareActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ParlourActivity : AppCompatActivity() {
+class ParlourActivity : SessionAwareActivity() {
 
     private lateinit var binding: ActivityParlourBinding
 

@@ -1,4 +1,4 @@
-package com.thekainchee.user.presentation.splash
+package com.thekainchee.user.presentation.splash.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,10 +8,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
 class SplashViewModel @Inject constructor(private val tokenManager: UserPreferencesManager) : ViewModel() {
     fun checkUserSession(onResult: (Boolean) -> Unit){
-        viewModelScope.launch{
+        viewModelScope.launch {
             delay(1500)
             val token = tokenManager.accessToken.first()
             onResult(!token.isNullOrEmpty())

@@ -1,5 +1,6 @@
 package com.thekainchee.user.data.remote.api
 
+import com.thekainchee.user.data.remote.dto.auth.LogoutResponseDto
 import com.thekainchee.user.data.remote.dto.profile.FcmTokenRequest
 import com.thekainchee.user.data.remote.dto.profile.FcmTokenResponse
 import com.thekainchee.user.data.remote.dto.profile.ProfileResponse
@@ -25,4 +26,8 @@ interface ProfileApi {
     suspend fun updateFcmToken(
         @Body request: FcmTokenRequest
     ): Response<FcmTokenResponse>
+
+    @POST("auth/logout")
+    suspend fun logout(
+    ): Response<LogoutResponseDto>
 }

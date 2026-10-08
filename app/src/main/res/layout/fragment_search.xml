@@ -56,7 +56,7 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardSearch"
         android:layout_width="0dp"
-        android:layout_height="56dp"
+        android:layout_height="48dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="10dp"
@@ -89,7 +89,7 @@
                 android:id="@+id/etSearch"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="14dp"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:background="@null"
                 android:hint="Search parlours or areas..."
@@ -108,6 +108,7 @@
                 android:layout_height="24dp"
                 android:contentDescription="Clear search"
                 android:padding="3dp"
+                android:visibility="gone"
                 android:src="@drawable/ic_close"
                 app:tint="#78909C" />
 
@@ -118,11 +119,11 @@
     <!-- Filter Button -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardFilter"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_marginEnd="20dp"
         app:cardBackgroundColor="#00695C"
-        app:cardCornerRadius="18dp"
+        app:cardCornerRadius="12dp"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="@id/cardSearch"
         app:layout_constraintEnd_toEndOf="parent"
@@ -133,7 +134,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="Filter"
-            android:padding="18dp"
+            android:padding="12dp"
             android:src="@drawable/ic_filter"
             app:tint="@android:color/white" />
 

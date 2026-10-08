@@ -188,7 +188,7 @@ class HomeFragment : Fragment() {
         binding.quickBookingCard.setOnClickListener {
             Snackbar.make(
                 binding.root,
-                "Quick Booking Coming Soon",
+                "Quick Booking is coming soon. We’re working on it!",
                 Snackbar.LENGTH_SHORT
             ).show()
         }
@@ -215,7 +215,7 @@ class HomeFragment : Fragment() {
                 val type = selectedCategory.name
                 parlourViewModel.getNearbyParlours(type)
                 parlourViewModel.trendingParlours(type)
-                parlourViewModel.trendingServices()
+                parlourViewModel.trendingServices(type)
             }
 
         }
@@ -250,7 +250,7 @@ class HomeFragment : Fragment() {
         )
         parlourViewModel.trendingParlours(type)
 
-        parlourViewModel.trendingServices()
+        parlourViewModel.trendingServices(type)
     }
 
     private fun setupRecyclerViews() {
@@ -329,7 +329,7 @@ class HomeFragment : Fragment() {
                                     val type = selectedCategory.name
                                     parlourViewModel.getNearbyParlours(type)
                                     parlourViewModel.trendingParlours(type)
-                                    parlourViewModel.trendingServices()
+                                    parlourViewModel.trendingServices(type)
 
                                 }else{
                                     binding.stateView.hide()

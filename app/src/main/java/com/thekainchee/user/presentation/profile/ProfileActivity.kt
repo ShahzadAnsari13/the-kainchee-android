@@ -10,10 +10,11 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.ActivityProfileBinding
+import com.thekainchee.user.presentation.base.SessionAwareActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ProfileActivity : AppCompatActivity() {
+class ProfileActivity : SessionAwareActivity() {
     private lateinit var navController: NavController
     private lateinit var binding: ActivityProfileBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,11 +41,6 @@ class ProfileActivity : AppCompatActivity() {
 
                 R.id.action_notification -> {
                     navController.navigate(R.id.notificationFragment)
-                    true
-                }
-
-                R.id.action_settings -> {
-                    // TODO
                     true
                 }
 

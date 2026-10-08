@@ -1,24 +1,30 @@
 package com.thekainchee.user.data.local.datastore
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.preferences.core.edit
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class UserPreferencesManager @Inject constructor(@ApplicationContext private val context: Context) {
-    private val _isLoggedOut = MutableSharedFlow<Unit>(replay = 0, extraBufferCapacity = 1)
-    val isLoggedOut = _isLoggedOut.asSharedFlow()
+    private val _isLoggedOut = MutableStateFlow(false)
+
+    val isLoggedOut = _isLoggedOut.asStateFlow()
     suspend fun saveTokens(accessToken: String, refreshToken: String){
         context.dataStore.edit {prefs ->
             prefs[PreferencesKeys.ACCESS_TOKEN] = accessToken
             prefs[PreferencesKeys.REFRESH_TOKEN] = refreshToken
         }
-
+        _isLoggedOut.value = false
     }
 
     val accessToken: Flow<String?>
@@ -30,12 +36,12 @@ class UserPreferencesManager @Inject constructor(@ApplicationContext private val
         get() = context.dataStore.data
             .map { it[PreferencesKeys.REFRESH_TOKEN] }
             .distinctUntilChanged()
-    suspend fun clearTokens(){
+    suspend fun clearTokens() {
         context.dataStore.edit {
             it.remove(PreferencesKeys.ACCESS_TOKEN)
             it.remove(PreferencesKeys.REFRESH_TOKEN)
         }
-        _isLoggedOut.emit(Unit)
+        _isLoggedOut.value = true
     }
 
 

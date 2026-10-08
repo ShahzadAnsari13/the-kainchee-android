@@ -21,13 +21,12 @@ class SearchResultAdapter(
 
             binding.tvParlourName.text = parlour.name
 
-            binding.tvRating.text = "★ ${parlour.rating}"
-            binding.tvRatingCount.text = "(${parlour.ratingCount})"
+            binding.tvRating.text = "★ ${parlour.rating} (${parlour.ratingCount})"
+            //binding.tvRatingCount.text = "(${parlour.ratingCount})"
 
             binding.tvParlourType.text = parlour.type
 
-            binding.tvLocation.text = "⚑ ${parlour.distance} km | ${parlour.location}"
-           // binding.tvLocation.text = "⚑ ${parlour.distance} km • ${parlour.location}"
+           binding.tvLocation.text = "⚑ ${parlour.distance} km • ${parlour.location}"
 
             Glide.with(binding.ivParlourImage.context)
                 .load(parlour.image)

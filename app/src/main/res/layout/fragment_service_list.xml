@@ -40,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_margin="14dp"
+        android:layout_margin="12dp"
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"
@@ -54,8 +54,8 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="14dp">
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="10dp">
 
             <!-- ICON CONTAINER -->
             <com.google.android.material.card.MaterialCardView
@@ -71,7 +71,7 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="5dp"
+                    android:padding="4dp"
                     android:src="@drawable/ic_booking_service"/>
 
 
@@ -82,7 +82,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="14dp"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
@@ -92,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:text="2 Services Added"
                     android:textColor="@android:color/white"
-                    android:textSize="15sp"
+                    android:textSize="14sp"
                     android:textStyle="bold"/>
 
                 <LinearLayout
@@ -105,17 +105,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="View Details"
+                        android:text="Review your selection"
                         android:textColor="#DFF5E4"
-                        android:textSize="11sp"/>
+                        android:textSize="10sp"/>
 
-                    <ImageView
-                        android:layout_width="13dp"
-                        android:layout_height="13dp"
-                        android:layout_marginStart="4dp"
-                        android:rotation="270"
-                        android:src="@drawable/ic_arrow_right"
-                        app:tint="#DFF5E4"/>
 
                 </LinearLayout>
 
@@ -133,14 +126,14 @@
                 android:foreground="?attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:paddingHorizontal="16dp">
+                android:paddingHorizontal="8dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Book"
+                    android:text="Review &amp; Book"
                     android:textColor="@color/primaryColor"
-                    android:textSize="13sp"
+                    android:textSize="11sp"
                     android:textStyle="bold"/>
 
                 <ImageView

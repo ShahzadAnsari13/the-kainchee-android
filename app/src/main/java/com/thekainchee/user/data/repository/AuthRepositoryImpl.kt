@@ -4,6 +4,7 @@ import com.thekainchee.user.data.local.datastore.UserPreferencesManager
 import com.thekainchee.user.data.local.room.dao.UserDao
 import com.thekainchee.user.data.local.room.entity.UserEntity
 import com.thekainchee.user.data.remote.api.AuthApi
+import com.thekainchee.user.data.remote.api.ProfileApi
 import com.thekainchee.user.data.remote.dto.auth.CommonMessageDto
 import com.thekainchee.user.data.remote.dto.auth.RequestOtpDto
 import com.thekainchee.user.data.remote.dto.auth.VerifyOtpDto
@@ -13,7 +14,7 @@ import com.thekainchee.user.utils.ErrorUtils
 import org.json.JSONObject
 import javax.inject.Inject
 
-class AuthRepositoryImpl @Inject constructor(private val authApi: AuthApi, private val tokenManager: UserPreferencesManager, private val userDao: UserDao) : AuthRepository{
+class AuthRepositoryImpl @Inject constructor(private val profileApi : ProfileApi,private val authApi: AuthApi, private val tokenManager: UserPreferencesManager, private val userDao: UserDao) : AuthRepository{
     override suspend fun requestOtp(
         countryCode: String,
         phone: String
@@ -78,6 +79,22 @@ class AuthRepositoryImpl @Inject constructor(private val authApi: AuthApi, priva
                 Result.failure(Exception(errorMsg.message))
             }
         }catch (e : Exception){
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun logout(): Result<Unit> {
+        return try{
+            val response = profileApi.logout()
+            if(response.isSuccessful){
+                Result.success(Unit)
+            }else{
+                val errorBody = response.errorBody()?.string()
+                val errorMsg = ErrorUtils.parseError(errorBody)
+                Result.failure(Exception(errorMsg.message))
+            }
+        }
+        catch(e: Exception){
             Result.failure(e)
         }
     }

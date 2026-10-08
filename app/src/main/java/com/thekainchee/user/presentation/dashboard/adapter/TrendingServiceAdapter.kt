@@ -42,12 +42,13 @@ class TrendingServiceAdapter(private val onItemClick : (ServiceUI) -> Unit)
                 .placeholder(R.drawable.ic_no_data)
                 .error(R.drawable.ic_no_data)
                 .into(binding.ivService)
-            binding.tvBookings.visibility =
-                if (item.bookingCount >= 5) View.VISIBLE else View.GONE
-
-            if (item.bookingCount >= 5) {
-                binding.tvBookings.text ="${item.bookingCount}+ booked"
-            }
+            binding.tvBookings.visibility =View.GONE
+//            binding.tvBookings.visibility =
+//                if (item.bookingCount >= 5) View.VISIBLE else View.GONE
+//
+//            if (item.bookingCount >= 5) {
+//                binding.tvBookings.text ="${item.bookingCount}+ booked"
+//            }
             binding.root.setOnClickListener {
                 onItemClick(item)
             }

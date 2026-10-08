@@ -35,7 +35,7 @@ class ParlourHorizontalAdapter(
             binding.tvType.text = item.type
             binding.tvRating.text = "★ ${item.rating}"
             binding.tvDistance.text = "⚑ ${item.distance} km"
-
+            binding.tvLocation.text = "⌖ ${item.location}"
             // Image load
             Glide.with(binding.root.context)
                 .load(item.image)

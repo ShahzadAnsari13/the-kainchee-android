@@ -33,6 +33,7 @@ interface ParlourApi {
 
     @GET("user/trending-services")
     suspend fun getTrendingService(
+        @Query("type") type : String,
         @Query("lat") lat : Double,
         @Query("lng") lng: Double
     ): Response<TrendingServiceResponseDto>

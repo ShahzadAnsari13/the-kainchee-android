@@ -505,12 +505,12 @@
                     android:paddingStart="16dp"
                     android:paddingTop="10dp"
                     android:paddingEnd="16dp"
-                    android:paddingBottom="88dp">
+                    android:paddingBottom="10dp">
 
                     <!-- Verified Parlours -->
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
-                        android:layout_height="64dp"
+                        android:layout_height="56dp"
                         android:layout_marginEnd="6dp"
                         android:layout_weight="1"
                         app:cardBackgroundColor="#F0FAF8"
@@ -547,7 +547,7 @@
                     <!-- Secure Payments -->
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
-                        android:layout_height="64dp"
+                        android:layout_height="56dp"
                         android:layout_marginEnd="6dp"
                         android:layout_weight="1"
                         app:cardBackgroundColor="#F0FAF8"
@@ -584,7 +584,7 @@
                     <!-- Best Offers -->
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
-                        android:layout_height="64dp"
+                        android:layout_height="56dp"
                         android:layout_marginEnd="6dp"
                         android:layout_weight="1"
                         app:cardBackgroundColor="#F0FAF8"
@@ -622,7 +622,7 @@
                     <!-- Easy Booking -->
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
-                        android:layout_height="64dp"
+                        android:layout_height="56dp"
                         android:layout_weight="1"
                         app:cardBackgroundColor="#F0FAF8"
                         app:cardCornerRadius="14dp"

@@ -6,18 +6,27 @@ import com.thekainchee.user.data.local.datastore.UserPreferencesManager
 import com.thekainchee.user.domain.repository.AuthRepository
 import com.thekainchee.user.domain.repository.ReferralRepository
 import com.thekainchee.user.presentation.auth.state.AuthState
+import com.thekainchee.user.presentation.auth.state.LogoutEvent
 import com.thekainchee.user.presentation.auth.state.ReferralState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(private val  authRepository: AuthRepository, private val referralRepository: ReferralRepository, private val tokenManager: UserPreferencesManager) : ViewModel(){
+class AuthViewModel @Inject constructor(private val  authRepository: AuthRepository, private val referralRepository: ReferralRepository, private val tokenManager: UserPreferencesManager) : ViewModel() {
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState
+
+    private val _logoutState = MutableStateFlow(false)
+    val logoutState = _logoutState.asStateFlow()
+
+    private val _logoutEvent = MutableSharedFlow<LogoutEvent>()
+    val logoutEvent = _logoutEvent.asSharedFlow()
 
     private val _referralState = MutableStateFlow<ReferralState>(
         ReferralState.Idle
@@ -25,6 +34,7 @@ class AuthViewModel @Inject constructor(private val  authRepository: AuthReposit
 
     val referralState: StateFlow<ReferralState> =
         _referralState.asStateFlow()
+
 
     fun applyReferral(
         referralCode: String,
@@ -55,7 +65,7 @@ class AuthViewModel @Inject constructor(private val  authRepository: AuthReposit
         }
     }
 
-    fun requestOtp(countryCode: String, phone: String){
+    fun requestOtp(countryCode: String, phone: String) {
 
         viewModelScope.launch {
             _authState.value = AuthState.Loading
@@ -76,12 +86,12 @@ class AuthViewModel @Inject constructor(private val  authRepository: AuthReposit
         }
     }
 
-    fun verifyOtp(countryCode: String,phone: String,otp: String){
+    fun verifyOtp(countryCode: String, phone: String, otp: String) {
         viewModelScope.launch {
 
             _authState.value = AuthState.Loading
 
-            val result = authRepository.verifyOtp(countryCode,phone,otp)
+            val result = authRepository.verifyOtp(countryCode, phone, otp)
 
             if (result.isSuccess) {
 
@@ -108,7 +118,31 @@ class AuthViewModel @Inject constructor(private val  authRepository: AuthReposit
             }
         }
     }
+
     fun resetState() {
         _authState.value = AuthState.Idle
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            _logoutState.value = true
+
+            try {
+                val result = authRepository.logout()
+
+                result.onSuccess {
+                    tokenManager.clearTokens()
+                    _logoutEvent.emit(LogoutEvent.Success)
+                }.onFailure {
+                    _logoutEvent.emit(
+                        LogoutEvent.Error(
+                            it.message ?: "Unknown error"
+                        )
+                    )
+                }
+            } finally {
+                _logoutState.value = false
+            }
+        }
     }
 }

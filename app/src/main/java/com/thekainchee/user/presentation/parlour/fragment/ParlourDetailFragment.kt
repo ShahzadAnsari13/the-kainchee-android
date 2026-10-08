@@ -96,11 +96,6 @@ class ParlourDetailFragment : Fragment() {
 
         binding.rvCategories.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.rvCategories.setHasFixedSize(true)
-
-        // TEMP DATA (API se replace karna baad me)
-
-
-
         serviceCategoryAdapter = CategoryAdapter(
             categories,
             ::onCategoryClick
@@ -526,6 +521,16 @@ class ParlourDetailFragment : Fragment() {
             }
         }
         binding.bottomBookingStrip.setOnClickListener {
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                Snackbar.make(binding.root, "No Internet Connection", Snackbar.LENGTH_SHORT).show()
+            }else{
+                id?.let { parlourId ->
+                    serviceViewModel.getBookingPreview(parlourId,serviceViewModel.selectedServiceIds.value)
+                }
+
+            }
+        }
+        binding.btnBook.setOnClickListener {
             if(!NetworkUtils.isInternetAvailable(requireContext())){
                 Snackbar.make(binding.root, "No Internet Connection", Snackbar.LENGTH_SHORT).show()
             }else{

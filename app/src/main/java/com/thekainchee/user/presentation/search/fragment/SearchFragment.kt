@@ -1,5 +1,6 @@
 package com.thekainchee.user.presentation.search.fragment
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -23,6 +24,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.utils.NetworkUtils
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
@@ -276,6 +278,8 @@ class SearchFragment : Fragment() {
                 override fun afterTextChanged(s: Editable?) {
 
                     if (s.isNullOrEmpty()) {
+
+                        binding.ivClearSearch.visibility = View.GONE
                         viewModel.clearSearch()
                     }
                 }
@@ -292,15 +296,22 @@ class SearchFragment : Fragment() {
                     start: Int,
                     before: Int,
                     count: Int
-                ) {}
+                ) {
+
+                    binding.ivClearSearch.visibility = View.VISIBLE
+                }
             }
         )
 
         binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
 
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                val imm = requireContext()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
-               if(!NetworkUtils.isInternetAvailable(requireContext())){
+                imm.hideSoftInputFromWindow(binding.etSearch.windowToken, 0)
+                binding.etSearch.clearFocus()
+                if(!NetworkUtils.isInternetAvailable(requireContext())){
                    Snackbar.make(requireView(),"No internet connection",Snackbar.LENGTH_SHORT).show()
                }else{
                    val query = binding.etSearch.text

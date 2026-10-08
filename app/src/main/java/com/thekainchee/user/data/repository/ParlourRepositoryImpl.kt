@@ -63,11 +63,12 @@ class ParlourRepositoryImpl @Inject constructor( private val api: ParlourApi) : 
     }
 
     override suspend fun getTrendingServices(
+        type : String,
         lat: Double,
         lng: Double
     ): Result<List<ServiceUI>> {
         try{
-            val response = api.getTrendingService(lat,lng)
+            val response = api.getTrendingService(type,lat,lng)
             if(response.isSuccessful && response.body() != null){
                 val list =  response.body()?.data?.map { it.toUI() }.orEmpty()
                 return Result.success(list)

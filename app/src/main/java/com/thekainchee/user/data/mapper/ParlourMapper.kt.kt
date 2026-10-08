@@ -11,13 +11,21 @@ import com.thekainchee.user.presentation.parlour.model.LocationUiModel
 import com.thekainchee.user.presentation.parlour.model.ParlourDetailedUI
 
 fun ParlourDto.toUI() : ParlourUI {
+    val address = location.address
+    val landmark = location.manualAddress?.landmark
+
+    val locationText = listOfNotNull(
+        landmark,
+        address.city ?: address.district
+    ).joinToString(", ")
     return ParlourUI(
         id = _id,
         name = name,
         image = images?.firstOrNull(),
         rating = rating.average,
         distance = distance,
-        type = type
+        type = type,
+        location = locationText
     )
 }
 

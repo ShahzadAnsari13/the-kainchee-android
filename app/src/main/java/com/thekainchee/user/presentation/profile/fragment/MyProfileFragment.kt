@@ -1,7 +1,10 @@
 package com.thekainchee.user.presentation.profile.fragment
 
 
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,13 +13,17 @@ import android.view.ViewGroup
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.thekainchee.user.R
+import com.thekainchee.user.databinding.DialogLogoutConfirmationBinding
 import com.thekainchee.user.databinding.FragmentMyProfileBinding
+import com.thekainchee.user.presentation.auth.state.LogoutEvent
+import com.thekainchee.user.presentation.auth.viewModel.AuthViewModel
 import com.thekainchee.user.presentation.booking.BookingActivity
 import com.thekainchee.user.presentation.booking.bottomSheet.SupportBottomSheet
 import com.thekainchee.user.presentation.common.extensions.hide
@@ -42,6 +49,7 @@ class MyProfileFragment : Fragment() {
     private var _binding : FragmentMyProfileBinding? = null
     private val binding get() = _binding!!
     private val profileViewModel : ProfileViewModel by activityViewModels()
+    private val authViewModel : AuthViewModel by viewModels()
     private var isSwipeRefresh  = false
     private var profile: ProfileUiModel? = null
     override fun onCreateView(
@@ -60,6 +68,8 @@ class MyProfileFragment : Fragment() {
         setupClickListeners()
         observeProfile()
         observeEvents()
+        observeLogoutState()
+        observeLogoutEvent()
         if (!NetworkUtils.isInternetAvailable(requireContext())){
             showNoInternetState("Try Again"){
                 if(!NetworkUtils.isInternetAvailable(requireContext())){
@@ -296,6 +306,15 @@ class MyProfileFragment : Fragment() {
             TermsAndConditionsBottomSheet()
                 .show(parentFragmentManager,"TermsAndConditionsBottomSheet")
         }
+
+        //logout
+        binding.cardLogout.setOnClickListener {
+            if(!NetworkUtils.isInternetAvailable(requireContext())){
+                Snackbar.make(requireView(), "No Internet Connection", Snackbar.LENGTH_SHORT).show()
+            }else{
+                showLogoutDialog()
+            }
+        }
     }
 
     private fun observeProfile(){
@@ -438,6 +457,73 @@ class MyProfileFragment : Fragment() {
         return NotificationManagerCompat
             .from(requireContext())
             .areNotificationsEnabled()
+    }
+    private fun observeLogoutState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                authViewModel.logoutState.collect { isLoading ->
+
+                    binding.cardLogout.isEnabled = !isLoading
+
+                    binding.tvLogout.text =
+                        if (isLoading) "Logging out..." else "Logout"
+                }
+            }
+        }
+    }
+    private fun observeLogoutEvent() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                authViewModel.logoutEvent.collect { event ->
+
+                    when (event) {
+
+                        LogoutEvent.Success -> {
+                            // SessionAwareActivity automatically
+                            // Login screen par le jayega
+                        }
+
+                        is LogoutEvent.Error -> {
+                            Snackbar.make(
+                                requireView(),
+                                event.message,
+                                Snackbar.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private fun showLogoutDialog() {
+
+        val dialog = Dialog(requireContext())
+        val binding = DialogLogoutConfirmationBinding.inflate(layoutInflater)
+
+        dialog.setContentView(binding.root)
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        binding.btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        binding.btnLogout.setOnClickListener {
+            authViewModel.logout()
+            dialog.dismiss()
+        }
+
+        dialog.show()
+
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.90).toInt(),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
     override fun onResume() {

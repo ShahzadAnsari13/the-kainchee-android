@@ -14,14 +14,14 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="164dp"
+        android:minHeight="156dp"
         android:padding="10dp">
 
         <!-- Parlour Image -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardParlourImage"
-            android:layout_width="142dp"
-            android:layout_height="142dp"
+            android:layout_width="124dp"
+            android:layout_height="132dp"
             app:cardCornerRadius="14dp"
             app:cardElevation="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -49,7 +49,7 @@
             android:maxLines="2"
             android:text="Style Studio"
             android:textColor="#101820"
-            android:textSize="18sp"
+            android:textSize="17sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/cardParlourImage"
@@ -66,25 +66,13 @@
             android:gravity="center"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            android:text="★ 4.6"
+            android:text="★ 4.6 (128)"
             android:textColor="@android:color/white"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/cardParlourImage"
             app:layout_constraintTop_toBottomOf="@id/tvParlourName" />
 
-        <!-- Rating Count -->
-        <TextView
-            android:id="@+id/tvRatingCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="(128)"
-            android:textColor="#65737C"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@id/tvRating"
-            app:layout_constraintStart_toEndOf="@id/tvRating"
-            app:layout_constraintTop_toTopOf="@id/tvRating" />
 
         <!-- Parlour Type -->
         <TextView
@@ -92,13 +80,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="28dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="Men's Salon"
             android:textColor="#53616A"
-            android:textSize="14sp"
+            android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/cardParlourImage"
             app:layout_constraintTop_toBottomOf="@id/tvRating" />
@@ -109,7 +97,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="7dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="28dp"
             android:ellipsize="end"
             android:maxLines="1"

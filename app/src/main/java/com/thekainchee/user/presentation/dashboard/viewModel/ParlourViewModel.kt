@@ -95,7 +95,7 @@ class ParlourViewModel @Inject constructor(private val parlourRepository: Parlou
             }
         }
     }
-    fun trendingServices(){
+    fun trendingServices(type: String){
         val lat = currentLat ?: return
         val lng = currentLng ?: return
 
@@ -106,7 +106,7 @@ class ParlourViewModel @Inject constructor(private val parlourRepository: Parlou
         _trendingServiceState.value = TrendingServiceState.Loading
         viewModelScope.launch {
             trendingServiceIsLoading = true
-            val result = parlourRepository.getTrendingServices(lat,lng)
+            val result = parlourRepository.getTrendingServices(type,lat,lng)
             if(result.isSuccess){
                 val data = result.getOrNull() ?: emptyList()
                 trendingServiceIsLoading = false
@@ -128,11 +128,10 @@ class ParlourViewModel @Inject constructor(private val parlourRepository: Parlou
 
 
         if(trendingParlourIsLoading) return
-
+        trendingParlourIsLoading = true
         trendingParlourCurrentList.clear()
         _trendingParlourState.value = ParlourState.Loading
         viewModelScope.launch {
-            trendingParlourIsLoading = true
             val result = parlourRepository.getTrendingParlours(lat=lat,lng=lng,type=type)
 
             if(result.isSuccess){

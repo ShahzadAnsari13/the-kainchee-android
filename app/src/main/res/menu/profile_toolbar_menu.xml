@@ -6,10 +6,4 @@
         android:icon="@drawable/ic_notification"
         android:title="Notifications"
         app:showAsAction="always" />
-
-    <item
-        android:id="@+id/action_settings"
-        android:icon="@drawable/ic_settings"
-        android:title="Settings"
-        app:showAsAction="always" />
 </menu>

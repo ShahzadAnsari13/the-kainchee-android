@@ -13,12 +13,13 @@ import com.razorpay.PaymentData
 import com.razorpay.PaymentResultWithDataListener
 import com.thekainchee.user.R
 import com.thekainchee.user.databinding.ActivityBookingBinding
+import com.thekainchee.user.presentation.base.SessionAwareActivity
 import com.thekainchee.user.presentation.payment.viewModel.PaymentViewModel
 import com.thekainchee.user.presentation.service.model.BookingPreviewUiModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class BookingActivity : AppCompatActivity(), PaymentResultWithDataListener {
+class BookingActivity : SessionAwareActivity(), PaymentResultWithDataListener {
     private var bookingPreviewData: BookingPreviewUiModel? = null
 
     private val paymentViewModel: PaymentViewModel by viewModels()

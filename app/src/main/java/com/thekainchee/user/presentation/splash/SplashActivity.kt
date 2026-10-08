@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.thekainchee.user.R
 import com.thekainchee.user.presentation.auth.AuthActivity
 import com.thekainchee.user.presentation.dashboard.DashboardActivity
+import com.thekainchee.user.presentation.splash.viewModel.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -21,6 +21,7 @@ interface ParlourRepository {
     ): Result<List<ParlourUI>>
 
     suspend fun  getTrendingServices(
+        type: String,
         lat : Double,
         lng : Double
     ): Result<List<ServiceUI>>
