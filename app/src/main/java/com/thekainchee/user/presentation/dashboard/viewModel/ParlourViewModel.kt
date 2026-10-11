@@ -156,7 +156,6 @@ class ParlourViewModel @Inject constructor(private val parlourRepository: Parlou
         val lng = currentLng ?: return
 
         if (nearbyIsLoading) {
-            Log.d("RETRY_CHECK", "BLOCKED BY LOADING")
             return
         }
 
@@ -169,20 +168,15 @@ class ParlourViewModel @Inject constructor(private val parlourRepository: Parlou
             nearbyCurrentList.clear()
             _nearbyParlourState.value = ParlourState.Loading
         }
-
+        nearbyIsLoading = true
         viewModelScope.launch {
-            Log.d("RETRY_CHECK", "COROUTINE STARTED")
-            nearbyIsLoading = true
-            Log.d("RETRY_CHECK", "API CALLING")
             val result = parlourRepository.getNearbyParlours(
                 lat, lng, nearbyCurrentPage, type
             )
-            Log.d("RETRY_CHECK", "RESULT = $result")
 
             nearbyIsLoading = false
 
             if (result.isSuccess) {
-                Log.d("RETRY_CHECK", "SUCCESS")
                 val data = result.getOrNull() ?: emptyList()
 
                 if (data.isNotEmpty()) {
@@ -197,8 +191,6 @@ class ParlourViewModel @Inject constructor(private val parlourRepository: Parlou
                 )
 
             } else {
-                Log.d("RETRY_CHECK", "ERROR")
-                Log.d("C", "LOADING FALSE")
                 _nearbyParlourState.value = ParlourState.Error(
                     result.exceptionOrNull()?.message ?: "Failed"
                 )

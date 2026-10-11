@@ -22,7 +22,7 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="12dp"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="#222222"/>
@@ -41,7 +41,7 @@
         android:id="@+id/btnPrimary"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="12dp"
         android:textColor="@android:color/white"
         android:backgroundTint="@color/primaryColor"
         app:cornerRadius="12dp"/>

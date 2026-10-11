@@ -193,6 +193,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true"
+            android:visibility="gone"
             android:background="@color/white"
             android:overScrollMode="never"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -668,7 +669,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="168dp"
-        android:visibility="gone"
+        android:background="@color/white"
         android:paddingBottom="16dp">
 
         <LinearLayout

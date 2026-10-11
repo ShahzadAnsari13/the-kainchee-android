@@ -12,6 +12,7 @@ import android.text.Spanned
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -99,7 +100,8 @@ class HomeFragment : Fragment() {
         BEAUTY,
         UNISEX
     }
-    private lateinit var selectedCategory: SalonCategoryType
+    private var selectedCategory:  SalonCategoryType =
+        SalonCategoryType.MENS
     private val locationPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
@@ -320,28 +322,32 @@ class HomeFragment : Fragment() {
                             val currentLat = state.address.latitude
                             val currentLng = state.address.longitude
                             parlourViewModel.setLocation(currentLat, currentLng)
+                            shouldRefreshLocation = true
+
 
                             withInternet {
                                 if (lastLat != currentLat || lastLng != currentLng) {
+
                                     lastLat = currentLat
                                     lastLng = currentLng
-                                    selectedCategory = SalonCategoryType.MENS
                                     val type = selectedCategory.name
-                                    parlourViewModel.getNearbyParlours(type)
+
+                                    parlourViewModel.getNearbyParlours(type,forceRefresh = true)
                                     parlourViewModel.trendingParlours(type)
                                     parlourViewModel.trendingServices(type)
 
                                 }else{
+                                    hideMainLoading()
+                                    binding.mainContent.isVisible = true
                                     binding.stateView.hide()
                                 }
                             }
-
                             askNotificationPermission()
                         }
 
                         is LocationUiState.Error -> {
 
-                            val text = "\uD83D\uDCCD Unable to load location  Retry"
+                            val text = "Retry"
 
                             val spannable = SpannableString(text)
 
@@ -374,7 +380,7 @@ class HomeFragment : Fragment() {
                             showLocationError(
                                 onRetry = {
                                     withInternet {
-                                        retryAllData()
+                                        locationViewModel.fetchUserLocation()
                                     }
                                 },
                                 onChangeLocation = {
@@ -396,7 +402,7 @@ class HomeFragment : Fragment() {
         binding.mainContent.isVisible = false
         binding.stateView.show(
             StateViewData(
-                image = R.drawable.ic_oops,
+                image = R.drawable.empty_state_illustration,
                 title = "No Parlour Found",
                 subtitle = "No parlours found in your area.",
                 primaryButtonText = "Retry",
@@ -405,6 +411,10 @@ class HomeFragment : Fragment() {
                         binding.stateView.hide()
                         retryAllData()
                     }
+                },
+                secondaryButtonText = "Change Location",
+                onSecondaryClick = {
+                    openLocationScreen()
                 }
             )
         )
@@ -433,6 +443,7 @@ class HomeFragment : Fragment() {
                         }
 
                         is ParlourState.Error -> {
+                            hideMainLoading()
                             showNearbyError(
                                 onRetry = {
                                     withInternet {
@@ -545,6 +556,10 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        Log.d(
+            "LOCATION_DEBUG",
+            "onResume: shouldRefreshLocation = $shouldRefreshLocation"
+        )
         withInternet {
             if (openedPermissionSettings) {
 
@@ -666,7 +681,7 @@ class HomeFragment : Fragment() {
     ) {
         binding.stateView.show(
             StateViewData(
-                image = R.drawable.ic_oops,
+                image = R.drawable.error_state_illustration,
                 title = "Unable to load parlours",
                 subtitle = "Something went wrong while loading nearby parlours.\nPlease retry or change your location",
                 primaryButtonText = "Retry",
