@@ -1,0 +1,80 @@
+package com.alenear.user.data.repository
+
+import com.alenear.user.data.local.room.dao.UserDao
+import com.alenear.user.data.local.room.entity.UserEntity
+import com.alenear.user.data.mapper.toUI
+import com.alenear.user.data.remote.api.ProfileApi
+import com.alenear.user.data.remote.dto.profile.FcmTokenRequest
+import com.alenear.user.data.remote.dto.profile.UpdateProfileRequest
+import com.alenear.user.domain.repository.ProfileRepository
+import com.alenear.user.presentation.profile.model.ProfileUiModel
+import com.alenear.user.utils.ErrorUtils
+import javax.inject.Inject
+
+class ProfileRepositoryImpl @Inject constructor(private val api: ProfileApi,private val userDao: UserDao)  : ProfileRepository {
+    override suspend fun getProfile(): Result<ProfileUiModel> {
+        return try{
+            val response =  api.getProfile()
+            if(response.isSuccessful && response.body() != null){
+                val data = response.body()?.data
+                if(data != null){
+                    Result.success(data.toUI())
+                }else{
+                    Result.failure(Exception("Failed to fetch profile"))
+                }
+            }else{
+
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
+                Result.failure(Exception(error.message ?: "Failed to fetch profile"))
+            }
+        }
+        catch(e : Exception){
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateProfile(name: String): Result<String> {
+        return try{
+            val response = api.updateProfile(UpdateProfileRequest(name))
+            if(response.isSuccessful && response.body() != null) {
+                val message = response.body()!!.message
+                userDao.insertOrReplace(
+                    UserEntity(
+                        id = 1,
+                        name = name
+                    )
+                )
+                Result.success(message)
+            }
+            else{
+
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
+                Result.failure(Exception(error.message ?: "Failed to update profile"))
+            }
+        }
+        catch(e : Exception){
+            Result.failure(e)
+
+        }
+    }
+
+    override suspend fun updateFcmToken(fcmToken: String): Result<String> {
+        return try {
+            val response = api.updateFcmToken(FcmTokenRequest(fcmToken))
+            if (response.isSuccessful) {
+                val message = response.body()?.message ?: "Success"
+                Result.success(message)
+            } else {
+
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
+                Result.failure(Exception(error.message ?: "Failed to update FCM token"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+}

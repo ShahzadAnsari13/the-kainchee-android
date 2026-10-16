@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/parlourDetailedFragment"
-        android:name="com.thekainchee.user.presentation.parlour.fragment.ParlourDetailFragment"
+        android:name="com.alenear.user.presentation.parlour.fragment.ParlourDetailFragment"
         android:label="ParlourDetailedFragment">
 
         <argument
@@ -26,7 +26,7 @@
 
     <fragment
         android:id="@+id/parlourMap"
-        android:name="com.thekainchee.user.presentation.parlour.fragment.ParlourMap"
+        android:name="com.alenear.user.presentation.parlour.fragment.ParlourMap"
         android:label="ParlourMap">
 
         <argument
@@ -41,7 +41,7 @@
 
     <fragment
         android:id="@+id/serviceListFragment"
-        android:name="com.thekainchee.user.presentation.service.fragment.ServiceListFragment"
+        android:name="com.alenear.user.presentation.service.fragment.ServiceListFragment"
         android:label="ServiceListFragment">
         <argument android:name="parlourId" app:argType="string" />
         <argument android:name="categoryId" app:argType="string" />

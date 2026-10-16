@@ -5,7 +5,7 @@
     app:startDestination="@id/myProfileFragment">
     <fragment
         android:id="@+id/myProfileFragment"
-        android:name="com.thekainchee.user.presentation.profile.fragment.MyProfileFragment"
+        android:name="com.alenear.user.presentation.profile.fragment.MyProfileFragment"
         android:label="MyProfileFragment">
 
         <action
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/walletTransactionFragment"
-        android:name="com.thekainchee.user.presentation.wallet.fragment.WalletTransactionFragment"
+        android:name="com.alenear.user.presentation.wallet.fragment.WalletTransactionFragment"
         android:label="Wallet Transactions" >
         <argument
             android:name="balance"
@@ -25,11 +25,11 @@
     </fragment>
     <fragment
         android:id="@+id/notificationFragment"
-        android:name="com.thekainchee.user.presentation.notification.fragment.NotificationFragment"
+        android:name="com.alenear.user.presentation.notification.fragment.NotificationFragment"
         android:label="Notifications" />
 
     <fragment android:id="@+id/referralFragment"
-        android:name="com.thekainchee.user.presentation.referral.fragment.ReferralFragment"
+        android:name="com.alenear.user.presentation.referral.fragment.ReferralFragment"
         android:label="Referral" >
         <action
             android:id="@+id/action_referralFragment_to_referralHistoryFragment"
@@ -37,11 +37,11 @@
     </fragment>
 
     <fragment android:id="@+id/referralHistoryFragment"
-        android:name="com.thekainchee.user.presentation.referral.fragment.ReferralHistoryFragment"
+        android:name="com.alenear.user.presentation.referral.fragment.ReferralHistoryFragment"
         android:label="Referral History" >
 
         <argument
             android:name="referral_history"
-            app:argType="com.thekainchee.user.presentation.referral.model.ReferralHistory" />
+            app:argType="com.alenear.user.presentation.referral.model.ReferralHistory" />
     </fragment>
 </navigation>

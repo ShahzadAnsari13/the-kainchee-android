@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/locationListFragment"
-        android:name="com.thekainchee.user.presentation.location.fragment.LocationListFragment"
+        android:name="com.alenear.user.presentation.location.fragment.LocationListFragment"
         android:label="Location List">
 
         <action
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.thekainchee.user.presentation.location.fragment.MapFragment"
+        android:name="com.alenear.user.presentation.location.fragment.MapFragment"
         android:label="Map" >
         <argument
             android:name="placeId"
@@ -33,7 +33,7 @@
 
     <fragment
         android:id="@+id/saveAddressFragment"
-        android:name="com.thekainchee.user.presentation.location.fragment.SaveAddressFragment"
+        android:name="com.alenear.user.presentation.location.fragment.SaveAddressFragment"
         android:label="Save Address" >
 
         <argument

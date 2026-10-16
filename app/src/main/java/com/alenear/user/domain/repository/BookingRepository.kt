@@ -1,0 +1,38 @@
+package com.alenear.user.domain.repository
+
+import com.alenear.user.data.remote.dto.booking.CancelBookingResponse
+import com.alenear.user.data.remote.dto.booking.CreateRatingRequest
+import com.alenear.user.data.remote.dto.booking.CreateRatingResponse
+import com.alenear.user.data.remote.dto.booking.RatingStatusDto
+import com.alenear.user.presentation.booking.model.BookingDetailUiModel
+import com.alenear.user.presentation.booking.model.BookingUiModel
+import com.alenear.user.presentation.booking.model.CreateBookingParams
+import com.alenear.user.presentation.booking.model.MyBookingUiModel
+import com.alenear.user.presentation.booking.model.SlotUiModel
+import com.alenear.user.presentation.booking.model.StaffUiModel
+
+interface BookingRepository {
+    suspend fun getParlourStaffs(parlourId: String): Result<List<StaffUiModel>>
+
+    suspend fun getStaffSlots(parlourId: String, staffId: String, date: String): Result<List<SlotUiModel>>
+
+    suspend fun createBooking(params: CreateBookingParams): Result<BookingUiModel>
+
+    suspend fun getBookingDetails(bookingId: String): Result<BookingDetailUiModel>
+    suspend fun getMyBookings(
+    ): Result<List<MyBookingUiModel>>
+
+    suspend fun cancelBooking(
+        bookingId: String,
+        reason: String
+    ): Result<CancelBookingResponse>
+
+    suspend fun getRatingStatus(
+        bookingId: String
+    ): Result<RatingStatusDto>
+
+    suspend fun createRating(
+        bookingId: String,
+        request: CreateRatingRequest
+    ): Result<CreateRatingResponse>
+}

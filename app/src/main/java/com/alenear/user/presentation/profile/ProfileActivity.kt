@@ -1,0 +1,52 @@
+package com.alenear.user.presentation.profile
+
+import android.os.Bundle
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import com.alenear.user.R
+import com.alenear.user.databinding.ActivityProfileBinding
+import com.alenear.user.presentation.base.SessionAwareActivity
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
+class ProfileActivity : SessionAwareActivity() {
+    private lateinit var navController: NavController
+    private lateinit var binding: ActivityProfileBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityProfileBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.profileNavHost) as NavHostFragment
+
+        navController = navHostFragment.navController
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+
+            if (destination.id == R.id.notificationFragment) {
+                binding.toolbar.menu.findItem(R.id.action_notification)?.isVisible = false
+            } else {
+                binding.toolbar.menu.findItem(R.id.action_notification)?.isVisible = true
+            }
+        }
+        binding.toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+
+                R.id.action_notification -> {
+                    navController.navigate(R.id.notificationFragment)
+                    true
+                }
+
+                else -> false
+            }
+        }
+    }
+    fun setToolbarTitle(title: String) {
+        binding.toolbar.title = title
+    }
+    fun clearMenu() {
+        binding.toolbar.menu.clear()
+    }
+}

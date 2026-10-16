@@ -1,0 +1,134 @@
+package com.alenear.user.di
+
+import com.alenear.user.data.remote.api.AddressApi
+import com.alenear.user.data.remote.api.AuthApi
+import com.alenear.user.data.remote.api.BookingApi
+import com.alenear.user.data.remote.api.NotificationApi
+import com.alenear.user.data.remote.api.ParlourApi
+import com.alenear.user.data.remote.api.PaymentApi
+import com.alenear.user.data.remote.api.ProfileApi
+import com.alenear.user.data.remote.api.ReferralApi
+import com.alenear.user.data.remote.api.SearchApi
+import com.alenear.user.data.remote.api.ServiceApi
+import com.alenear.user.data.remote.api.WalletApi
+import com.alenear.user.data.remote.interceptor.AuthInterceptor
+import com.alenear.user.data.remote.interceptor.RefreshTokenAuthenticator
+import com.alenear.user.data.remote.retrofit.LoggingInterceptorProvider
+import com.alenear.user.data.remote.retrofit.OkHttpProvider
+import com.alenear.user.data.remote.retrofit.RetrofitProvider
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import javax.inject.Named
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+object NetworkModule {
+    @Provides
+    @Singleton
+    fun provideLoggingInterceptor() : HttpLoggingInterceptor{
+        return LoggingInterceptorProvider.provide()
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor,authInterceptor: AuthInterceptor,refreshTokenAuthenticator: RefreshTokenAuthenticator) : OkHttpClient{
+        return OkHttpProvider.provide(loggingInterceptor,authInterceptor,refreshTokenAuthenticator)
+    }
+
+    @Provides
+    @Singleton
+    @Named("NoAuth")
+    fun provideNoAuthOkHttpClient(loggingInterceptor: HttpLoggingInterceptor) : OkHttpClient {
+        return OkHttpProvider.provideNoAuth(loggingInterceptor)
+    }
+    @Provides
+    @Singleton
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return RetrofitProvider.provide(okHttpClient)
+    }
+
+    @Provides
+    @Singleton
+    @Named("NoAuth")
+    fun provideNoAuthRetrofit(
+        @Named("NoAuth") okHttpClient: OkHttpClient
+    ): Retrofit {
+        return RetrofitProvider.provide(okHttpClient)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthApi(
+        @Named("NoAuth") retrofit: Retrofit
+    ): AuthApi {
+        return retrofit.create(AuthApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAddressApi(retrofit: Retrofit) : AddressApi {
+        return retrofit.create(AddressApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideParlourApi(retrofit: Retrofit) : ParlourApi{
+        return retrofit.create(ParlourApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideServiceApi(retrofit: Retrofit): ServiceApi{
+        return retrofit.create(ServiceApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBookingApi(retrofit: Retrofit): BookingApi{
+        return retrofit.create(BookingApi::class.java)
+    }
+    @Provides
+    @Singleton
+    fun provideWalletApi(retrofit: Retrofit): WalletApi {
+        return retrofit.create(WalletApi::class.java)
+    }
+    @Provides
+    @Singleton
+    fun providePaymentApi(retrofit: Retrofit): PaymentApi{
+        return retrofit.create(PaymentApi::class.java)
+    }
+    @Provides
+    @Singleton
+    fun provideProfileApi(retrofit: Retrofit): ProfileApi {
+        return retrofit.create(ProfileApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationApi(retrofit: Retrofit): NotificationApi {
+        return retrofit.create(NotificationApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideReferralApi(
+        retrofit: Retrofit
+    ): ReferralApi {
+        return retrofit.create(ReferralApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSearchApi(
+        retrofit: Retrofit
+    ): SearchApi {
+        return retrofit.create(SearchApi::class.java)
+    }
+
+}

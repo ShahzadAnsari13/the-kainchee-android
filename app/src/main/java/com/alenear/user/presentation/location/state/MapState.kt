@@ -1,0 +1,15 @@
+package com.alenear.user.presentation.location.state
+
+import com.alenear.user.domain.model.UserAddress
+
+sealed class MapState {
+    object Idle : MapState()
+    object Loading : MapState()
+
+    data class LocationReceived(val lat: Double, val lng: Double) : MapState()
+    data class AddressReceived( val lat: Double,
+                                val lng: Double,
+                                val address: UserAddress) : MapState()
+
+    data class Error(val message: String) : MapState()
+}

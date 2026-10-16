@@ -5,11 +5,11 @@
     app:startDestination="@id/bookingSlotFragment">
     <fragment
         android:id="@+id/bookingSlotFragment"
-        android:name="com.thekainchee.user.presentation.booking.fragment.BookingSlotFragment"
+        android:name="com.alenear.user.presentation.booking.fragment.BookingSlotFragment"
         android:label="BookingSlotFragment">
 
         <argument android:name="services"
-            app:argType="com.thekainchee.user.presentation.service.model.BookingPreviewUiModel"/>
+            app:argType="com.alenear.user.presentation.service.model.BookingPreviewUiModel"/>
 
         <action android:id="@+id/action_bookingSlotFragment_to_bookingSuccessFragment"
             app:destination="@id/bookingSuccessFragment">
@@ -19,7 +19,7 @@
 
 
     <fragment android:id="@+id/bookingSuccessFragment"
-        android:name="com.thekainchee.user.presentation.booking.fragment.BookingSuccess"
+        android:name="com.alenear.user.presentation.booking.fragment.BookingSuccess"
         android:label="BookingSuccessFragment">
         <argument
             android:name="bookingId"
@@ -30,7 +30,7 @@
     </fragment>
 
     <fragment android:id="@+id/myBookingFragment"
-        android:name="com.thekainchee.user.presentation.booking.fragment.MyBookings"
+        android:name="com.alenear.user.presentation.booking.fragment.MyBookings"
         android:label="MyBookingsFragment">
 
         <action
@@ -40,7 +40,7 @@
 
 
     <fragment android:id="@+id/bookingDetailFragment"
-        android:name="com.thekainchee.user.presentation.booking.fragment.BookingDetailFragment"
+        android:name="com.alenear.user.presentation.booking.fragment.BookingDetailFragment"
         android:label="BookingDetailFragment">
         <argument
             android:name="bookingId"
@@ -52,7 +52,7 @@
 
     <fragment
         android:id="@+id/parlourMap"
-        android:name="com.thekainchee.user.presentation.parlour.fragment.ParlourMap"
+        android:name="com.alenear.user.presentation.parlour.fragment.ParlourMap"
         android:label="ParlourMap">
 
         <argument

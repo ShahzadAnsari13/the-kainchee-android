@@ -1,0 +1,274 @@
+package com.alenear.user.data.repository
+
+import com.alenear.user.data.mapper.toBookingRequestDto
+import com.alenear.user.data.mapper.toBookingUiModel
+import com.alenear.user.data.mapper.toUi
+import com.alenear.user.data.mapper.toUiModel
+import com.alenear.user.data.remote.api.BookingApi
+import com.alenear.user.data.remote.dto.booking.CancelBookingRequest
+import com.alenear.user.data.remote.dto.booking.CancelBookingResponse
+import com.alenear.user.data.remote.dto.booking.CreateRatingRequest
+import com.alenear.user.data.remote.dto.booking.CreateRatingResponse
+import com.alenear.user.data.remote.dto.booking.RatingStatusDto
+import com.alenear.user.domain.repository.BookingRepository
+import com.alenear.user.presentation.booking.model.BookingDetailUiModel
+import com.alenear.user.presentation.booking.model.BookingUiModel
+import com.alenear.user.presentation.booking.model.CreateBookingParams
+import com.alenear.user.presentation.booking.model.MyBookingUiModel
+import com.alenear.user.presentation.booking.model.SlotUiModel
+import com.alenear.user.presentation.booking.model.StaffUiModel
+import com.alenear.user.utils.ErrorUtils
+import javax.inject.Inject
+import kotlin.collections.emptyList
+
+class BookingRepositoryImpl @Inject constructor(private val api: BookingApi) : BookingRepository {
+
+
+    override
+    suspend fun getParlourStaffs(parlourId: String): Result<List<StaffUiModel>> {
+
+        return try {
+            val response = api.getParlourStaffs(parlourId)
+            if (response.isSuccessful && response.body() != null) {
+                val body = response.body()
+                val list = body?.staff?.map { it.toUi() }.orEmpty()
+                Result.success(list)
+            } else {
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
+                Result.failure(Exception(error.message ?: "Failed to fetch staff"))
+            }
+        }
+        catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override
+    suspend fun getStaffSlots(
+        parlourId: String,
+        staffId: String,
+        date: String
+    ): Result<List<SlotUiModel>> {
+        return try {
+            val response = api.getStaffSlots(parlourId, staffId, date)
+            if (response.isSuccessful && response.body() != null) {
+                val body = response.body()!!
+                val list = body.slots.map { SlotUiModel(time = it.start) }
+                Result.success(list)
+            } else {
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
+                Result.failure(Exception(error.message ?: "Failed to fetch staff"))
+            }
+        }
+        catch (e: Exception) {
+            Result.failure(e)
+            }
+    }
+
+    override suspend fun createBooking(params: CreateBookingParams): Result<BookingUiModel> {
+        return try {
+            val response = api.createBooking(params.toBookingRequestDto())
+            if (response.isSuccessful && response.body() != null) {
+                val body = response.body()!!
+                Result.success(body.toBookingUiModel())
+            } else {
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
+                Result.failure(Exception(error.message ?: "Failed to fetch staff"))
+            }
+        }catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getBookingDetails(
+        bookingId: String
+    ): Result<BookingDetailUiModel> {
+
+        return try {
+
+            val response = api.getBookingDetails(bookingId)
+
+            if (response.isSuccessful) {
+
+                val body = response.body()
+
+                if (body != null) {
+                    Result.success(
+                        body.booking.toUiModel()
+                    )
+                } else {
+                    Result.failure(
+                        Exception("Empty response")
+                    )
+                }
+
+            } else {
+                val errorBody = response.errorBody()?.string()
+
+                val error = ErrorUtils.parseError(errorBody
+                )
+
+                Result.failure(
+                    Exception(
+                        error.message ?: "Failed to fetch booking details"
+                    )
+                )
+            }
+
+        } catch (e: Exception) {
+
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getMyBookings(): Result<List<MyBookingUiModel>> {
+        return try{
+            val response  =  api.getMyBookings()
+            if(response.isSuccessful){
+                val body = response.body()?.bookings ?: emptyList()
+                Result.success(body.map { it.toUiModel() })
+
+            }else{
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
+                Result.failure(Exception(error.message ?: "Failed to fetch bookings"))
+            }
+        }
+        catch(e : Exception){
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun cancelBooking(
+        bookingId: String,
+        reason: String
+    ): Result<CancelBookingResponse> {
+
+        return try {
+
+            val response = api.cancelBooking(
+                bookingId = bookingId,
+                request = CancelBookingRequest(reason)
+            )
+
+            if (response.isSuccessful) {
+
+                val body = response.body()
+
+                if (body != null) {
+                    Result.success(body)
+                } else {
+                    Result.failure(
+                        Exception("Invalid response from server")
+                    )
+                }
+
+            } else {
+                val errorBody = response.errorBody()?.string()
+
+
+                val error = ErrorUtils.parseError(
+                    errorBody
+                )
+                Result.failure(
+                    Exception(
+                        error.message ?: "Failed to cancel booking"
+                    )
+                )
+            }
+
+        } catch (e: Exception) {
+
+            Result.failure(e)
+        }
+    }
+    override suspend fun getRatingStatus(
+        bookingId: String
+    ): Result<RatingStatusDto> {
+
+        return try {
+
+            val response = api.getRatingStatus(
+                bookingId = bookingId
+            )
+
+            if (response.isSuccessful) {
+
+                val body = response.body()
+
+                if (body != null) {
+                    Result.success(body)
+                } else {
+                    Result.failure(
+                        Exception("Invalid response from server")
+                    )
+                }
+
+            } else {
+
+                val errorBody = response.errorBody()?.string()
+
+                val error = ErrorUtils.parseError(
+                    errorBody
+                )
+
+                Result.failure(
+                    Exception(
+                        error.message ?: "Failed to get rating status"
+                    )
+                )
+            }
+
+        } catch (e: Exception) {
+
+            Result.failure(e)
+        }
+    }
+    override suspend fun createRating(
+        bookingId: String,
+        request: CreateRatingRequest
+    ): Result<CreateRatingResponse> {
+
+        return try {
+
+            val response = api.createRating(
+                bookingId = bookingId,
+                request = request
+            )
+
+            if (response.isSuccessful) {
+
+                val body = response.body()
+
+                if (body != null) {
+                    Result.success(body)
+                } else {
+                    Result.failure(
+                        Exception("Invalid response from server")
+                    )
+                }
+
+            } else {
+
+                val errorBody = response.errorBody()?.string()
+
+                val error = ErrorUtils.parseError(
+                    errorBody
+                )
+
+                Result.failure(
+                    Exception(
+                        error.message ?: "Failed to submit rating"
+                    )
+                )
+            }
+
+        } catch (e: Exception) {
+
+            Result.failure(e)
+        }
+    }
+}

@@ -1,0 +1,143 @@
+package com.alenear.user.data.repository
+
+import com.alenear.user.data.mapper.toUI
+import com.alenear.user.data.mapper.toUi
+import com.alenear.user.data.remote.api.ParlourApi
+import com.alenear.user.domain.repository.ParlourRepository
+import com.alenear.user.presentation.dashboard.model.BookingUI
+import com.alenear.user.presentation.dashboard.model.ParlourUI
+import com.alenear.user.presentation.dashboard.model.ServiceUI
+import com.alenear.user.presentation.parlour.model.ParlourDetailedUI
+import com.alenear.user.utils.ErrorUtils
+import java.io.IOException
+import javax.inject.Inject
+import kotlin.collections.orEmpty
+
+class ParlourRepositoryImpl @Inject constructor( private val api: ParlourApi) : ParlourRepository {
+    override suspend fun getNearbyParlours(
+        lat: Double,
+        lng: Double,
+        page: Int,
+        type: String?
+    ): Result<List<ParlourUI>> {
+        try {
+            val response = api.getNearbyParlours(lat = lat, lng = lng, page = page, type = type)
+            if (response.isSuccessful && response.body() != null) {
+                val list = response.body()?.parlours?.map { it.toUI() }.orEmpty()
+                return Result.success(list)
+            } else {
+
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
+                return Result.failure(Exception(error.message ?: "Failed to fetch parlours"))
+            }
+        }
+        catch (e: Exception) {
+            return Result.failure(e)
+        }
+    }
+
+
+
+
+    override suspend fun getTrendingParlours(
+        lat: Double,
+        lng: Double,
+        type: String?
+    ): Result<List<ParlourUI>> {
+        try {
+            val response = api.getTrendingParlours(lat = lat, lng = lng, type = type)
+            if (response.isSuccessful && response.body() != null) {
+                val list = response.body()?.data?.map { it.toUI() }.orEmpty()
+                return Result.success(list)
+            } else {
+                val error = ErrorUtils.parseError(response.errorBody()?.string())
+                return Result.failure(Exception(error.message ?: "Failed to fetch parlours"))
+
+            }
+        }
+        catch (e: Exception) {
+            return Result.failure(e)
+        }
+
+    }
+
+    override suspend fun getTrendingServices(
+        type : String,
+        lat: Double,
+        lng: Double
+    ): Result<List<ServiceUI>> {
+        try{
+            val response = api.getTrendingService(type,lat,lng)
+            if(response.isSuccessful && response.body() != null){
+                val list =  response.body()?.data?.map { it.toUI() }.orEmpty()
+                return Result.success(list)
+            }else{
+                val error = ErrorUtils.parseError(response.errorBody()?.string())
+                return Result.failure(Exception(error.message ?: "Failed to fetch services"))
+            }
+        }catch(e: Exception){
+           return Result.failure(e)
+        }
+    }
+
+    override suspend fun getUpcomingBookings(limit: Int): Result<List<BookingUI>> {
+        try{
+            val response = api.getUpcomingBookings(limit)
+            if(response.isSuccessful && response.body()!=null){
+                val list = response.body()?.bookings?.map { it.toUI() }.orEmpty()
+                return Result.success(list)
+            }else{
+                val error = ErrorUtils.parseError(response.errorBody()?.string())
+                return Result.failure(Exception(error.message ?: "Failed to fetch bookings"))
+            }
+        }catch (e: IOException) {
+            return Result.failure(Exception("No internet connection"))
+        }
+        catch(e: Exception){
+            return Result.failure(e)
+        }
+    }
+
+
+    override suspend fun getParlourDetails(id: String): Result<ParlourDetailedUI> {
+        return try {
+            val response = api.getParlourDetails(id)
+
+            if (response.isSuccessful && response.body() != null) {
+
+                val dto = response.body()!!
+
+                val ui = dto.toUi()   // 🔥 direct mapper call
+
+                Result.success(ui)
+
+            } else {
+                val error = ErrorUtils.parseError(response.errorBody()?.string())
+                Result.failure(Exception(error.message ?: "Failed to fetch parlour details"))
+            }
+
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun checkParlourStatus(parlourId: String): Result<Boolean> {
+        return try{
+            val response = api.checkParlourStatus(parlourId)
+            val dto = response.body()
+            if(response.isSuccessful && dto != null){
+
+                Result.success(dto.isOpenNow)
+            }else{
+                val error = ErrorUtils.parseError(response.errorBody()?.string())
+                Result.failure(Exception(error.message ?: "Failed to check parlour status"))
+            }
+        }
+        catch (e : Exception){
+            Result.failure(e)
+        }
+    }
+
+
+}

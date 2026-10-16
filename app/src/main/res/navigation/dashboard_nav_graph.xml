@@ -5,7 +5,7 @@
     app:startDestination="@id/homeFragment">
 
     <fragment android:id="@+id/homeFragment"
-        android:name="com.thekainchee.user.presentation.dashboard.fragment.HomeFragment"
+        android:name="com.alenear.user.presentation.dashboard.fragment.HomeFragment"
         android:label="Home" >
 
         <action
@@ -14,7 +14,7 @@
     </fragment>
 
     <fragment android:id="@+id/searchFragment"
-        android:name="com.thekainchee.user.presentation.search.fragment.SearchFragment"
+        android:name="com.alenear.user.presentation.search.fragment.SearchFragment"
         android:label="Search" >
 
     </fragment>

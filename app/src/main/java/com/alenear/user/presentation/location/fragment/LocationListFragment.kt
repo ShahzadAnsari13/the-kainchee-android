@@ -1,0 +1,295 @@
+package com.alenear.user.presentation.location.fragment
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
+import com.alenear.user.R
+import com.alenear.user.data.local.datastore.UserPreferencesManager
+import com.alenear.user.data.mapper.toUI
+import com.alenear.user.databinding.FragmentLocationListBinding
+import com.alenear.user.domain.model.AddressMode
+import com.alenear.user.domain.model.UserAddress
+import com.alenear.user.presentation.common.extensions.hide
+import com.alenear.user.presentation.common.extensions.show
+import com.alenear.user.presentation.common.state.StateViewData
+import com.alenear.user.presentation.location.state.AddressListState
+import com.alenear.user.presentation.location.adapter.AddressAdapter
+import com.alenear.user.presentation.location.model.AddressUI
+import com.alenear.user.presentation.location.state.AddressDeleteEvent
+import com.alenear.user.presentation.location.viewmodel.AddressSharedViewModel
+import com.alenear.user.presentation.location.viewmodel.AddressViewModel
+import com.alenear.user.presentation.location.viewmodel.SearchLocationViewModel
+import com.alenear.user.utils.NetworkUtils
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@AndroidEntryPoint
+class LocationListFragment : Fragment() {
+    private lateinit var adapter: AddressAdapter
+    private var _binding: FragmentLocationListBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: SearchLocationViewModel by viewModels()
+    private val addressViewModel : AddressViewModel by viewModels()
+
+    private val addressSharedViewModel : AddressSharedViewModel by activityViewModels()
+    private var fullList: List<UserAddress> = emptyList()
+    @Inject
+    lateinit var preferencesManager : UserPreferencesManager
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+         _binding = FragmentLocationListBinding.inflate(inflater,container,false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupAdapter()
+        setUpRecyclerView()
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    addressViewModel.actionId.collect { id ->
+                        if(::adapter.isInitialized){
+                            adapter.actionId = id
+                            adapter.notifyDataSetChanged()
+                        }
+
+                    }
+                }
+
+
+
+                launch {
+                    addressViewModel.event.collect { event ->
+                        when (event) {
+                            is AddressDeleteEvent.ShowMessage -> {
+                                Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                    }
+                }
+
+                launch {
+                    addressViewModel.state.collect { state ->
+                        when (state) {
+                            is AddressListState.Loading -> { /* loader */ }
+
+                            is AddressListState.Success -> {
+                                fullList = state.data
+                                val uiList = fullList.map { it.toUI() }
+
+                                if(::adapter.isInitialized){
+                                    adapter.submitList(uiList)
+                                }
+                            }
+
+                            is AddressListState.Error -> { /* error */ }
+                            else -> {}
+                        }
+                    }
+                }
+                launch {
+                    viewModel.searchResults.collect {list ->
+
+                        val uiList = list.mapIndexed { index, item ->
+                            AddressUI(
+                                id = index.toString(),
+                                label = item.primaryText,
+                                address = item.secondaryText,
+                                latitude = 0.0,
+                                longitude = 0.0,
+                                placeId = item.placeId,
+                                isFromSearch = true
+                            )
+                        }
+                        binding.tvSaved.text = "Search results"
+                        binding.tvSaved.setTextColor(
+                            ContextCompat.getColor(requireContext(), R.color.gray)
+                        )
+                        binding.tvAddNew.visibility = View.GONE
+
+                        if (::adapter.isInitialized) {
+                            adapter.submitList(uiList)
+                        }
+                    }
+                }
+            }
+        }
+        binding.cardCurrentLocation.setOnClickListener {
+            withInternet {
+                val action = LocationListFragmentDirections
+                    .actionLocationListFragmentToMapFragment(null)
+
+                findNavController().navigate(action)
+            }
+        }
+        binding.tvAddNew.setOnClickListener {
+            withInternet {
+                val action = LocationListFragmentDirections
+                    .actionLocationListFragmentToMapFragment(null)
+
+                findNavController().navigate(action)
+            }
+        }
+        binding.etSearch.addTextChangedListener { text ->
+            val query = text.toString()
+            if (query.length >= 3) {
+                withInternet {
+                    viewModel.searchLocation(query)
+                }
+
+            }else {
+                binding.tvSaved.text = "Saved addresses"
+                binding.tvAddNew.visibility = View.VISIBLE
+                if (::adapter.isInitialized) {
+                    val uiList = fullList.map { it.toUI() }
+                    adapter.submitList(uiList)
+                }
+            }
+        }
+    }
+    private fun setupAdapter(){
+        adapter = AddressAdapter(
+            onItemClick = {item->
+                if (item.placeId != null) {
+                    withInternet {
+                        val action = LocationListFragmentDirections
+                            .actionLocationListFragmentToMapFragment(placeId = item.placeId)
+                        findNavController().navigate(action)
+                    }
+
+                }
+                else {
+                    //store id in dataStore
+                    item.id?.let {
+                        lifecycleScope.launch {
+                            preferencesManager.saveSelectedAddressId(it)
+                        }
+                    }
+                    Toast.makeText(
+                        requireContext(),
+                        "Location selected successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                }
+
+            },
+            onMenuClick = {item,view->
+                val bottomSheet = AddressOptionsBottomSheet(
+                    onEditClick = {
+
+                        withInternet {
+
+                            addressSharedViewModel.mode = AddressMode.EDIT
+                            addressSharedViewModel.selectedAddress = item
+
+                            val action = LocationListFragmentDirections
+                                .actionLocationListFragmentToMapFragment(null)
+
+                            findNavController().navigate(action)
+                        }
+
+                    },
+                    onDeleteClick = deleteClick@{
+                        if (addressViewModel.actionId.value != null) return@deleteClick
+                        val id = item.id ?: return@deleteClick
+                        if (item.isSelected) {
+                            Toast.makeText(requireContext(), "Cannot delete default address", Toast.LENGTH_SHORT).show()
+                            return@deleteClick
+                        }
+                        withInternet {
+                            addressViewModel.deleteAddress(id)
+                        }
+                    },
+                    onSetDefaultClick = setDefaultClick@{
+                        if (addressViewModel.actionId.value != null) {
+                            return@setDefaultClick
+                        }
+
+                        val id = item.id ?: return@setDefaultClick
+
+                        withInternet {
+                            addressViewModel.setDefaultAddress(id)
+                        }
+
+                    }
+                )
+
+                bottomSheet.show(parentFragmentManager, "AddressOptionsBottomSheet")
+
+            }
+
+
+        )
+    }
+
+    private fun setUpRecyclerView(){
+        binding.rvLocations.apply {
+            adapter = this@LocationListFragment.adapter
+            layoutManager = LinearLayoutManager(requireContext())
+            setHasFixedSize(true)
+        }
+    }
+    private fun showNoInternetState(
+        retryText: String = "Retry",
+        onRetry: () -> Unit
+    ){
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.no_internet,
+                title = "No Internet Connection",
+                subtitle = "Please check your internet connection and try again.",
+                primaryButtonText = retryText,
+                onPrimaryClick = onRetry
+            )
+        )
+    }
+    private fun withInternet(
+        onConnected: () -> Unit
+    ) {
+        if (!NetworkUtils.isInternetAvailable(requireContext())) {
+            showNoInternetState {
+                if (!NetworkUtils.isInternetAvailable(requireContext())) {
+                    Snackbar.make(
+                        binding.root,
+                        "No Internet Connection",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                } else {
+                    binding.stateView.hide()
+                    onConnected()
+                }
+            }
+        } else {
+            onConnected()
+        }
+    }
+    override fun onResume() {
+        super.onResume()
+        if (_binding != null) {
+            binding.etSearch.setText("")
+        }
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+}

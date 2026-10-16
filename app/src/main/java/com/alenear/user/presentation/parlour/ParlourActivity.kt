@@ -1,0 +1,45 @@
+package com.alenear.user.presentation.parlour
+
+import android.os.Bundle
+import android.util.Log
+import androidx.navigation.fragment.NavHostFragment
+import com.alenear.user.R
+import com.alenear.user.databinding.ActivityParlourBinding
+import com.alenear.user.presentation.base.SessionAwareActivity
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
+class ParlourActivity : SessionAwareActivity() {
+
+    private lateinit var binding: ActivityParlourBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityParlourBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbar)
+        val parlourId = intent.getStringExtra("parlourId")
+            ?: throw IllegalArgumentException("ParlourId missing")
+        val distance = intent.getStringExtra("distance")
+            ?: throw IllegalArgumentException("distance missing")
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.parlourNavHost) as NavHostFragment
+
+        val navController = navHostFragment.navController
+
+        val bundle = Bundle().apply {
+            putString("parlourId", parlourId)
+            putString("distance", distance)
+        }
+        Log.d("CHECK", "parlourId = $parlourId")
+        navController.setGraph(R.navigation.parlour_nav_graph, bundle)
+        binding.toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+    }
+    fun setToolbarTitle(title: String) {
+        binding.tvTitle.text = title
+    }
+}

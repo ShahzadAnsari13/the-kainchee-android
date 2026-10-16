@@ -1,0 +1,14 @@
+package com.alenear.user.presentation.dashboard.state
+
+import com.alenear.user.presentation.dashboard.model.ServiceUI
+
+sealed class TrendingServiceState {
+
+    object Idle : TrendingServiceState()
+
+    object Loading : TrendingServiceState()
+
+    data class Success( val data : List<ServiceUI>) : TrendingServiceState()
+
+    data class Error(val message : String) : TrendingServiceState()
+}

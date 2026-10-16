@@ -4,7 +4,7 @@
     android:id="@+id/auth_nav_graph"
     app:startDestination="@id/requestOtpFragment">
     <fragment android:id="@+id/requestOtpFragment"
-        android:name="com.thekainchee.user.presentation.auth.fragment.RequestOtpFragment">
+        android:name="com.alenear.user.presentation.auth.fragment.RequestOtpFragment">
 
         <action android:id="@+id/action_requestOtpFragment_to_verifyOtpFragment"
             app:destination="@id/verifyOtpFragment"/>
@@ -12,7 +12,7 @@
 
 
     <fragment android:id="@+id/verifyOtpFragment"
-        android:name="com.thekainchee.user.presentation.auth.fragment.VerifyOtpFragment">
+        android:name="com.alenear.user.presentation.auth.fragment.VerifyOtpFragment">
         <argument android:name="countryCode"
             app:argType="string"/>
         <argument android:name="phone"
@@ -25,7 +25,7 @@
     </fragment>
 
     <fragment android:id="@+id/nameSetupFragment"
-        android:name="com.thekainchee.user.presentation.auth.fragment.NameSetupFragment"
+        android:name="com.alenear.user.presentation.auth.fragment.NameSetupFragment"
         />
 
 </navigation>

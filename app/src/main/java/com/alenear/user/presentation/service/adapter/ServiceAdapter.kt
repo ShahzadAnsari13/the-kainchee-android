@@ -1,0 +1,105 @@
+package com.alenear.user.presentation.service.adapter
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.alenear.user.R
+import com.alenear.user.databinding.ItemServiceBinding
+import com.alenear.user.presentation.service.model.ServiceUiModel
+
+class ServiceAdapter(
+    private val onAddClick: (ServiceUiModel) -> Unit, private val onRemoveClick: (ServiceUiModel) -> Unit
+) : ListAdapter<ServiceUiModel, ServiceAdapter.ServiceViewHolder>(DIFF_CALLBACK) {
+
+    companion object {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ServiceUiModel>() {
+
+            override fun areItemsTheSame(
+                oldItem: ServiceUiModel,
+                newItem: ServiceUiModel
+            ): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(
+                oldItem: ServiceUiModel,
+                newItem: ServiceUiModel
+            ): Boolean {
+                return oldItem == newItem
+            }
+        }
+    }
+
+    inner class ServiceViewHolder(
+        private val binding: ItemServiceBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(item: ServiceUiModel) {
+            binding.apply {
+
+                tvName.text = item.name
+                tvPrice.text = "₹${item.price}"
+                tvDuration.text = "⏱ ${item.duration} min"
+                tvDescription.text = "${item.description ?: ""}"
+                Glide.with(binding.root.context)
+                    .load(item.image)
+                    .placeholder(R.drawable.ic_no_data)
+                    .error(R.drawable.ic_no_data)
+                    .into(ivService)
+
+
+                if (item.isAvailable) {
+                    btnAdd.isEnabled = true
+                    root.alpha = 1f
+                    tvUnavailable.visibility = View.GONE
+                } else {
+                    btnAdd.isEnabled = false
+                    root.alpha = 0.5f
+                    tvUnavailable.visibility = View.VISIBLE
+                }
+
+                if (item.isAdded) {
+
+                    btnAdd.visibility = View.GONE
+                    btnAdded.visibility = View.VISIBLE
+
+                } else {
+                    btnAdd.visibility = View.VISIBLE
+                    btnAdded.visibility = View.GONE
+                }
+
+                btnAdd.setOnClickListener {
+                    if (item.isAvailable && !item.isAdded) {
+
+                        onAddClick(item)
+
+                    }
+                }
+                btnAdded.setOnClickListener {
+                    if (item.isAvailable && item.isAdded) {
+
+                        onRemoveClick(item)
+
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServiceViewHolder {
+        val binding = ItemServiceBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return ServiceViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: ServiceViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
+}

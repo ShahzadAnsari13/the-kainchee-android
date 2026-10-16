@@ -1,0 +1,66 @@
+package com.alenear.user.data.remote.api
+
+import com.alenear.user.data.remote.dto.booking.BookingDetailResponseDto
+import com.alenear.user.data.remote.dto.booking.BookingRequestDto
+import com.alenear.user.data.remote.dto.booking.BookingResponseDto
+import com.alenear.user.data.remote.dto.booking.CancelBookingRequest
+import com.alenear.user.data.remote.dto.booking.CancelBookingResponse
+import com.alenear.user.data.remote.dto.booking.CreateRatingRequest
+import com.alenear.user.data.remote.dto.booking.CreateRatingResponse
+import com.alenear.user.data.remote.dto.booking.MyBookingsResponseDto
+import com.alenear.user.data.remote.dto.booking.RatingStatusDto
+import com.alenear.user.data.remote.dto.booking.SlotResponseDto
+import com.alenear.user.data.remote.dto.booking.StaffResponseDto
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
+
+interface BookingApi {
+    @GET("user/parlour-staffs/{parlourId}")
+    suspend fun getParlourStaffs(
+        @Path("parlourId") parlourId: String
+    ): Response<StaffResponseDto>
+
+    @GET("user/parlours/{parlourId}/staffs/{staffId}/slots")
+    suspend fun getStaffSlots(
+        @Path("parlourId") parlourId: String,
+        @Path("staffId") staffId: String,
+        @Query("date") date: String
+    ): Response<SlotResponseDto>
+
+    @POST("user/create-booking")
+    suspend fun createBooking(
+        @Body bookingRequest: BookingRequestDto
+    ): Response<BookingResponseDto>
+
+    @GET ("user/booking-detail/{bookingId}")
+    suspend fun getBookingDetails(
+        @Path("bookingId") bookingId: String
+    ): Response<BookingDetailResponseDto>
+
+    @GET("user/bookings")
+    suspend fun getMyBookings(
+    ): Response<MyBookingsResponseDto>
+
+
+    @PATCH("user/bookings/{bookingId}/cancel")
+    suspend fun cancelBooking(
+        @Path("bookingId") bookingId: String,
+        @Body request: CancelBookingRequest
+    ): Response<CancelBookingResponse>
+    @GET("user/rating/{bookingId}")
+    suspend fun getRatingStatus(
+        @Path("bookingId") bookingId: String
+    ): Response<RatingStatusDto>
+
+
+    @POST("user/rating/{bookingId}")
+    suspend fun createRating(
+        @Path("bookingId") bookingId: String,
+        @Body request: CreateRatingRequest
+    ): Response<CreateRatingResponse>
+}

@@ -7,6 +7,25 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:547486007030:android:38a24899542d58118236d7",
+        "android_client_info": {
+          "package_name": "com.alenear.user"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHnx8mjgH1OJe01gki8nTr7KRjNU39ExQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:547486007030:android:1b40e4f1ce47ec748236d7",
         "android_client_info": {
           "package_name": "com.thekainchee.user"

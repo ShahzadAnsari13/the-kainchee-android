@@ -1,0 +1,7 @@
+package com.alenear.user.data.remote.dto.parlour
+
+data class BookingServiceDto(val serviceId: String,
+                             val name: String,
+                             val price: Double,
+                             val image: String,
+                             val durationMinutes: Int)

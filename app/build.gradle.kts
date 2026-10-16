@@ -10,11 +10,11 @@ plugins {
 }
 
 android {
-    namespace = "com.thekainchee.user"
+    namespace = "com.alenear.user"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.thekainchee.user"
+        applicationId = "com.alenear.user"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
