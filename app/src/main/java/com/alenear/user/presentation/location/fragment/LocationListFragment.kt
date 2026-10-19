@@ -148,7 +148,7 @@ class LocationListFragment : Fragment() {
             }
         }
         binding.etSearch.addTextChangedListener { text ->
-            val query = text.toString()
+            val query = text.toString().trim()
             if (query.length >= 3) {
                 withInternet {
                     viewModel.searchLocation(query)

@@ -15,8 +15,6 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: SplashViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-
         observeSession()
     }
 

@@ -240,7 +240,7 @@ class ServiceListFragment : Fragment() {
     ) {
         binding.stateView.show(
             StateViewData(
-                image = R.drawable.ic_oops,
+                image = R.drawable.error_state_illustration,
                 title = "Unable to Load Services",
                 subtitle = "We couldn't load the services right now. Please try again.",
                 primaryButtonText = "Retry",
@@ -251,7 +251,7 @@ class ServiceListFragment : Fragment() {
     private fun showEmptyServices() {
         binding.stateView.show(
             StateViewData(
-                image = R.drawable.ic_oops,
+                image = R.drawable.empty_state_illustration,
                 title = "No Services Found",
                 subtitle = "This category doesn't have any services yet."
             )

@@ -10,7 +10,7 @@
     <style name="Theme.TheKaincheeUser"
         parent="Base.Theme.TheKaincheeUser">
 
-        <item name="android:windowBackground">@color/primaryColor</item>
+        <item name="android:windowBackground">@color/white</item>
 
     </style>
 </resources>

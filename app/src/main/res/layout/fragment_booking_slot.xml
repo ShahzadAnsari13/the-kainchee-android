@@ -249,9 +249,10 @@
                 tools:listitem="@layout/item_slot"/>
 
         </LinearLayout>
-
-
-
+            <include
+                android:id="@+id/stateView"
+                layout="@layout/view_state"
+                android:visibility="gone" />
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="170dp"/>
@@ -365,8 +366,5 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <include
-        android:id="@+id/stateView"
-        android:visibility="gone"
-        layout="@layout/view_state"/>
+
 </FrameLayout>

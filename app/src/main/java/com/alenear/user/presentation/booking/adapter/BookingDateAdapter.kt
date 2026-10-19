@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.alenear.user.databinding.ItemDateBinding
 import com.alenear.user.presentation.booking.model.DateUiModel
+import com.alenear.user.utils.NetworkUtils
+import com.google.android.material.snackbar.Snackbar
 import java.time.LocalDate
 
 class BookingDateAdapter(private val onItemClick : (DateUiModel)->Unit) : ListAdapter<DateUiModel, BookingDateAdapter.BookingDateHolder>(DIFF_CALLBACK){
@@ -48,6 +50,10 @@ class BookingDateAdapter(private val onItemClick : (DateUiModel)->Unit) : ListAd
                 tvDate.text = item.date
                 root.isSelected = position == selectedPosition
                 root.setOnClickListener {
+                    if(!NetworkUtils.isInternetAvailable(binding.root.context)){
+                        Snackbar.make(binding.root,"Check Internet Connection", Snackbar.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
                     val previousPosition = selectedPosition
                     selectedPosition = position
 

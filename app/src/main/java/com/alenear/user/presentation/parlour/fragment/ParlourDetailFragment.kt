@@ -467,7 +467,7 @@ class ParlourDetailFragment : Fragment() {
     ) {
         binding.stateView.show(
             StateViewData(
-                image = R.drawable.ic_oops,
+                image = R.drawable.error_state_illustration,
                 title = "Unable to Load Parlour",
                 subtitle = "We couldn't load the parlour details right now. Please try again.",
                 primaryButtonText = "Retry",

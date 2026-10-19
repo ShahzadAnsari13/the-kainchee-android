@@ -21,6 +21,7 @@ class AddressRepositoryImpl @Inject constructor(
     override suspend fun addAddress(address: UserAddress) {
 
         val dto = address.toDto()
+        Log.d("API_DEBUG", "DTO: $dto")
         val response = addressApi.addAddress(dto)
         if (response.isSuccessful) {
             val body = response.body() ?: throw Exception("Empty response")

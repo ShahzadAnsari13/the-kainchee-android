@@ -86,7 +86,6 @@ class SaveAddressFragment : Fragment() {
     private fun loadAddress() {
         val lat = args.latitude.toDouble()
         val lng = args.longitude.toDouble()
-
         withInternet {
             if (selectedAddress == null) {
                 viewModel.getAddressFromLatLng(lat, lng)

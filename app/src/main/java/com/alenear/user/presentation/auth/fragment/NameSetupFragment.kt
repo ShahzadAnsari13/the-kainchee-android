@@ -2,10 +2,12 @@ package com.alenear.user.presentation.auth.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -26,6 +28,7 @@ class NameSetupFragment : Fragment() {
     private var _binding: FragmentNameSetupBinding? = null
     private val binding get() = _binding!!
     private val profileViewModel : ProfileViewModel by activityViewModels()
+    private var backPressedTime = 0L
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,6 +39,25 @@ class NameSetupFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+
+                override fun handleOnBackPressed() {
+                    if (SystemClock.elapsedRealtime() - backPressedTime < 2000) {
+                        requireActivity().finish()
+                    } else {
+                        backPressedTime = SystemClock.elapsedRealtime()
+
+                        Snackbar.make(
+                            requireView(),
+                            "Press back again to exit",
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        )
         binding.btnContinue.setOnClickListener {
             if(!NetworkUtils.isInternetAvailable(requireContext())){
                 Snackbar.make(requireView(), "No Internet Connection", Snackbar.LENGTH_SHORT).show()
@@ -89,6 +111,7 @@ class NameSetupFragment : Fragment() {
             }
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

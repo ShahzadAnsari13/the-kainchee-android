@@ -297,16 +297,11 @@ class BookingSlotFragment : Fragment() {
                         is StaffState.Empty -> {
                             hideStaffLoading()
                             binding.layoutStaffContainer.isVisible = false
-                            Toast.makeText(
-                                requireContext(),
-                                "No staff available at the moment.",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            showStaffIsEmpty()
                         }
                         is StaffState.Error -> {
                             hideStaffLoading()
                             binding.layoutStaffContainer.isVisible = false
-                            binding.mainContent.isVisible = false
                             showStaffLoadError {
                                 withInternet {
                                     binding.stateView.hide()
@@ -350,17 +345,12 @@ class BookingSlotFragment : Fragment() {
                             hideSlotLoading()
                             binding.rvSlots.isVisible = false
                             binding.layoutSlotContainer.isVisible = false
-                            Toast.makeText(
-                                requireContext(),
-                                "No slots available for the selected date.",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            showSlotIsEmpty()
                         }
                         is SlotState.Error -> {
                             hideSlotLoading()
                             binding.rvSlots.isVisible = false
                             binding.layoutSlotContainer.isVisible = false
-                            binding.mainContent.isVisible = false
                             showSlotLoadError {
                                 withInternet {
                                     binding.stateView.hide()
@@ -520,11 +510,21 @@ class BookingSlotFragment : Fragment() {
     ) {
         binding.stateView.show(
             StateViewData(
-                image = R.drawable.ic_oops,
+                image = R.drawable.error_state_illustration,
                 title = "Unable to Load Staff",
                 subtitle = "We couldn't load the available staff. Please try again.",
                 primaryButtonText = "Retry",
                 onPrimaryClick = onRetry
+            )
+        )
+    }
+    private fun showStaffIsEmpty(
+    ) {
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.empty_state_illustration,
+                title = "No Staff Available",
+                subtitle = "This parlour hasn't added any staff members yet. Please try another parlour."
             )
         )
     }
@@ -533,7 +533,7 @@ class BookingSlotFragment : Fragment() {
     ) {
         binding.stateView.show(
             StateViewData(
-                image = R.drawable.ic_oops,
+                image = R.drawable.error_state_illustration,
                 title = "Unable to Load Slots",
                 subtitle = "We couldn't load the available time slots. Please try again.",
                 primaryButtonText = "Retry",
@@ -542,6 +542,16 @@ class BookingSlotFragment : Fragment() {
         )
     }
 
+    private fun showSlotIsEmpty(
+    ) {
+        binding.stateView.show(
+            StateViewData(
+                image = R.drawable.empty_state_illustration,
+                title = "No Slots Available",
+                subtitle = "There are no available appointments for this date. Please select another staff member or date."
+            )
+        )
+    }
     private fun withInternet(
         onConnected: () -> Unit
     ) {

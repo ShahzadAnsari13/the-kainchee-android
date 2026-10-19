@@ -1,6 +1,7 @@
 package com.alenear.user.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
@@ -40,7 +41,8 @@ class PlaceSearchRepositoryImpl @Inject constructor( @ApplicationContext private
                         continuation.resume(results)
                     }
                 }
-                .addOnFailureListener {
+                .addOnFailureListener { exception ->
+                    Log.e("PlacesAPI", "Autocomplete failed", exception)
                     if (continuation.isActive) {
                         continuation.resume(emptyList())
                     }

@@ -2,6 +2,7 @@ package com.alenear.user.presentation.booking.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -9,6 +10,8 @@ import com.bumptech.glide.Glide
 import com.alenear.user.R
 import com.alenear.user.databinding.ItemStaffBinding
 import com.alenear.user.presentation.booking.model.StaffUiModel
+import com.alenear.user.utils.NetworkUtils
+import com.google.android.material.snackbar.Snackbar
 
 class BookingStaffAdapter(private val onItemClick: (StaffUiModel) -> Unit) : ListAdapter<StaffUiModel, BookingStaffAdapter.BookingStaffViewHolder>(DIFF_CALLBACK){
     private var selectedPosition = 0
@@ -47,6 +50,10 @@ class BookingStaffAdapter(private val onItemClick: (StaffUiModel) -> Unit) : Lis
                     .into(imgStaff)
 
                 root.setOnClickListener {
+                    if(!NetworkUtils.isInternetAvailable(binding.root.context)){
+                        Snackbar.make(binding.root,"Check Internet Connection", Snackbar.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
                     val previousPosition = selectedPosition
                     selectedPosition = position
 

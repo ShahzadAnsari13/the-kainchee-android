@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.alenear.user.databinding.ItemSlotBinding
 import com.alenear.user.presentation.booking.model.SlotUiModel
+import com.alenear.user.utils.NetworkUtils
+import com.google.android.material.snackbar.Snackbar
 
 class BookingSlotAdapter(private val onItemClick : (SlotUiModel)->Unit ) : RecyclerView.Adapter<BookingSlotAdapter.BookingSlotHolder>(){
     private var selectedPosition = -1
@@ -20,6 +22,10 @@ class BookingSlotAdapter(private val onItemClick : (SlotUiModel)->Unit ) : Recyc
                 tvSlotTime.text = item.time
                 root.isSelected = position == selectedPosition
                 root.setOnClickListener {
+                    if(!NetworkUtils.isInternetAvailable(binding.root.context)){
+                        Snackbar.make(binding.root,"Check Internet Connection", Snackbar.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
                     val previousPosition = selectedPosition
                     selectedPosition = position
 

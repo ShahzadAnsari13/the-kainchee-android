@@ -2,7 +2,7 @@ package com.alenear.user.utils.socket
 import io.socket.client.IO
 import io.socket.client.Socket
 object SocketManager {
-    private val SOCKET_URL = "http://10.151.31.101:3000"
+    private val SOCKET_URL = "http://10.27.152.101:3000"
     private var socket: Socket? = null
     fun connect(){
         if (socket==null){
