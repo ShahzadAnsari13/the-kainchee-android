@@ -76,7 +76,7 @@ class BookingRepositoryImpl @Inject constructor(private val api: BookingApi) : B
             } else {
                 val errorBody = response.errorBody()?.string()
                 val error = ErrorUtils.parseError(errorBody)
-                Result.failure(Exception(error.message ?: "Failed to fetch staff"))
+                Result.failure(Exception(error.message ?: "Unable to reserve slot. Please try again."))
             }
         }catch (e: Exception) {
             Result.failure(e)

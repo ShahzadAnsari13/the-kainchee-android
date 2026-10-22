@@ -60,20 +60,13 @@ class PaymentRepositoryImpl @Inject constructor(private val api : PaymentApi) : 
 
             if (response.isSuccessful) {
                 val body = response.body()
-
-                if (body != null) {
-                    Result.success(body)
-                } else {
-                    Result.failure(
-                        Exception("Response body is null")
-                    )
-                }
+                Result.success(body!!)
             } else {
+                val errorBody = response.errorBody()?.string()
+                val error = ErrorUtils.parseError(errorBody)
+
                 Result.failure(
-                    Exception(
-                        response.errorBody()?.string()
-                            ?: "Something went wrong"
-                    )
+                    Exception(error.message ?: "Something went wrong")
                 )
             }
         } catch (e: Exception) {
@@ -96,24 +89,9 @@ class PaymentRepositoryImpl @Inject constructor(private val api : PaymentApi) : 
             val response = api.verifyPayment(request)
 
             if (response.isSuccessful) {
-
-                val body = response.body()
-
-                if (body != null) {
-                    Result.success(body)
-                } else {
-                    Result.failure(
-                        Exception("Response body is null")
-                    )
-                }
-
+                Result.success(response.body()!!)
             } else {
-                Result.failure(
-                    Exception(
-                        response.errorBody()?.string()
-                            ?: "Payment verification failed"
-                    )
-                )
+                Result.failure(retrofit2.HttpException(response))
             }
 
         } catch (e: Exception) {

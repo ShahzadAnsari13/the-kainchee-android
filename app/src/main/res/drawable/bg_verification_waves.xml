@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="360dp"
+    android:height="230dp"
+    android:viewportWidth="360"
+    android:viewportHeight="230">
+
+    <!-- Soft mint background wave -->
+    <path
+        android:fillColor="#EAF8F5"
+        android:pathData="M0,35 C55,18 95,50 145,68 C205,90 270,45 360,20 L360,230 L0,230 Z" />
+
+    <!-- Light translucent wave -->
+    <path
+        android:fillColor="#C9EDE6"
+        android:pathData="M0,72 C55,55 100,85 155,102 C220,122 290,70 360,48 L360,230 L0,230 Z" />
+
+    <!-- Main teal wave -->
+    <path
+        android:fillColor="#49B9AA"
+        android:pathData="M0,105 C55,83 95,130 155,145 C225,165 285,100 360,80 L360,230 L0,230 Z" />
+
+    <!-- Deep teal lower wave -->
+    <path
+        android:fillColor="#008F80"
+        android:pathData="M0,135 C55,105 105,155 165,175 C230,198 295,130 360,105 L360,230 L0,230 Z" />
+
+    <!-- White flowing accent -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.88"
+        android:pathData="M0,113 C65,90 100,145 165,160 C230,178 290,120 360,96 L360,102 C290,128 230,186 165,168 C100,153 65,98 0,121 Z" />
+
+    <!-- Bottom teal depth -->
+    <path
+        android:fillColor="#00695C"
+        android:pathData="M0,158 C65,128 110,185 175,198 C245,212 300,158 360,132 L360,230 L0,230 Z" />
+
+</vector>

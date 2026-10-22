@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 @HiltViewModel
 class PaymentViewModel @Inject constructor(private val repository: WalletRepository,private val paymentRepository: PaymentRepository) : ViewModel(){
     private val _walletBalanceState = MutableStateFlow<WalletBalanceState>(WalletBalanceState.Idle)
@@ -53,7 +52,7 @@ class PaymentViewModel @Inject constructor(private val repository: WalletReposit
             result.onSuccess {
                 _paymentEvent.emit(PaymentEvent.NavigateToSuccess)
             }.onFailure { error ->
-                _paymentEvent.emit(PaymentEvent.Message(error.message ?: "Failed to pay with wallet"))
+                _paymentEvent.emit(PaymentEvent.Error(error.message ?: "Failed to pay with wallet"))
             }
         }
     }
@@ -64,7 +63,7 @@ class PaymentViewModel @Inject constructor(private val repository: WalletReposit
             result.onSuccess {
                 _paymentEvent.emit(PaymentEvent.NavigateToSuccess)
             }.onFailure { error ->
-                _paymentEvent.emit(PaymentEvent.Message(error.message ?: "Failed to pay with cash"))
+                _paymentEvent.emit(PaymentEvent.Error(error.message ?: "Failed to pay with cash"))
             }
         }
     }
@@ -87,33 +86,70 @@ class PaymentViewModel @Inject constructor(private val repository: WalletReposit
             }.onFailure { error ->
 
                 _onlinePaymentEvent.emit(
-                    OnlinePaymentEvent.Message(
+                    OnlinePaymentEvent.PaymentError(
                         error.message ?: "Failed to create order"
                     )
                 )
             }
         }
     }
-
-    fun verifyPayment(params: VerifyPaymentParams){
+    fun verifyPayment(params: VerifyPaymentParams) {
         viewModelScope.launch {
             Log.d("PAYMENT", "Verifying payment")
+
             val result = paymentRepository.verifyPayment(params)
 
-            result.onSuccess {
-                _onlinePaymentEvent.emit(OnlinePaymentEvent.NavigateToSuccess)
-            }.onFailure { error ->
-                _onlinePaymentEvent.emit(OnlinePaymentEvent.Message(error.message ?: "Failed to verify payment"))
-            }
-        }
+            result
+                .onSuccess {
+                    _onlinePaymentEvent.emit(
+                        OnlinePaymentEvent.NavigateToSuccess
+                    )
+                }
+                .onFailure { error ->
+                    when {
+                        error is retrofit2.HttpException &&
+                                error.code() == 422 -> {
+                            _onlinePaymentEvent.emit(
+                                OnlinePaymentEvent.PaymentFailed(
+                                    "Payment not completed"
+                                )
+                            )
+                        }
 
+                        error is retrofit2.HttpException &&
+                                error.code() == 500 -> {
+                            _onlinePaymentEvent.emit(
+                                OnlinePaymentEvent.PaymentError(
+                                    "Server error. Please try again later."
+                                )
+                            )
+                        }
+
+                        error is java.io.IOException -> {
+                            _onlinePaymentEvent.emit(
+                                OnlinePaymentEvent.PaymentError(
+                                    "Network error. Please try again."
+                                )
+                            )
+                        }
+
+                        else -> {
+                            _onlinePaymentEvent.emit(
+                                OnlinePaymentEvent.PaymentError(
+                                    "Unable to verify payment. Please try again."
+                                )
+                            )
+                        }
+                    }
+                }
+        }
     }
     fun onPaymentSuccess(
         paymentId: String,
         orderId: String,
         signature: String
     ) {
-        Log.d("PAYMENT", "Payment Success")
+
         viewModelScope.launch {
             _paymentCallbackEvent.emit(
                 PaymentCallbackEvent.Success(
@@ -129,6 +165,14 @@ class PaymentViewModel @Inject constructor(private val repository: WalletReposit
         viewModelScope.launch {
             _paymentCallbackEvent.emit(
                 PaymentCallbackEvent.Error(message)
+            )
+        }
+    }
+
+    fun navigateToVerification() {
+        viewModelScope.launch {
+            _onlinePaymentEvent.emit(
+                OnlinePaymentEvent.NavigateToVerification
             )
         }
     }

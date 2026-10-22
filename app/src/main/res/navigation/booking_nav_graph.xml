@@ -11,12 +11,53 @@
         <argument android:name="services"
             app:argType="com.alenear.user.presentation.service.model.BookingPreviewUiModel"/>
 
-        <action android:id="@+id/action_bookingSlotFragment_to_bookingSuccessFragment"
-            app:destination="@id/bookingSuccessFragment">
+        <action android:id="@+id/action_bookingSlotFragment_to_paymentVerificationFragment"
+            app:destination="@id/paymentVerificationFragment">
 
         </action>
+        <action
+            android:id="@+id/action_bookingSlotFragment_to_bookingSuccessFragment"
+            app:destination="@id/bookingSuccessFragment" />
+        <action
+            android:id="@+id/action_bookingSlotFragment_to_paymentFailureFragment"
+            app:destination="@id/paymentFailureFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/paymentFailureFragment"
+        android:name="com.alenear.user.presentation.payment.fragment.PaymentFailureFragment"
+        android:label="PaymentFailureFragment">
 
+        <argument
+            android:name="bookingId"
+            app:argType="string" />
+
+    </fragment>
+    <fragment android:id="@+id/paymentVerificationFragment"
+        android:name="com.alenear.user.presentation.payment.fragment.VerifyingPaymentFragment"
+        android:label="PaymentVerificationFragment">
+
+        <argument
+            android:name="bookingId"
+            app:argType="string" />
+
+        <argument
+            android:name="orderId"
+            app:argType="string" />
+
+        <argument
+            android:name="paymentId"
+            app:argType="string" />
+
+        <argument
+            android:name="signature"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_paymentVerificationFragment_to_bookingSuccessFragment"
+            app:destination="@id/bookingSuccessFragment" />
+        <action
+            android:id="@+id/action_paymentVerificationFragment_to_paymentFailureFragment"
+            app:destination="@id/paymentFailureFragment" />
+    </fragment>
 
     <fragment android:id="@+id/bookingSuccessFragment"
         android:name="com.alenear.user.presentation.booking.fragment.BookingSuccess"

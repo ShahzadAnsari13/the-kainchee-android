@@ -26,18 +26,36 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import com.alenear.user.BuildConfig
+import com.alenear.user.databinding.DialogErrorBinding
 import com.alenear.user.presentation.payment.state.PaymentCallbackEvent
 import com.alenear.user.utils.NetworkUtils
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 @AndroidEntryPoint
 class PaymentMethodBottomSheet : BottomSheetDialogFragment(){
     var onPaymentSuccess: ((String) -> Unit)? = null
+    var onPaymentVerification: ((
+        String, // bookingId
+        String, // orderId
+        String, // paymentId
+        String  // signature
+    ) -> Unit)? = null
+
     private var _binding: LayoutPaymentBottomSheetBinding? = null
     private var selectedPaymentMethod: PaymentMethod? = null
     private val binding get() = _binding!!
     private lateinit var paymentSummary: PaymentSummary
     private val paymentViewModel: PaymentViewModel by activityViewModels()
     private var walletBalance: Double = 0.0
+
+
+    private var paymentOrderId: String? = null
+    private var paymentId: String? = null
+    private var paymentSignature: String? = null
+
+
+    private var lastBackPressedTime = 0L
     companion object {
 
         private const val KEY_PAYMENT_SUMMARY = "payment_summary"
@@ -67,9 +85,9 @@ class PaymentMethodBottomSheet : BottomSheetDialogFragment(){
         )
         return binding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupBackPress()
         paymentSummary = requireArguments().getParcelable(KEY_PAYMENT_SUMMARY)
             ?: throw IllegalStateException("Payment summary missing")
         binding.btnConfirmPayment.isEnabled = false
@@ -147,12 +165,21 @@ class PaymentMethodBottomSheet : BottomSheetDialogFragment(){
                 paymentViewModel.paymentEvent.collect {event->
                     when(event){
                         is PaymentEvent.NavigateToSuccess -> {
-                            Toast.makeText(requireContext(), "Payment Successful", Toast.LENGTH_SHORT).show()
                             dismiss()
                             onPaymentSuccess?.invoke(paymentSummary.bookingId)
                         }
-                        is PaymentEvent.Message -> {
-                            Toast.makeText(requireContext(), event.msg, Toast.LENGTH_SHORT).show()
+                        is PaymentEvent.Error -> {
+                            val title = when (selectedPaymentMethod) {
+                                PaymentMethod.WALLET -> "Wallet Payment Failed"
+                                PaymentMethod.CASH -> "Unable to Confirm Booking"
+                                else -> "Something Went Wrong"
+                            }
+
+
+                            showErrorDialog(
+                                title = title,
+                                message = event.msg
+                            )
                         }
                     }
 
@@ -160,7 +187,6 @@ class PaymentMethodBottomSheet : BottomSheetDialogFragment(){
             }
         }
     }
-
     private fun observeOnlinePayment(){
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -169,20 +195,32 @@ class PaymentMethodBottomSheet : BottomSheetDialogFragment(){
                         is  OnlinePaymentEvent.OpenRazorpay -> {
                             openRazorpay(event)
                         }
-                        is OnlinePaymentEvent.Message -> {
-
-                            Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
+                        is OnlinePaymentEvent.PaymentError -> {
+                            showErrorDialog(
+                                title = "Unable to Initiate Payment",
+                                message = event.message
+                            )
                         }
-                        is OnlinePaymentEvent.NavigateToSuccess -> {
-                            Toast.makeText(
-                                requireContext(),
-                                "Payment Successful",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            onPaymentSuccess?.invoke(paymentSummary.bookingId)
+                        is OnlinePaymentEvent.NavigateToVerification -> {
+                            val orderId = paymentOrderId
+                            val paymentId = paymentId
+                            val signature = paymentSignature
 
-                            dismiss()
+                            if (
+                                orderId != null &&
+                                paymentId != null &&
+                                signature != null
+                            ) {
+                                onPaymentVerification?.invoke(
+                                    paymentSummary.bookingId,
+                                    orderId,
+                                    paymentId,
+                                    signature
+                                )
+                                dismiss()
+                            }
                         }
+                        else -> Unit
                     }
 
                 }
@@ -195,16 +233,16 @@ class PaymentMethodBottomSheet : BottomSheetDialogFragment(){
                 paymentViewModel.paymentCallbackEvent.collect{event->
                     when(event){
                         is PaymentCallbackEvent.Success -> {
-                            val params = VerifyPaymentParams(
-                                orderId = event.orderId,
-                                paymentId = event.paymentId,
-                                signature = event.signature
-                            )
-
-                            paymentViewModel.verifyPayment(params)
+                            paymentOrderId = event.orderId
+                            paymentId = event.paymentId
+                            paymentSignature = event.signature
+                            paymentViewModel.navigateToVerification()
                         }
                         is PaymentCallbackEvent.Error -> {
-                            Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
+                            showErrorDialog(
+                                title = "Payment Unsuccessful",
+                                message = "Your payment couldn't be completed. Please try again or choose another payment method."
+                            )
                         }
                     }
                 }
@@ -238,7 +276,6 @@ class PaymentMethodBottomSheet : BottomSheetDialogFragment(){
 
 
     }
-
     private fun handlePayment(){
         if(!NetworkUtils.isInternetAvailable(requireContext())){
             Snackbar.make(binding.root,"No Internet Connection",Snackbar.LENGTH_SHORT).show()
@@ -278,23 +315,88 @@ class PaymentMethodBottomSheet : BottomSheetDialogFragment(){
         checkout.setKeyID(BuildConfig.RAZORPAY_KEY_ID)
         val options = JSONObject().apply {
 
-            put("name", "THE KAINCHEE")
-            put("description", "Salon Booking")
+            put("name", "AleNear")
+            put("description", "Parlour Booking")
             put("order_id", event.orderId)
             put("currency", event.currency)
             put("amount", event.amount)
+            //put("image", "YOUR_LOGO_URL")
         }
         checkout.open(requireActivity(),options)
     }
     override fun onStart() {
         super.onStart()
-
         isCancelable = false
         dialog?.setCanceledOnTouchOutside(false)
-        requireDialog().setOnKeyListener { _, keyCode, event ->
-            keyCode == KeyEvent.KEYCODE_BACK &&
-                    event.action == KeyEvent.ACTION_UP
+
+        val bottomSheet =
+            dialog?.findViewById<View>(
+                com.google.android.material.R.id.design_bottom_sheet
+            ) ?: return
+
+        val behavior = BottomSheetBehavior.from(bottomSheet)
+
+        val displayMetrics = resources.displayMetrics
+        val screenHeight = displayMetrics.heightPixels
+
+        bottomSheet.layoutParams.height = (screenHeight * 0.94).toInt()
+        bottomSheet.requestLayout()
+
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        behavior.isDraggable = true
+    }
+
+    private fun showErrorDialog(
+        title: String,
+        message: String
+    ) {
+        val dialogBinding = DialogErrorBinding.inflate(layoutInflater)
+
+        dialogBinding.tvErrorTitle.text = title
+        dialogBinding.tvErrorMessage.text = message
+
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(dialogBinding.root)
+            .create()
+
+        dialogBinding.btnErrorOk.setOnClickListener {
+            dialog.dismiss()
         }
+
+        dialog.window?.setBackgroundDrawableResource(
+            android.R.color.transparent
+        )
+
+        dialog.show()
+
+        dialog.window?.setBackgroundDrawableResource(
+            android.R.color.transparent
+        )
+    }
+
+    private fun setupBackPress() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : androidx.activity.OnBackPressedCallback(true) {
+
+                override fun handleOnBackPressed() {
+                    val currentTime = System.currentTimeMillis()
+
+                    if (currentTime - lastBackPressedTime < 2000L) {
+                        isEnabled = false
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
+                    } else {
+                        lastBackPressedTime = currentTime
+
+                        Snackbar.make(
+                            binding.root,
+                            "Back again to exit. Your booking will be cancelled.",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
+        )
     }
     override fun onDestroyView() {
         super.onDestroyView()

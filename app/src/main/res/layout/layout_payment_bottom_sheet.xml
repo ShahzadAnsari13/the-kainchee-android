@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -335,6 +334,9 @@
                 android:text="CONTINUE"
                 android:textAllCaps="false"
                 android:enabled="false"
+                android:clickable="true"
+                android:focusable="true"
+                android:soundEffectsEnabled="true"
                 android:alpha="0.5"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"

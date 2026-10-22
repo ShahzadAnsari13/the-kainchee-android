@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.alenear.user.R
+import com.alenear.user.databinding.DialogErrorBinding
 import com.alenear.user.databinding.FragmentBookingSlotBinding
 import com.alenear.user.presentation.booking.adapter.BookingDateAdapter
 import com.alenear.user.presentation.booking.adapter.BookingSlotAdapter
@@ -40,6 +41,7 @@ import com.alenear.user.presentation.common.state.StateViewData
 import com.alenear.user.presentation.service.viewModel.ServiceViewModel
 import com.alenear.user.utils.NetworkUtils
 import com.alenear.user.utils.socket.SocketManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -400,6 +402,11 @@ class BookingSlotFragment : Fragment() {
                             binding.progressStatusCheck.visibility = View.GONE
                             binding.btnContinue.text = "Continue to Payment"
                             binding.btnContinue.isEnabled = true
+
+                            showErrorDialog(
+                                title = "Unable to Reserve Slot",
+                                message = state.message
+                            )
                         }
                     }
                 }
@@ -429,6 +436,22 @@ class BookingSlotFragment : Fragment() {
                                     BookingSlotFragmentDirections
                                         .actionBookingSlotFragmentToBookingSuccessFragment(
                                             bookingId
+                                        )
+                                )
+                            }
+                            bottomSheet.onPaymentVerification = {
+                                    bookingId,
+                                    orderId,
+                                    paymentId,
+                                    signature ->
+
+                                findNavController().navigate(
+                                    BookingSlotFragmentDirections
+                                        .actionBookingSlotFragmentToPaymentVerificationFragment(
+                                            bookingId = bookingId,
+                                            orderId = orderId,
+                                            paymentId = paymentId,
+                                            signature = signature
                                         )
                                 )
                             }
@@ -676,6 +699,36 @@ class BookingSlotFragment : Fragment() {
                 "${minutes}m"
         }
     }
+
+
+    private fun showErrorDialog(
+        title: String,
+        message: String
+    ) {
+        val dialogBinding = DialogErrorBinding.inflate(layoutInflater)
+
+        dialogBinding.tvErrorTitle.text = title
+        dialogBinding.tvErrorMessage.text = message
+
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(dialogBinding.root)
+            .create()
+
+        dialogBinding.btnErrorOk.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.window?.setBackgroundDrawableResource(
+            android.R.color.transparent
+        )
+
+        dialog.show()
+
+        dialog.window?.setBackgroundDrawableResource(
+            android.R.color.transparent
+        )
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         leaveStaffSlotsJoin()
