@@ -11,6 +11,8 @@ import com.alenear.user.R
 import com.alenear.user.databinding.FragmentPaymentFailureBinding
 import com.alenear.user.databinding.FragmentVerifyingPaymentBinding
 import com.alenear.user.presentation.booking.BookingActivity
+import com.alenear.user.presentation.dashboard.DashboardActivity
+import com.alenear.user.presentation.profile.ProfileActivity
 import com.google.android.material.snackbar.Snackbar
 
 class PaymentFailureFragment : Fragment() {
@@ -44,15 +46,27 @@ class PaymentFailureFragment : Fragment() {
 
 
     private fun openHome() {
-        val intent = Intent(requireContext(), BookingActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or
+        val intent = Intent(
+            requireContext(),
+            DashboardActivity::class.java
+        )
+
+        intent.flags =
+            Intent.FLAG_ACTIVITY_CLEAR_TOP or
                     Intent.FLAG_ACTIVITY_SINGLE_TOP
-        }
+
         startActivity(intent)
+
+        requireActivity().finish()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (requireActivity() as BookingActivity).setToolbarTitle("Payment Unsuccessful")
     }
 }

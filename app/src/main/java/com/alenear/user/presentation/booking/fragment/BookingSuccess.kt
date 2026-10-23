@@ -85,11 +85,6 @@ class BookingSuccess : Fragment() {
 
             requireActivity().finish()
         }
-        binding.btnViewBooking.setOnClickListener {
-            findNavController().navigate(
-                BookingSuccessDirections.actionBookingSuccessFragmentToMyBookingFragment()
-            )
-        }
 
 
         requireActivity().onBackPressedDispatcher.addCallback(
@@ -198,18 +193,13 @@ class BookingSuccess : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        (requireActivity() as BookingActivity)
-            .showToolbar(false)
+        (requireActivity() as BookingActivity).setToolbarTitle("Booking Confirmed")
     }
 
 
 
     override fun onDestroyView() {
         super.onDestroyView()
-
-        (requireActivity() as BookingActivity)
-            .showToolbar(true)
         _binding = null
     }
-
 }

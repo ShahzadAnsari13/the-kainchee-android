@@ -1,6 +1,7 @@
 package com.alenear.user.presentation.payment.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -92,6 +93,7 @@ class VerifyingPaymentFragment : Fragment() {
                         }
 
                         is OnlinePaymentEvent.PaymentFailed -> {
+                            Log.d("PAYMENT", "PaymentFailed event received")
                             findNavController().navigate(
                                 VerifyingPaymentFragmentDirections
                                     .actionPaymentVerificationFragmentToPaymentFailureFragment(
@@ -153,8 +155,4 @@ class VerifyingPaymentFragment : Fragment() {
             )
         )
     }
-
-
-
-
 }

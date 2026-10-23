@@ -81,7 +81,6 @@ class BookingSlotFragment : Fragment() {
         _binding = FragmentBookingSlotBinding.inflate(inflater,container,false)
         return binding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val firstService = bookingPreviewData.services.firstOrNull() ?: return
@@ -114,7 +113,6 @@ class BookingSlotFragment : Fragment() {
         }else{
             viewModel.getParlourStaffs(bookingPreviewData.parlourId)
         }
-
         binding.btnContinue.setOnClickListener {
             if(!NetworkUtils.isInternetAvailable(requireContext())){
                 Snackbar.make(binding.root,"Check Internet Connection", Snackbar.LENGTH_SHORT).show()
@@ -160,11 +158,8 @@ class BookingSlotFragment : Fragment() {
 
             }
         }
-
     }
-
     private fun setupRecyclerViews(){
-
         for (i in 0..6) {
 
             val date = today.plusDays(i.toLong())
@@ -486,7 +481,7 @@ class BookingSlotFragment : Fragment() {
                 return@on
             }
             requireActivity().runOnUiThread {
-
+                hideBottomStrip()
                 currentSlots.removeAll { slot ->
 
                     val slotMinutes = toMinutes(slot.time)
@@ -499,7 +494,6 @@ class BookingSlotFragment : Fragment() {
                     currentSlots.toList()
                 )
             }
-
         }
 
         SocketManager.getSocket()?.on("slot_unlocked") { args ->

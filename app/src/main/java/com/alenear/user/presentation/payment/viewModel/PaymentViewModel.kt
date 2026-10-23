@@ -106,9 +106,11 @@ class PaymentViewModel @Inject constructor(private val repository: WalletReposit
                     )
                 }
                 .onFailure { error ->
+                    Log.d("PAYMENT", "HTTP error code = ${(error as? retrofit2.HttpException)?.code()}")
                     when {
                         error is retrofit2.HttpException &&
                                 error.code() == 422 -> {
+                                    Log.d("PAYMENT",error.code().toString())
                             _onlinePaymentEvent.emit(
                                 OnlinePaymentEvent.PaymentFailed(
                                     "Payment not completed"

@@ -374,30 +374,34 @@ class PaymentMethodBottomSheet : BottomSheetDialogFragment(){
         )
     }
 
+
     private fun setupBackPress() {
-        requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
-            object : androidx.activity.OnBackPressedCallback(true) {
+        requireDialog().setOnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK &&
+                event.action == KeyEvent.ACTION_UP
+            ) {
+                val currentTime = System.currentTimeMillis()
 
-                override fun handleOnBackPressed() {
-                    val currentTime = System.currentTimeMillis()
+                if (currentTime - lastBackPressedTime < 2000L) {
+                    lastBackPressedTime = 0L
+                    dismiss()
+                } else {
+                    lastBackPressedTime = currentTime
 
-                    if (currentTime - lastBackPressedTime < 2000L) {
-                        isEnabled = false
-                        requireActivity().onBackPressedDispatcher.onBackPressed()
-                    } else {
-                        lastBackPressedTime = currentTime
-
-                        Snackbar.make(
-                            binding.root,
-                            "Back again to exit. Your booking will be cancelled.",
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                    }
+                    Snackbar.make(
+                        binding.root,
+                        "Going back may cancel your pending booking. Your selected slot may no longer be available. Press back again to close.",
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
+
+                true
+            } else {
+                false
             }
-        )
+        }
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

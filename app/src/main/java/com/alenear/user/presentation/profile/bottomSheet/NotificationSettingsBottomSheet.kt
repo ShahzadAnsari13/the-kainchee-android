@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.alenear.user.databinding.FragmentNotificationSettingsBottomSheetBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class NotificationSettingsBottomSheet : BottomSheetDialogFragment() {
 
@@ -69,6 +70,26 @@ class NotificationSettingsBottomSheet : BottomSheetDialogFragment() {
         }
 
         startActivity(intent)
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        val bottomSheet =
+            dialog?.findViewById<View>(
+                com.google.android.material.R.id.design_bottom_sheet
+            ) ?: return
+
+        val behavior = BottomSheetBehavior.from(bottomSheet)
+
+        val displayMetrics = resources.displayMetrics
+        val screenHeight = displayMetrics.heightPixels
+
+        bottomSheet.layoutParams.height = (screenHeight * 0.94).toInt()
+        bottomSheet.requestLayout()
+
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        behavior.isDraggable = true
     }
 
     override fun onDestroyView() {
