@@ -1,9 +1,11 @@
-# The Kainchee - Android Salon Booking Platform ✂️
+# AleNear - Android Salon Booking Platform ✂️
 
-![The Kainchee App Screenshots](https://github.com/ShahzadAnsari13/the-kainchee-android/blob/main/screenshots/home_screen.jpeg?raw=true )
+![AleNear App Screenshots](https://github.com/ShahzadAnsari13/the-kainchee-android/blob/main/screenshots/home_screen.jpeg?raw=true )
 
 ## 🚀 Project Overview
-**The Kainchee** is a production-grade Android application designed to streamline the salon booking experience. Built with a full-stack approach, it ensures real-time synchronization and secure transactions, providing a seamless journey from discovery to confirmation.
+**AleNear** is an Android salon booking application designed to streamline the salon booking experience. Built with a full-stack approach, it provides real-time synchronization and secure transactions for a seamless booking experience.
+
+> **Rebranding Notice:** THE KAINCHEE has been rebranded as AleNear. This repository contains the original Android customer application developed under the previous brand. The platform is currently being rebuilt under the AleNear brand.
 
 ## 🎥 Demo & Visuals
 - **Watch Walkthrough:** [Demo Video Link](https://youtu.be/abGSdyXQKCM )
@@ -29,6 +31,40 @@ graph TD
     Data -->|API| Remote[Retrofit/Socket.IO]
     Data -->|Local| DB[Room/DataStore]
 ```
+
+The application follows modern Android development practices using **Clean Architecture** and **MVVM**.
+
+```
+Presentation Layer
+        │
+        ▼
+ViewModel (StateFlow)
+        │
+        ▼
+Repository
+   │          │
+   ▼          ▼
+Remote API   Room Database
+        │
+        ▼
+Node.js Backend
+```
+
+### Architecture Components
+
+- MVVM Architecture
+- Clean Architecture
+- Repository Pattern
+- Hilt Dependency Injection
+- Kotlin Coroutines
+- StateFlow
+- Room Database
+- DataStore
+- Socket.IO
+- Firebase Cloud Messaging (FCM)
+
+---
+
 
 # 📱 Application Screenshots
 
@@ -64,7 +100,6 @@ graph TD
   <img src="screenshots/notification_screen.png" width="220"/>
   <img src="screenshots/edit_profile_screen.png" width="220"/>
   <img src="screenshots/waller_screen.png" width="220"/>
-</p>
 </p>
 <p align="center">
   <img src="screenshots/booking_history_screen.png" width="220"/>
@@ -164,41 +199,6 @@ graph TD
 
 ---
 
-# 🏗 Architecture
-
-The application follows modern Android development practices using **Clean Architecture** and **MVVM**.
-
-```
-Presentation Layer
-        │
-        ▼
-ViewModel (StateFlow)
-        │
-        ▼
-Repository
-   │          │
-   ▼          ▼
-Remote API   Room Database
-        │
-        ▼
-Node.js Backend
-```
-
-### Architecture Components
-
-- MVVM Architecture
-- Clean Architecture
-- Repository Pattern
-- Hilt Dependency Injection
-- Kotlin Coroutines
-- StateFlow
-- Room Database
-- DataStore
-- Socket.IO
-- Firebase Cloud Messaging (FCM)
-
----
-
 # 🛠 Tech Stack
 
 ## Android
@@ -251,7 +251,7 @@ Node.js Backend
 
 # 🌐 Backend Repository
 
-The backend powering THE KAINCHEE is available here:
+The backend powering AleNear is available here:
 
 https://github.com/ShahzadAnsari13/the-kainchee-backend
 
@@ -260,7 +260,7 @@ https://github.com/ShahzadAnsari13/the-kainchee-backend
 
 # 🚀 Highlights
 
-- Production-Grade Android Application
+- Android Salon Booking Application
 - Real-Time Appointment Booking
 - Secure OTP Authentication
 - Google Maps & Places Integration
