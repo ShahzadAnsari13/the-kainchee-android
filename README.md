@@ -103,7 +103,6 @@ Node.js Backend
 </p>
 <p align="center">
   <img src="screenshots/booking_history_screen.png" width="220"/>
-  <img src="screenshots/booking_detailed_screen.png" width="220"/>
 </p>
 ---
 
